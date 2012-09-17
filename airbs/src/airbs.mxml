@@ -1,8 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
-					   xmlns:mx="library://ns.adobe.com/flex/mx">
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   creationComplete="initApp()"
+					   styleName="main"
+					   showStatusBar="false"
+					   width="700"
+					   height="500"
+					   backgroundAlpha="0">
+	
+	<fx:Style>
+		.main {
+			showFlexChrome: true;
+		}
+		
+		.bg {
+			backgroundColor: #000000;
+			backgroundImage: " "; 
+			
+		}
+	</fx:Style>
+	
+	<fx:Script>
+		<![CDATA[
+			import air.update.ApplicationUpdaterUI;
+			import air.update.events.UpdateEvent;
+			
+			import flash.filters.DropShadowFilter;
+			
+			import mx.controls.Alert;
+			
+			private var gVersion:String;
+			private var shadowFilter:DropShadowFilter;
+			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
+			
+			private function initApp():void {
+				/*
+				if(NativeWindow.supportsTransparency) {
+					shadowFilter = new DropShadowFilter();
+					shadowFilter.color = 0x000000;
+					shadowFilter.alpha = 0.4;
+					shadowFilter.blurX = 5;
+					shadowFilter.blurY = 5;
+					shadowFilter.distance = 5;
+					addShadow(this.mainBox);
+				}
+				else { */
+					this.borderLeft.width = 0;
+					this.borderRight.width = 0;
+					this.borderTop.height = 0;
+					this.borderBottom.height = 0;
+				//}
+				
+				nativeWindow.x = (Capabilities.screenResolutionX - nativeWindow.width) / 2;
+				nativeWindow.y = (Capabilities.screenResolutionY - nativeWindow.height) / 2;
+				
+				NativeApplication.nativeApplication.addEventListener( Event.EXITING, 
+					function(e:Event):void {
+						var opened:Array = NativeApplication.nativeApplication.openedWindows;
+						for (var i:int = 0; i < opened.length; i ++) {
+							opened[i].close();
+						}
+					});    
+				
+				setApplicationVersion();
+				//appUpdater.updateURL = "http://localhost/buckscore/update.xml";
+				appUpdater.updateURL = "http://www.complexless.com/buckscore/update.xml";
+				appUpdater.isCheckForUpdateVisible = false;
+				appUpdater.addEventListener(UpdateEvent.INITIALIZED, onUpdate);
+				appUpdater.addEventListener(ErrorEvent.ERROR, onError);
+				appUpdater.initialize();
+			}
+			
+			private function addShadow(comp:DisplayObject):void {
+				comp.filters = [this.shadowFilter];
+			}
+
+			private function onError(event:ErrorEvent):void {
+				Alert.show(event.toString());
+			}
+			
+			private function onUpdate(event:UpdateEvent):void {
+				appUpdater.checkNow();
+			}
+			
+			private function setApplicationVersion():void {
+				var appXML:XML = NativeApplication.nativeApplication.applicationDescriptor;
+				var ns:Namespace = appXML.namespace();
+				gVersion = appXML.ns::version;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="stateMain">
+		</s:State>
+		<s:State name="stateLogin">
+		</s:State>
+	</s:states>
+
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
+	<s:layout.stateLogin>
+		<s:BasicLayout/>
+	</s:layout.stateLogin>
+	
+	
+	<s:HGroup x="0" y="0" width="100%" height="100%" gap="0">
+		<s:VGroup id="borderLeft" width="15" height="100%"/>
+		<s:VGroup width="100%" height="100%" gap="0">
+			<s:HGroup id="borderTop" height="15" width="100%"/>
+			<s:SkinnableContainer id="mainBox" width="100%" height="100%" backgroundColor="#000000">
+				<s:VGroup includeIn="stateLogin" width="100%" height="100%">
+					
+				</s:VGroup>
+				
+				<s:VGroup includeIn="stateMain" width="100%" height="100%" gap="0">
+					<s:HGroup width="100%" height="56" gap="0">
+						<s:VGroup width="5" height="100%"/>
+						<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
+								 text=" What's you buckscore?" verticalAlign="middle"/>
+						<s:Label width="100%" height="100%" color="#DCD3D3" fontFamily="Arial"
+								 fontSize="24" fontWeight="normal" text="Powered by the MSU Deer Lab "
+								 textAlign="right" verticalAlign="middle"/>
+						<s:VGroup width="5" height="100%"/>
+					</s:HGroup>
+					<s:SkinnableContainer width="100%" height="1" backgroundColor="#848484"/>
+					<s:HGroup width="100%" height="35" verticalAlign="middle">
+						<mx:MenuBar id="myMenuBar" labelField="@label">
+							<fx:XMLList>
+								<menuitem label="New">
+									<menuitem label="Album"/>
+									<menuitem label="Deer"/>
+									<menuitem label="Maps"/>
+								</menuitem>
+								<menuitem label="Skins">
+									<menuitem label="Black"/>
+									<menuitem label="Silver"/>
+								</menuitem>
+								<menuitem label="Help">
+									<menuitem label="View Help"/>
+									<menuitem label="Update License"/>
+									<menuitem label="Sincronization"/>
+									<menuitem label="About Buckscore Application"/>
+								</menuitem>
+							</fx:XMLList>
+						</mx:MenuBar>
+					</s:HGroup>
+					<s:HGroup width="100%" height="100%" gap="0">
+						<s:VGroup width="6" height="100%"/>
+						<s:VGroup width="100%" height="100%">
+							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#848484"/>
+						</s:VGroup>
+						<s:VGroup width="6" height="100%"/>
+						<s:VGroup width="308" height="100%">
+							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#cccccc"/>
+						</s:VGroup>
+						<s:VGroup width="6" height="100%"/>
+					</s:HGroup>
+					<s:HGroup width="100%" height="6"/>
+				</s:VGroup>
+				
+			</s:SkinnableContainer>
+			<s:HGroup id="borderBottom" height="15" width="100%"/>
+		</s:VGroup>
+		<s:VGroup id="borderRight" width="15" height="100%"/>
+	</s:HGroup>
 </s:WindowedApplication>
