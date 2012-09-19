@@ -177,9 +177,20 @@
 											<s:Label fontWeight="bold" text="Album Name"/>
 										</s:VGroup>
 									</s:HGroup>
-									<s:VGroup x="0" y="0" width="100%" height="107">
+									<s:VGroup x="0" y="0" width="100%" height="107"
+											  chromeColor="#090808">
+										<s:Group width="306" height="42">
+											<s:Button x="27" y="10" width="100" label="Button"
+													  accentColor="#F7FAFB" alpha="15"
+													  chromeColor="#1F1B1B" color="#F4EEEE"
+													  cornerRadius="5" focusColor="#040404"/>
+											<s:Button x="170" y="10" width="105" label="Button"
+													  alpha="15" color="#F8ECEC" cornerRadius="5"
+													  focusAlpha="3" focusColor="#090808"/>
+										</s:Group>
 									</s:VGroup>
-									<s:HGroup x="0" y="0" width="100%" height="60">
+									<s:HGroup x="0" y="0" width="100%" height="60"
+											  contentBackgroundAlpha="4">
 									</s:HGroup>
 								</s:VGroup>
 								
