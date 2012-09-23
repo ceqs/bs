@@ -5,8 +5,8 @@
 					   creationComplete="initApp()"
 					   styleName="main"
 					   showStatusBar="false"
-					   width="700"
-					   height="500"
+					   width="750"
+					   height="550"
 					   backgroundAlpha="0" xmlns:component="component.*">
 	
 	<fx:Style>
@@ -22,6 +22,10 @@
 		global
 		{
 			vertical-align: middle;
+			content-background-color: #F5FBFB;
+			font-size: 12;
+			font-family: "Times New Roman";
+			content-background-alpha: 0.91;
 		}
 	</fx:Style>
 	
@@ -30,13 +34,50 @@
 			import air.update.ApplicationUpdaterUI;
 			import air.update.events.UpdateEvent;
 			
+			import component.albumbuckscore;
+			
 			import flash.filters.DropShadowFilter;
 			
+			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			
 			private var gVersion:String;
 			private var shadowFilter:DropShadowFilter;
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
+			private var albumphoto:ArrayCollection = new ArrayCollection();
+			
+			
+			[Bindable]
+			public var array:ArrayCollection;
+			
+
+			public function llenarTabla():void
+			{
+				 var itemalbumphoto:albumbuckscore = new albumbuckscore();
+				itemalbumphoto.albumname='henry';
+				itemalbumphoto.deername='venado 1';
+				itemalbumphoto.posturename='center';
+				itemalbumphoto.ranchname='';
+				itemalbumphoto.tagnumber='';
+				albumphoto.addItem(itemalbumphoto);
+				var itemalbumphoto2:albumbuckscore = new albumbuckscore();
+				itemalbumphoto2.albumname='henry2';
+				itemalbumphoto2.deername='venado 2';
+				itemalbumphoto2.posturename='rigth';
+				itemalbumphoto2.ranchname='';
+				itemalbumphoto2.tagnumber='';
+				albumphoto.addItem(itemalbumphoto2);
+				array = new ArrayCollection();
+				for(var i:int = 0;i<albumphoto.length;i++)
+				{
+					var name:String =(albumbuckscore)( albumphoto.getItemAt(i)).deername;
+					var albumname:String = (albumbuckscore)( albumphoto.getItemAt(i)).albumname;
+					trace('Subject'+i+name);
+					trace('From'+i+albumname);
+					array.addItem({name:name,type:albumname});
+					trace(array);
+				}
+			}
 			
 			private function initApp():void {
 				/*
@@ -68,12 +109,14 @@
 					});    
 				
 				setApplicationVersion();
+				
 				//appUpdater.updateURL = "http://localhost/buckscore/update.xml";
 				appUpdater.updateURL = "http://www.complexless.com/buckscore/update.xml";
 				appUpdater.isCheckForUpdateVisible = false;
 				appUpdater.addEventListener(UpdateEvent.INITIALIZED, onUpdate);
 				appUpdater.addEventListener(ErrorEvent.ERROR, onError);
 				appUpdater.initialize();
+				
 			}
 			
 			private function addShadow(comp:DisplayObject):void {
@@ -94,6 +137,31 @@
 				gVersion = appXML.ns::version;
 			}
 			
+			protected function combophoto_uploadphoto(event:MouseEvent):void
+			{
+				currentState='editphoto';
+				
+			}
+			
+			protected function button1_canceluploadphot(event:MouseEvent):void
+			{
+				currentState='stateMain';
+				
+			}
+			
+			protected function button2_callscore(event:MouseEvent):void
+			{
+				currentState='scorephoto';
+				
+				
+			}
+			
+			protected function button3_backeditphoto(event:MouseEvent):void
+			{
+				currentState='stateMain';
+				
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -102,6 +170,9 @@
 		</s:State>
 		<s:State name="stateLogin">
 		</s:State>
+		<s:State name="editphoto"/>
+		<s:State name="editAlbum"/>
+		<s:State name="scorephoto"/>
 	</s:states>
 
 	<fx:Declarations>
@@ -112,7 +183,7 @@
 	</s:layout.stateLogin>
 	
 	
-	<s:HGroup x="0" y="0" width="100%" height="100%" gap="0">
+	<s:HGroup x="0" y="0" width="100%" height="100%" gap="0" >
 		<s:VGroup id="borderLeft" width="15" height="100%"/>
 		<s:VGroup width="100%" height="100%" gap="0">
 			<s:HGroup id="borderTop" height="15" width="100%"/>
@@ -121,7 +192,7 @@
 					
 				</s:VGroup>
 				
-				<s:VGroup includeIn="stateMain" width="100%" height="100%" gap="0">
+				<s:VGroup includeIn="editAlbum,editphoto,scorephoto,stateMain" width="100%" height="100%" gap="0">
 					<s:HGroup width="100%" height="56" gap="0">
 						<s:VGroup width="5" height="100%"/>
 						<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
@@ -156,7 +227,8 @@
 					<s:HGroup width="100%" height="100%" gap="0">
 						<s:VGroup width="6" height="100%"/>
 						<s:VGroup width="100%" height="100%">
-							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#848484"/>
+							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#848484">
+							</s:SkinnableContainer>
 						</s:VGroup>
 						<s:VGroup width="6" height="100%"/>
 						<s:VGroup width="308" height="100%">
@@ -168,12 +240,22 @@
 										<s:HGroup x="0" y="0" width="100%" height="100%" verticalAlign="middle">
 											<s:Label x="0" y="0" width="100%" color="#DCD3D3"
 													 fontSize="20" text=" Name"/>
+											<s:Button includeIn="editphoto" label="Delete"/>
+											<s:Button includeIn="scorephoto" label="Close"/>
+											<s:Button includeIn="editAlbum,scorephoto" label="Delete"
+													  label.scorephoto="Back"
+													  click.scorephoto="button3_backeditphoto(event)"/>
+											<s:Button includeIn="stateMain" label="Delete"/>
 										</s:HGroup>
 									</s:SkinnableContainer>
-									<s:HGroup x="0" y="0" width="100%" height="109">
-										<s:VGroup width="130" height="100%">
+									<s:HGroup x="0" y="0" width="100%" height="109"
+											  height.editAlbum="314"
+											  height.editphoto="314"
+											  height.scorephoto="314"
+											  height.stateMain="95">
+										<s:VGroup includeIn="stateMain" width="130" height="92">
 										</s:VGroup>
-										<s:VGroup width="100%" height="100%">
+										<s:VGroup includeIn="stateMain" width="100%" height="93">
 											<s:HGroup width="100%" height="5">
 											</s:HGroup>
 											<s:Label text="Name"/>
@@ -181,16 +263,170 @@
 											<s:Label text="Album Name"/>
 											<s:Label fontWeight="bold" text="Album Name"/>
 										</s:VGroup>
+										<s:SkinnableContainer includeIn="editAlbum,editphoto,scorephoto" width="100%"
+															  height="313">
+											<s:BorderContainer includeIn="editphoto" width="68"
+															   height="44" horizontalCenter="-54"
+															   verticalCenter="-122">
+												<s:Button x="3" y="2" width="61" height="19"
+														  label="Browse to add"
+														  chromeColor="#131212" color="#FAF5F5"
+														  fontSize="10"/>
+												<s:Button x="3" y="20" width="61" height="17"
+														  label="Deer Photo" fontSize="10"/>
+											</s:BorderContainer>
+											<s:Label x="20" y="2" text="Add Deer"
+													 text.editAlbum="Album"
+													 x.scorephoto="20" y.scorephoto="20"
+													 text.scorephoto="Score Deer"/>
+											<s:VGroup x="24" y="58" width="100%" height="254"
+													  x.editAlbum="20" y.editAlbum="48"
+													  width.editAlbum="290"
+													  x.scorephoto="20" y.scorephoto="49"
+													  width.scorephoto="279">
+											
+												<s:Label text="Deer Name *"
+														 text.editAlbum=" Album Name"
+														 text.scorephoto="State"/>
+												<s:ComboBox  width="164" name="txtdeername"
+															 width.editAlbum="120"
+															 width.scorephoto="163"/>
+												
+												
+												
+												<s:Label text="Album Name"
+														 text.editAlbum="   Description"
+														 text.scorephoto="Deer Age"/>
+												<s:ComboBox includeIn="editAlbum,scorephoto"
+															width="123" height="98"
+															height.editAlbum="86"
+															width.scorephoto="163"
+															height.scorephoto="21"/>
+												
+												<s:Group includeIn="editAlbum,scorephoto" width="197"
+														 height="11"
+														 height.scorephoto="26">
+													<s:Button label="Add"
+															  x.editAlbum="53" y.editAlbum="-5"
+															  x.scorephoto="121" y.scorephoto="1"
+															  label.scorephoto="Next"/>
+												</s:Group>
+												<s:HGroup includeIn="editphoto">
+												<s:Label text="Tag Number"/>
+												<s:TextInput width="164"/>
+												</s:HGroup>
+												<s:Label includeIn="editAlbum" text="Delete Album"/>
+												<s:HGroup includeIn="editphoto">
+												<s:Label text="Ranch Name"/>
+												<s:TextInput width="164"/>
+												</s:HGroup>
+												<s:HGroup includeIn="editphoto">
+												<s:Label text="Posture Name"/>
+												<s:TextInput width="164"/>
+												</s:HGroup>	
+												<s:DropDownList includeIn="editphoto" width="164"></s:DropDownList>
+												<mx:HRule includeIn="editphoto" width="165"/>
+												<s:HGroup includeIn="editphoto" width="164"
+														  height="27">
+													<s:Button width="80" label="Cancel"
+															  click="button1_canceluploadphot(event)"
+															  name="btncancel"
+															  width.editAlbum="111"/>
+													<s:Button width="80" label="Add" name="btnadd"
+															  width.editAlbum="128"/>
+												</s:HGroup>
+												<mx:HRule includeIn="editAlbum" width="200"/>
+												<s:HGroup width.editAlbum="217"
+														  width.scorephoto="217">
+												<s:Label includeIn="editAlbum" text="Album Name"/>
+												<s:ComboBox includeIn="editAlbum" width="133"/>
+												</s:HGroup>
+												<s:Group includeIn="editAlbum" width="200"
+														 height="17">
+													<s:Button x="130" y="-3" label="Delete"/>
+												</s:Group>
+												<mx:HRule includeIn="editAlbum,scorephoto" width="200"
+														  height="0"/>
+												<s:Group includeIn="editAlbum" width="200"
+														 height="15">
+													<s:Button x="132" y="-5" label="Close"/>
+												</s:Group>
+											</s:VGroup>
+											<s:Label includeIn="editAlbum" x="20" y="28" text="Add Album"/>
+											<mx:HRule includeIn="editAlbum,scorephoto" x="21" y="43" width="200"/>
+											<mx:HRule includeIn="editAlbum" x="21" y="196" width="200"/>
+										</s:SkinnableContainer>
 									</s:HGroup>
-									<s:VGroup x="0" y="0" width="100%" height="107"
-											  chromeColor="#090808">
-										
-											<component:subirfoto/>
-										
-									</s:VGroup>
-									<s:HGroup x="0" y="0" width="100%" height="110"
-											  contentBackgroundAlpha="4">
-									</s:HGroup>
+									<s:SkinnableContainer includeIn="stateMain" width="307"
+														  height="105" backgroundColor="#cccccc">
+										<s:Button x="46" y="3" label="Deer Info" alpha="4"/>
+										<s:Button x="187" y="3" label="Score Sheet" alpha="4"/>
+										<s:Button x="86" y="31" width="135" height="28" label="SCORE"
+												  alpha="4" click="button2_callscore(event)"/>
+										<s:ComboBox id="combophoto" x="7" y="76" alpha="4"
+													doubleClick="combophoto_uploadphoto(event)"
+													labelField="Add Photo" selectedItem="Add Photo">
+											<s:dataProvider>
+												<mx:ArrayList>
+													<fx:String>Album</fx:String>
+													<fx:String>Photo</fx:String>
+													<fx:String>Map</fx:String>
+												</mx:ArrayList>
+											</s:dataProvider>			 
+													 
+										</s:ComboBox>
+										<s:Label x="7" y="66" text="Create Item"/>
+									</s:SkinnableContainer>
+									<s:SkinnableContainer includeIn="stateMain" width="310"
+														  height="175">
+										<s:Label x="10" y="10" text="Choose Deer To Star Scoring (number)"/>
+										<s:Button x="235" y="4" label="Expand"/>
+										<s:TextInput x="45" y="29" width="184"/>
+										<s:Label x="10" y="37" text="Filter"/>
+										<s:DataGrid creationComplete="llenarTabla()" x="10" y="56" width="290" height="102" dataProvider="{array}">
+											<s:columns>
+												<s:ArrayList>
+													<s:GridColumn dataField="name"
+																  headerText="name"></s:GridColumn>
+													<s:GridColumn dataField="type"
+																  headerText="type"></s:GridColumn>
+												</s:ArrayList>
+											</s:columns>
+											
+										</s:DataGrid>
+									</s:SkinnableContainer>
+									<s:SkinnableContainer includeIn="editAlbum,editphoto,scorephoto" width="310"
+														  height="175" enabled="false">
+										<s:Label x="10" y="10" text="Choose Deer To Star Scoring (number)"/>
+										<s:Button x="235" y="4" label="Expand"/>
+										<s:TextInput x="45" y="29" width="184"/>
+										<s:Label x="10" y="37" text="Filter"/>
+										<s:DataGrid x="10" y="56" width="290" height="102">
+											<s:columns>
+												<s:ArrayList>
+													<s:GridColumn dataField="dataField1"
+																  headerText="name"></s:GridColumn>
+													<s:GridColumn dataField="dataField2"
+																  headerText="Type"></s:GridColumn>
+												</s:ArrayList>
+											</s:columns>
+											<s:typicalItem>
+												<fx:Object dataField1="Sample Data"
+														   dataField2="Sample Data"
+														   dataField3="Sample Data"></fx:Object>
+											</s:typicalItem>
+											<s:ArrayList>
+												<fx:Object dataField1="data1" dataField2="data1"
+														   dataField3="data1"></fx:Object>
+												<fx:Object dataField1="data2" dataField2="data2"
+														   dataField3="data2"></fx:Object>
+												<fx:Object dataField1="data3" dataField2="data3"
+														   dataField3="data3"></fx:Object>
+												<fx:Object dataField1="data4" dataField2="data4"
+														   dataField3="data4"></fx:Object>
+											</s:ArrayList>
+										</s:DataGrid>
+									</s:SkinnableContainer>
 								</s:VGroup>
 								
 							</s:SkinnableContainer>
@@ -204,5 +440,7 @@
 			<s:HGroup id="borderBottom" height="15" width="100%"/>
 		</s:VGroup>
 		<s:VGroup id="borderRight" width="15" height="100%"/>
+	</s:HGroup>
+	<s:HGroup includeIn="editAlbum">
 	</s:HGroup>
 </s:WindowedApplication>
