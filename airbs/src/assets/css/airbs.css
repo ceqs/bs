@@ -9,3 +9,12 @@
 .bg {
 	backgroundColor: #000000;
 }
+
+global
+{
+	vertical-align: middle;
+	content-background-color: #F5FBFB;
+	font-size: 12;
+	font-family: "Times New Roman";
+	content-background-alpha: 0.91;
+}

@@ -1,33 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
-					   xmlns:s="library://ns.adobe.com/flex/spark" 
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
-					   creationComplete="initApp()"
-					   styleName="main"
-					   showStatusBar="false"
+					   xmlns:component="component.*"
+					   xmlns:imagecropper="com.flexblocks.imagecropper.*"
+					   xmlns:ns1="*"
 					   width="750"
 					   height="550"
-					   backgroundAlpha="0" xmlns:component="component.*">
+					   backgroundAlpha="0"
+					   creationComplete="initApp()"
+					   showStatusBar="false"
+					   styleName="main">
 	
-	<fx:Style>
-		.main {
-			showFlexChrome: true;
-		}
-		
-		.bg {
-			backgroundColor: #000000;
-			backgroundImage: " "; 
-			
-		}
-		global
-		{
-			vertical-align: middle;
-			content-background-color: #F5FBFB;
-			font-size: 12;
-			font-family: "Times New Roman";
-			content-background-alpha: 0.91;
-		}
-	</fx:Style>
+	<fx:Style source="assets/css/airbs.css"/>
 	
 	<fx:Script>
 		<![CDATA[
@@ -80,6 +65,7 @@
 			}
 			
 			private function initApp():void {
+				maximize();
 				/*
 				if(NativeWindow.supportsTransparency) {
 					shadowFilter = new DropShadowFilter();
@@ -228,6 +214,7 @@
 						<s:VGroup width="6" height="100%"/>
 						<s:VGroup width="100%" height="100%">
 							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#848484">
+								<ns1:ManageCropper includeIn="stateMain" width="100%" height="100%"/>
 							</s:SkinnableContainer>
 						</s:VGroup>
 						<s:VGroup width="6" height="100%"/>
