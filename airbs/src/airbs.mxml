@@ -158,7 +158,100 @@
 			
 			protected function button3_backeditphoto(event:MouseEvent):void
 			{
+				currentState='scorephoto';
+				
+			}
+			protected function button3_backscorephoto(event:MouseEvent):void
+			{
 				currentState='stateMain';
+				
+			}
+			
+			protected function btnnext_nextphoto(event:MouseEvent):void
+			{
+				
+				
+				if(imageposition.source=="Image/0_RL.png")
+				{
+					imageposition.source="Image/22_L.png";
+				}
+				if(imageposition.source=="Image/22_L.png")
+				{
+					imageposition.source="Image/45_L.png";
+				}
+				if(imageposition.source=="Image/45_L.png")
+				{
+					imageposition.source="Image/66_L.png";
+				}
+				if(imageposition.source=="Image/66_L.png")
+				{
+					imageposition.source="Image/90_L.png";
+				}
+				if(imageposition.source=="Image/90_L.png")
+				{
+					
+				}
+				
+				if(imageposition.source=="Image/22_R.png")
+				{
+					imageposition.source="Image/0_RL.png";
+				}
+				if(imageposition.source=="Image/45_R.png")
+				{
+					imageposition.source="Image/22_R.png";
+				}
+				if(imageposition.source=="Image/66_R.png")
+				{
+					imageposition.source="Image/45_R.png";
+				}
+				if(imageposition.source=="Image/90_R.png")
+				{
+					imageposition.source="Image/66_R.png";
+				}
+				
+				
+			}
+			
+			protected function btnback_backphoto(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(imageposition.source=="Image/0_RL.png")
+				{
+					imageposition.source="Image/22_R.png";
+				}
+				if(imageposition.source=="Image/22_R.png")
+				{
+					imageposition.source="Image/45_R.png";
+				}
+				if(imageposition.source=="Image/45_R.png")
+				{
+					imageposition.source="Image/66_R.png";
+				}
+				if(imageposition.source=="Image/66_R.png")
+				{
+					imageposition.source="Image/90_R.png";
+				}
+				if(imageposition.source=="Image/90_R.png")
+				{
+					
+					
+				}
+				if(imageposition.source=="Image/22_L.png")
+				{
+					imageposition.source="Image/0_RL.png";
+				}
+				if(imageposition.source=="Image/45_L.png")
+				{
+					imageposition.source="Image/22_L.png";
+				}
+				if(imageposition.source=="Image/66_L.png")
+				{
+					imageposition.source="Image/45_L.png";
+				}
+				if(imageposition.source=="Image/90_L.png")
+				{
+					imageposition.source="Image/66_L.png";
+				}
 				
 			}
 			
@@ -173,7 +266,16 @@
 		<s:State name="editphoto"/>
 		<s:State name="editAlbum"/>
 		<s:State name="scorephoto"/>
+		<s:State name="positionphoto"/>
 	</s:states>
+	
+	<s:transitions>
+		<s:Transition id="t1" autoReverse="true">
+			<s:CrossFade
+				target="{holder}" 
+				duration="1000" />
+		</s:Transition>
+	</s:transitions>
 
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
@@ -192,7 +294,7 @@
 					
 				</s:VGroup>
 				
-				<s:VGroup includeIn="editAlbum,editphoto,scorephoto,stateMain" width="100%" height="100%" gap="0">
+				<s:VGroup includeIn="editAlbum,editphoto,positionphoto,scorephoto,stateMain" width="100%" height="100%" gap="0">
 					<s:HGroup width="100%" height="56" gap="0">
 						<s:VGroup width="5" height="100%"/>
 						<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
@@ -232,7 +334,7 @@
 						</s:VGroup>
 						<s:VGroup width="6" height="100%"/>
 						<s:VGroup width="308" height="100%">
-							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#cccccc">
+							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#cccccc" id="holder">
 								<s:VGroup width="100%" height="100%" gap="0">
 									<s:SkinnableContainer x="0" y="0" width="100%" height="45"
 														  backgroundColor="#848484"
@@ -241,16 +343,20 @@
 											<s:Label x="0" y="0" width="100%" color="#DCD3D3"
 													 fontSize="20" text=" Name"/>
 											<s:Button includeIn="editphoto" label="Delete"/>
-											<s:Button includeIn="scorephoto" label="Close"/>
-											<s:Button includeIn="editAlbum,scorephoto" label="Delete"
+											<s:Button includeIn="positionphoto,scorephoto" label="Close"/>
+											<s:Button includeIn="editAlbum,positionphoto,scorephoto"
+													  label="Delete"
+													  label.positionphoto="Back"
+													  click.positionphoto="button3_backeditphoto(event)"
 													  label.scorephoto="Back"
-													  click.scorephoto="button3_backeditphoto(event)"/>
+													  click.scorephoto="button3_backscorephoto(event)"/>
 											<s:Button includeIn="stateMain" label="Delete"/>
 										</s:HGroup>
 									</s:SkinnableContainer>
 									<s:HGroup x="0" y="0" width="100%" height="109"
 											  height.editAlbum="314"
 											  height.editphoto="314"
+											  height.positionphoto="314"
 											  height.scorephoto="314"
 											  height.stateMain="95">
 										<s:VGroup includeIn="stateMain" width="130" height="92">
@@ -263,7 +369,7 @@
 											<s:Label text="Album Name"/>
 											<s:Label fontWeight="bold" text="Album Name"/>
 										</s:VGroup>
-										<s:SkinnableContainer includeIn="editAlbum,editphoto,scorephoto" width="100%"
+										<s:SkinnableContainer includeIn="editAlbum,editphoto,positionphoto,scorephoto" width="100%"
 															  height="313">
 											<s:BorderContainer includeIn="editphoto" width="68"
 															   height="44" horizontalCenter="-54"
@@ -277,9 +383,12 @@
 											</s:BorderContainer>
 											<s:Label x="20" y="2" text="Add Deer"
 													 text.editAlbum="Album"
+													 x.positionphoto="20" y.positionphoto="20"
+													 text.positionphoto="Score Deer"
 													 x.scorephoto="20" y.scorephoto="20"
 													 text.scorephoto="Score Deer"/>
-											<s:VGroup x="24" y="58" width="100%" height="254"
+											<s:VGroup includeIn="editAlbum,editphoto,scorephoto"
+													  x="24" y="58" width="100%" height="254"
 													  x.editAlbum="20" y.editAlbum="48"
 													  width.editAlbum="290"
 													  x.scorephoto="20" y.scorephoto="49"
@@ -288,28 +397,28 @@
 												<s:Label text="Deer Name *"
 														 text.editAlbum=" Album Name"
 														 text.scorephoto="State"/>
-												<s:ComboBox  width="164" name="txtdeername"
-															 width.editAlbum="120"
-															 width.scorephoto="163"/>
+												<s:TextInput includeIn="editAlbum,editphoto"
+															width="164" name="txtdeername"
+															width.editAlbum="120"/>
+												<s:ComboBox includeIn="scorephoto"/>
 												
 												
 												
 												<s:Label text="Album Name"
 														 text.editAlbum="   Description"
 														 text.scorephoto="Deer Age"/>
-												<s:ComboBox includeIn="editAlbum,scorephoto"
-															width="123" height="98"
-															height.editAlbum="86"
-															width.scorephoto="163"
-															height.scorephoto="21"/>
+												<s:TextArea includeIn="editAlbum" width="123"
+															height="86"/>
+												<s:ComboBox includeIn="scorephoto"/>
 												
 												<s:Group includeIn="editAlbum,scorephoto" width="197"
 														 height="11"
 														 height.scorephoto="26">
 													<s:Button label="Add"
 															  x.editAlbum="53" y.editAlbum="-5"
-															  x.scorephoto="121" y.scorephoto="1"
-															  label.scorephoto="Next"/>
+															  x.scorephoto="97" y.scorephoto="1"
+															  label.scorephoto="Next"
+															  click="currentState='positionphoto'"/>
 												</s:Group>
 												<s:HGroup includeIn="editphoto">
 												<s:Label text="Tag Number"/>
@@ -330,10 +439,8 @@
 														  height="27">
 													<s:Button width="80" label="Cancel"
 															  click="button1_canceluploadphot(event)"
-															  name="btncancel"
-															  width.editAlbum="111"/>
-													<s:Button width="80" label="Add" name="btnadd"
-															  width.editAlbum="128"/>
+															  name="btncancel"/>
+													<s:Button width="80" label="Add" name="btnadd"/>
 												</s:HGroup>
 												<mx:HRule includeIn="editAlbum" width="200"/>
 												<s:HGroup width.editAlbum="217"
@@ -353,8 +460,29 @@
 												</s:Group>
 											</s:VGroup>
 											<s:Label includeIn="editAlbum" x="20" y="28" text="Add Album"/>
-											<mx:HRule includeIn="editAlbum,scorephoto" x="21" y="43" width="200"/>
+											<mx:HRule includeIn="editAlbum,positionphoto,scorephoto"
+													  x="21" y="43" width="200"
+													  x.positionphoto="20" y.positionphoto="33"
+													  width.positionphoto="267"
+													  height.positionphoto="5"/>
 											<mx:HRule includeIn="editAlbum" x="21" y="196" width="200"/>
+											<s:Label includeIn="positionphoto" x="108" y="46"
+													 text="Image Orientation"/>
+											<s:Group includeIn="positionphoto" x="20" y="65"
+													 width="267" height="238">
+												<s:Image includeIn="positionphoto" x="65" y="8" id="imageposition"
+														 width="133" height="107" source="Image/0_RL.png" />
+												<s:Button x="69" y="124" width="42"
+														  icon="Image/back.png" 
+														  click="btnback_backphoto(event)"/>
+												<s:Button name="btnnext" x="155" y="125" width="43" alpha="1"
+														  blendMode="layer"
+														  icon="Image/next.png"
+														  click="btnnext_nextphoto(event)"/>
+												<s:Button name="btnback" x="69" y="176" width="129" height="33"
+														  label="Lock in View" alpha="4"
+														  />
+											</s:Group>
 										</s:SkinnableContainer>
 									</s:HGroup>
 									<s:SkinnableContainer includeIn="stateMain" width="307"
@@ -395,7 +523,7 @@
 											
 										</s:DataGrid>
 									</s:SkinnableContainer>
-									<s:SkinnableContainer includeIn="editAlbum,editphoto,scorephoto" width="310"
+									<s:SkinnableContainer includeIn="editAlbum,editphoto,positionphoto,scorephoto" width="310"
 														  height="175" enabled="false">
 										<s:Label x="10" y="10" text="Choose Deer To Star Scoring (number)"/>
 										<s:Button x="235" y="4" label="Expand"/>
