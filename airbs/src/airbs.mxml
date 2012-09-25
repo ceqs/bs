@@ -175,36 +175,36 @@
 				{
 					imageposition.source="Image/22_L.png";
 				}
-				if(imageposition.source=="Image/22_L.png")
+				else if(imageposition.source=="Image/22_L.png")
 				{
 					imageposition.source="Image/45_L.png";
 				}
-				if(imageposition.source=="Image/45_L.png")
+				else if(imageposition.source=="Image/45_L.png")
 				{
 					imageposition.source="Image/66_L.png";
 				}
-				if(imageposition.source=="Image/66_L.png")
+				else if(imageposition.source=="Image/66_L.png")
 				{
 					imageposition.source="Image/90_L.png";
 				}
-				if(imageposition.source=="Image/90_L.png")
+				else if(imageposition.source=="Image/90_L.png")
 				{
 					
 				}
 				
-				if(imageposition.source=="Image/22_R.png")
+				else if(imageposition.source=="Image/22_R.png")
 				{
 					imageposition.source="Image/0_RL.png";
 				}
-				if(imageposition.source=="Image/45_R.png")
+				else if(imageposition.source=="Image/45_R.png")
 				{
 					imageposition.source="Image/22_R.png";
 				}
-				if(imageposition.source=="Image/66_R.png")
+				else if(imageposition.source=="Image/66_R.png")
 				{
 					imageposition.source="Image/45_R.png";
 				}
-				if(imageposition.source=="Image/90_R.png")
+				else if(imageposition.source=="Image/90_R.png")
 				{
 					imageposition.source="Image/66_R.png";
 				}
@@ -219,36 +219,36 @@
 				{
 					imageposition.source="Image/22_R.png";
 				}
-				if(imageposition.source=="Image/22_R.png")
+				else if(imageposition.source=="Image/22_R.png")
 				{
 					imageposition.source="Image/45_R.png";
 				}
-				if(imageposition.source=="Image/45_R.png")
+				else if(imageposition.source=="Image/45_R.png")
 				{
 					imageposition.source="Image/66_R.png";
 				}
-				if(imageposition.source=="Image/66_R.png")
+				else if(imageposition.source=="Image/66_R.png")
 				{
 					imageposition.source="Image/90_R.png";
 				}
-				if(imageposition.source=="Image/90_R.png")
+				else if(imageposition.source=="Image/90_R.png")
 				{
 					
 					
 				}
-				if(imageposition.source=="Image/22_L.png")
+				else if(imageposition.source=="Image/22_L.png")
 				{
 					imageposition.source="Image/0_RL.png";
 				}
-				if(imageposition.source=="Image/45_L.png")
+				else if(imageposition.source=="Image/45_L.png")
 				{
 					imageposition.source="Image/22_L.png";
 				}
-				if(imageposition.source=="Image/66_L.png")
+				else if(imageposition.source=="Image/66_L.png")
 				{
 					imageposition.source="Image/45_L.png";
 				}
-				if(imageposition.source=="Image/90_L.png")
+				else if(imageposition.source=="Image/90_L.png")
 				{
 					imageposition.source="Image/66_L.png";
 				}
