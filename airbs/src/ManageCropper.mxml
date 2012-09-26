@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:c="com.flexblocks.imagecropper.*"
+		   width="670"
+		   height="516"
+		   horizontalScrollPolicy="off"
+		   verticalScrollPolicy="off"
+		   creationComplete="init()">
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			private function init():void {
+				imageCropper.outlineColor = 0xffffff;  	
+				imageCropper.outlineAlpha = 1;
+				imageCropper.handleColor = 0xff00ff;
+				imageCropper.handleAlpha = 0.5;
+				imageCropper.maskColor = 0x660066;
+				imageCropper.maskAlpha = 0.4;
+				imageCropper.backgroundColor = 0x000000;
+				imageCropper.backgroundAlpha = 1;
+				imageCropper.handleSize = 10;
+				imageCropper.constrainToAspectRatio = false;
+				imageCropper.setCropRect();
+				imageCropper.enabled = false;
+			}
+			
+			private function save():void {
+				var newImage:BitmapData = imageCropper.croppedBitmapData;
+				imageCropper.sourceImage = newImage;
+				imageCropper.enabled = false;
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup x="0" y="0" width="100%" height="100%" gap="0">
+		<s:SkinnableContainer width="413" height="25">
+			<s:HGroup width="100%" height="100%" gap="0" verticalAlign="middle">
+				<mx:LinkButton icon="@Embed('assets/images/select16x16.png')"/>
+				<mx:LinkButton icon="@Embed('assets/images/save16x16.png')" click="save()"/>
+				<mx:LinkButton icon="@Embed('assets/images/crop16x16.png')" click="imageCropper.enabled = true"/>
+				<mx:LinkButton icon="@Embed('assets/images/zoom_in16x16.png')"/>
+				<mx:LinkButton icon="@Embed('assets/images/zoom_out16x16.png')"/>
+				<mx:LinkButton icon="@Embed('assets/images/zoom_fit16x16.png')"/>
+				<mx:LinkButton icon="@Embed('assets/images/zoom_actualsize16x16.png')"/>
+			</s:HGroup>
+		</s:SkinnableContainer>
+		<s:SkinnableContainer width="100%" height="100%" backgroundColor="#000000">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" gap="20">
+				
+				<c:ImageCropper id="imageCropper"
+								width="640"
+								height="480"
+								sourceImage="large.jpg"
+								enabled="true"
+								cropConstraintDisabled="false"
+								sourceImageReady="trace('Image ready');"
+								sourceImageLoadError="trace('Error while loading image')"
+								cropRectChanged="trace('Crop Rect changed');"
+								cropConstraintChanged="trace('Crop constraint changed');"
+								cropDimensionsChanged="trace('Crop dimensions changed');"
+								cropPositionChanged="trace('Crop position changed');" />
+				
+			</s:VGroup>
+		</s:SkinnableContainer>
+	</s:VGroup>
+</mx:Canvas>
