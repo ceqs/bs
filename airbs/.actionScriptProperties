@@ -21,5 +21,12 @@
   <modules/>
   <buildCSSFiles/>
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
-  <buildTargets/>
+  <buildTargets>
+    <buildTarget buildTargetName="default">
+      <airSettings airCertificatePath="C:/Temp/ComplexLess/complexless-air.p12" airTimestamp="false" version="1">
+        <airExcludes/>
+      </airSettings>
+      <actionScriptSettings version="1"/>
+    </buildTarget>
+  </buildTargets>
 </actionScriptProperties>
