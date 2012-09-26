@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <States>
+    <State Code="-1" Description="Select..."/>
+    <State Code="0001" Description="Alabama" Rule1="0.93" Rule2="1.45" Rule3="1.52" Rule4="2.78" Rule5="2.68" Rule6="0.98" Rule7="1.59" Rule8="1.65" Rule9="2.97" Rule10="3.14" />
+    <State Code="0002" Description="Alberta" Rule1="0.94" Rule2="1.42" Rule3="1.54" Rule4="2.98" Rule5="2.91" Rule6="0.99" Rule7="1.53" Rule8="1.58" Rule9="3.05" Rule10="3.24" />
+    <State Code="0003" Description="Arizona" Rule1="0.93" Rule2="1.42" Rule3="1.44" Rule4="2.68" Rule5="2.7" Rule6="0.98" Rule7="1.65" Rule8="1.63" Rule9="2.81" Rule10="3.1" />
+    <State Code="0004" Description="Arkansas" Rule1="0.955163426000322" Rule2="1.42993159448819" Rule3="1.51657887591637" Rule4="2.92978468639696" Rule5="3.18936265725405" Rule6="0.93" Rule7="1.5" Rule8="1.55" Rule9="2.87" Rule10="2.84" />
+    <State Code="0005" Description="British Columbia" Rule1="0.94" Rule2="1.42" Rule3="1.54" Rule4="2.98" Rule5="2.91" Rule6="0.99" Rule7="1.53" Rule8="1.58" Rule9="3.05" Rule10="3.24" />
+    <State Code="0006" Description="California" Rule1="0.93" Rule2="1.42" Rule3="1.44" Rule4="2.68" Rule5="2.7" Rule6="0.98" Rule7="1.65" Rule8="1.63" Rule9="2.81" Rule10="3.1" />
+    <State Code="0007" Description="Colorado" Rule1="0.95" Rule2="1.48" Rule3="1.52" Rule4="2.99" Rule5="3.25" Rule6="0.98" Rule7="1.63" Rule8="1.68" Rule9="3.03" Rule10="3.53" />
+    <State Code="0008" Description="Connecticut" Rule1="0.88" Rule2="1.61" Rule3="1.64" Rule4="3.27" Rule5="2.93" Rule6="0.93" Rule7="1.7" Rule8="1.73" Rule9="3.37" Rule10="3.16" />
+    <State Code="0009" Description="Delaware" Rule1="0.93" Rule2="1.47" Rule3="1.54" Rule4="2.89" Rule5="2.87" Rule6="1" Rule7="1.64" Rule8="1.68" Rule9="2.95" Rule10="3.26" />
+    <State Code="0010" Description="Florida " Rule1="0.91" Rule2="1.38" Rule3="1.39" Rule4="2.8" Rule5="2.7" Rule6="0.96" Rule7="1.54" Rule8="1.63" Rule9="2.99" Rule10="3.09" />
+    <State Code="0011" Description="Georgia" Rule1="0.91" Rule2="1.38" Rule3="1.39" Rule4="2.8" Rule5="2.7" Rule6="0.94" Rule7="1.61" Rule8="1.66" Rule9="3.01" Rule10="3.13" />
+    <State Code="0012" Description="Idaho " Rule1="0.95" Rule2="1.48" Rule3="1.52" Rule4="2.99" Rule5="3.25" Rule6="0.98" Rule7="1.63" Rule8="1.68" Rule9="3.03" Rule10="3.53" />
+    <State Code="0013" Description="Illinois" Rule1="0.97" Rule2="1.6" Rule3="1.57" Rule4="3.23" Rule5="3.32" Rule6="0.96" Rule7="1.77" Rule8="1.8" Rule9="3.19" Rule10="3.5" />
+    <State Code="0014" Description="Indiana" Rule1="0.93" Rule2="1.59" Rule3="1.59" Rule4="3.15" Rule5="3.2" Rule6="0.96" Rule7="1.72" Rule8="1.74" Rule9="3.12" Rule10="3.38" />
+    <State Code="0015" Description="Iowa" Rule1="0.97" Rule2="1.6" Rule3="1.57" Rule4="3.23" Rule5="3.32" Rule6="0.96" Rule7="1.77" Rule8="1.8" Rule9="3.19" Rule10="3.5" />
+    <State Code="0016" Description="Kansas" Rule1="0.95" Rule2="1.5" Rule3="1.51" Rule4="3" Rule5="3.36" Rule6="0.97" Rule7="1.67" Rule8="1.72" Rule9="3.02" Rule10="3.62" />
+    <State Code="0017" Description="Kentucky" Rule1="0.91" Rule2="1.5" Rule3="1.53" Rule4="3.12" Rule5="3.13" Rule6="0.93" Rule7="1.64" Rule8="1.68" Rule9="3.08" Rule10="3.28" />
+    <State Code="0018" Description="Louisiana" Rule1="0.93" Rule2="1.45" Rule3="1.53" Rule4="2.84" Rule5="3.06" Rule6="0.96" Rule7="1.64" Rule8="1.68" Rule9="2.88" Rule10="3.19" />
+    <State Code="0019" Description="Maine" Rule1="0.99" Rule2="1.47" Rule3="1.52" Rule4="2.98" Rule5="2.66" Rule6="1.08" Rule7="1.68" Rule8="1.7" Rule9="3.15" Rule10="2.99" />
+    <State Code="0020" Description="Manitoba" Rule1="0.91" Rule2="1.5" Rule3="1.56" Rule4="3.05" Rule5="2.95" Rule6="0.94" Rule7="1.59" Rule8="1.63" Rule9="3.11" Rule10="3.19" />
+    <State Code="0021" Description="Maryland" Rule1="0.93" Rule2="1.47" Rule3="1.44" Rule4="2.86" Rule5="2.85" Rule6="1.01" Rule7="1.62" Rule8="1.67" Rule9="3.07" Rule10="3.06" />
+    <State Code="0022" Description="Massachusetts" Rule1="0.88" Rule2="1.56" Rule3="1.61" Rule4="3.31" Rule5="2.94" Rule6="0.95" Rule7="1.65" Rule8="1.68" Rule9="3.3" Rule10="3.13" />
+    <State Code="0023" Description="Mexico" Rule1="0.93" Rule2="1.42" Rule3="1.44" Rule4="2.68" Rule5="2.7" Rule6="0.98" Rule7="1.65" Rule8="1.63" Rule9="2.81" Rule10="3.1" />
+    <State Code="0024" Description="Michigan" Rule1="0.87" Rule2="1.57" Rule3="1.58" Rule4="3.12" Rule5="2.99" Rule6="0.89" Rule7="1.65" Rule8="1.69" Rule9="3.17" Rule10="3.13" />
+    <State Code="0025" Description="Minnesota" Rule1="0.87" Rule2="1.57" Rule3="1.58" Rule4="3.12" Rule5="2.99" Rule6="0.89" Rule7="1.65" Rule8="1.69" Rule9="3.17" Rule10="3.13" />
+    <State Code="0026" Description="Mississippi" Rule1="0.96" Rule2="1.43" Rule3="1.53" Rule4="2.95" Rule5="3.23" Rule6="1.02" Rule7="1.62" Rule8="1.66" Rule9="3.03" Rule10="3.57" />
+    <State Code="0027" Description="Missouri" Rule1="0.93" Rule2="1.45" Rule3="1.48" Rule4="2.83" Rule5="3.17" Rule6="0.96" Rule7="1.58" Rule8="1.63" Rule9="2.92" Rule10="3.4" />
+    <State Code="0028" Description="Montana" Rule1="0.95" Rule2="1.48" Rule3="1.52" Rule4="2.99" Rule5="3.25" Rule6="0.98" Rule7="1.63" Rule8="1.68" Rule9="3.03" Rule10="3.53" />
+    <State Code="0029" Description="Nebraska" Rule1="0.95" Rule2="1.5" Rule3="1.51" Rule4="3" Rule5="3.36" Rule6="0.97" Rule7="1.67" Rule8="1.72" Rule9="3.02" Rule10="3.62" />
+    <State Code="0030" Description="Nevada " Rule1="0.93" Rule2="1.42" Rule3="1.44" Rule4="2.68" Rule5="2.7" Rule6="0.98" Rule7="1.63" Rule8="1.68" Rule9="3.03" Rule10="3.53" />
+    <State Code="0031" Description="New Brunswick" Rule1="1" Rule2="1.56" Rule3="1.58" Rule4="3.27" Rule5="2.92" Rule6="1.1" Rule7="1.75" Rule8="1.75" Rule9="3.29" Rule10="3.175" />
+    <State Code="0032" Description="New Hampshire" Rule1="0.93" Rule2="1.65" Rule3="1.68" Rule4="3.31" Rule5="2.99" Rule6="1" Rule7="1.64" Rule8="1.66" Rule9="3.3" Rule10="3.18" />
+    <State Code="0033" Description="New Jersey" Rule1="0.91" Rule2="1.53" Rule3="1.58" Rule4="2.98" Rule5="2.98" Rule6="0.98" Rule7="1.65" Rule8="1.68" Rule9="3.06" Rule10="3.15" />
+    <State Code="0034" Description="New Mexico" Rule1="0.93" Rule2="1.42" Rule3="1.44" Rule4="2.68" Rule5="2.7" Rule6="0.98" Rule7="1.65" Rule8="1.63" Rule9="2.81" Rule10="3.1" />
+    <State Code="0035" Description="New York" Rule1="0.88" Rule2="1.57" Rule3="1.61" Rule4="3.25" Rule5="2.98" Rule6="0.95" Rule7="1.65" Rule8="1.68" Rule9="3.24" Rule10="3.16" />
+    <State Code="0036" Description="North Carolina" Rule1="0.92" Rule2="1.48" Rule3="1.6" Rule4="2.92" Rule5="2.98" Rule6="0.94" Rule7="1.65" Rule8="1.78" Rule9="2.9" Rule10="3.17" />
+    <State Code="0037" Description="North Dakota" Rule1="0.95" Rule2="1.48" Rule3="1.52" Rule4="2.99" Rule5="3.25" Rule6="0.98" Rule7="1.63" Rule8="1.68" Rule9="3.03" Rule10="3.53" />
+    <State Code="0038" Description="Nova Scotia" Rule1="1" Rule2="1.56" Rule3="1.58" Rule4="3.27" Rule5="2.92" Rule6="1.1" Rule7="1.75" Rule8="1.75" Rule9="3.29" Rule10="3.175" />
+    <State Code="0039" Description="Ohio" Rule1="0.93" Rule2="1.59" Rule3="1.59" Rule4="3.15" Rule5="3.2" Rule6="0.96" Rule7="1.72" Rule8="1.74" Rule9="3.12" Rule10="3.38" />
+    <State Code="0040" Description="Oklahoma" Rule1="1.06" Rule2="1.45" Rule3="1.47" Rule4="2.97" Rule5="3.54" Rule6="1.08" Rule7="1.63" Rule8="1.73" Rule9="2.97" Rule10="3.87" />
+    <State Code="0041" Description="Ontario" Rule1="0.89" Rule2="1.57" Rule3="1.59" Rule4="3.05" Rule5="3.01" Rule6="0.92" Rule7="1.66" Rule8="1.72" Rule9="3.19" Rule10="3.08" />
+    <State Code="0042" Description="Oregon" Rule1="0.92" Rule2="1.5" Rule3="1.58" Rule4="3.02" Rule5="3" Rule6="0.94" Rule7="1.6" Rule8="1.63" Rule9="3.05" Rule10="3.24" />
+    <State Code="0043" Description="Pennsylvania" Rule1="0.89" Rule2="1.58" Rule3="1.61" Rule4="3.06" Rule5="3.08" Rule6="0.95" Rule7="1.67" Rule8="1.68" Rule9="3.05" Rule10="3.25" />
+    <State Code="0044" Description="Quebec" Rule1="0.89" Rule2="1.57" Rule3="1.59" Rule4="3.05" Rule5="3.01" Rule6="0.95" Rule7="1.67" Rule8="1.75" Rule9="3.21" Rule10="3.02" />
+    <State Code="0045" Description="Rhode Island" Rule1="0.88" Rule2="1.61" Rule3="1.64" Rule4="3.27" Rule5="2.93" Rule6="0.93" Rule7="1.7" Rule8="1.73" Rule9="3.36" Rule10="3.16" />
+    <State Code="0046" Description="Saskatchewan" Rule1="0.91" Rule2="1.5" Rule3="1.56" Rule4="3.05" Rule5="2.95" Rule6="0.94" Rule7="1.59" Rule8="1.64" Rule9="3.11" Rule10="3.19" />
+    <State Code="0047" Description="South Carolina" Rule1="0.98" Rule2="1.48524666666667" Rule3="1.62" Rule4="2.97" Rule5="2.92" Rule6="1" Rule7="1.56" Rule8="1.67" Rule9="2.96" Rule10="3.09" />
+    <State Code="0048" Description="South Dakota" Rule1="0.95" Rule2="1.48" Rule3="1.52" Rule4="2.99" Rule5="3.25" Rule6="0.98" Rule7="1.63" Rule8="1.68" Rule9="3.03" Rule10="3.53" />
+    <State Code="0049" Description="Tennessee" Rule1="0.96" Rule2="1.49" Rule3="1.54" Rule4="3.05" Rule5="3.01" Rule6="0.97" Rule7="1.58" Rule8="1.64" Rule9="3.08" Rule10="3.12" />
+    <State Code="0050" Description="Texas" Rule1="0.93" Rule2="1.42" Rule3="1.44" Rule4="2.68" Rule5="2.7" Rule6="0.98" Rule7="1.65" Rule8="1.63" Rule9="2.81" Rule10="3.1" />
+    <State Code="0051" Description="Utah" Rule1="0.95" Rule2="1.48" Rule3="1.52" Rule4="2.99" Rule5="3.25" Rule6="0.98" Rule7="1.63" Rule8="1.68" Rule9="3.03" Rule10="3.53" />
+    <State Code="0052" Description="Vermont" Rule1="0.91" Rule2="1.57" Rule3="1.61" Rule4="3.36" Rule5="2.98" Rule6="1" Rule7="1.64" Rule8="1.66" Rule9="3.3" Rule10="3.18" />
+    <State Code="0053" Description="Virginia" Rule1="0.91" Rule2="1.46" Rule3="1.55" Rule4="2.97" Rule5="2.94" Rule6="0.95" Rule7="1.62" Rule8="1.7" Rule9="3.03" Rule10="3.08" />
+    <State Code="0054" Description="Washington" Rule1="0.92" Rule2="1.5" Rule3="1.58" Rule4="3.02" Rule5="3" Rule6="0.94" Rule7="1.6" Rule8="1.63" Rule9="3.05" Rule10="3.24" />
+    <State Code="0055" Description="West Virginia" Rule1="0.89" Rule2="1.44" Rule3="1.52" Rule4="3.11" Rule5="2.96" Rule6="0.91" Rule7="1.59" Rule8="1.64" Rule9="3.12" Rule10="3.02" />
+    <State Code="0056" Description="Wisconsin" Rule1="0.87" Rule2="1.57" Rule3="1.58" Rule4="3.13" Rule5="2.99" Rule6="0.89" Rule7="1.65" Rule8="1.69" Rule9="3.17" Rule10="3.13" />
+    <State Code="0057" Description="Wyoming" Rule1="0.95" Rule2="1.48" Rule3="1.52" Rule4="2.99" Rule5="3.25" Rule6="0.98" Rule7="1.63" Rule8="1.68" Rule9="3.03" Rule10="3.53" />
+  </States>
+  <ImageOrientations>
+    <ImageOrientation Code="-1" Description="Select...">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="-1"/>
+      </RelatedReferenceFeatures>
+    </ImageOrientation>
+    <ImageOrientation Code="0" Description="Zero Degrees">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="-1"/>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="002"/>
+        <!--
+        <RelatedReferenceFeature key="003"/>
+        <RelatedReferenceFeature key="004"/>        
+        -->
+      </RelatedReferenceFeatures>
+    </ImageOrientation>
+    <ImageOrientation Code="45" Description="Forty-Five Degrees">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="-1"/>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </ImageOrientation>
+    <ImageOrientation Code="90" Description="Ninety Degrees">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="-1"/>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </ImageOrientation>
+  </ImageOrientations>
+  <ModifiedImageOrientations>
+    <Orientation Code="90" Direction="R" FillColor="#FFF55656" Description="90 Right  Degrees" ImagePath="pack://application:,,,/Images/90_R.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+    <Orientation Code="66" Direction="R" FillColor="#FF78F556" Description="66 Right Degrees" ImagePath="pack://application:,,,/Images/66_R.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+    <Orientation Code="45" Direction="R" FillColor="#FF56F5E3" Description="45 Right Degrees" ImagePath="pack://application:,,,/Images/45_R.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+    <Orientation Code="22" Direction="R" FillColor="#FF5B56F5" Description="22 Right Degrees" ImagePath="pack://application:,,,/Images/22_R.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+    <Orientation Code="0" Direction="RL" FillColor="#FFC856F5" Description="Zero Degrees" ImagePath="pack://application:,,,/Images/0_RL.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="002"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+    <Orientation Code="22" Direction="L" FillColor="#FF56F5D4" Description="22 Left Degrees" ImagePath="pack://application:,,,/Images/22_L.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+    <Orientation Code="45" Direction="L" FillColor="#FFF5955E" Description="45 Left Degrees" ImagePath="pack://application:,,,/Images/45_L.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+    <Orientation Code="66" Direction="L" FillColor="#FFF55EA3" Description="66 Left Degrees" ImagePath="pack://application:,,,/Images/66_L.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+    <Orientation Code="90" Direction="L" FillColor="#FFFF2034" Description="90 Left Degrees" ImagePath="pack://application:,,,/Images/90_L.png">
+      <RelatedReferenceFeatures>
+        <RelatedReferenceFeature key="001"/>
+        <RelatedReferenceFeature key="005"/>
+      </RelatedReferenceFeatures>
+    </Orientation>
+  </ModifiedImageOrientations>
+  <ReferenceFeatures>
+    <ReferenceFeature Code="-1" Description="Select..."/>
+    <ReferenceFeature Code="001" Description="Ear Width" ImagePath="pack://application:,,,/Images/REFFTR_001.png"/>
+    <ReferenceFeature Code="002" Description="Eye to Eye Width" ImagePath="pack://application:,,,/Images/REFFTR_002.png"/>
+    <ReferenceFeature Code="003" Description="Lower Nostril Width" ImagePath="pack://application:,,,/Images/REFFTR_003.jpg"/>
+    <ReferenceFeature Code="004" Description="Upper Nostril Width" ImagePath="pack://application:,,,/Images/REFFTR_004.jpg"/>
+    <ReferenceFeature Code="005" Description="Eyeball Width" ImagePath="pack://application:,,,/Images/REFFTR_005.png"/>
+  </ReferenceFeatures>
+  <AgeGroups>
+    <AgeGroup Code="-1" Description="Select..."/>
+    <AgeGroup Code="100" Description="Unknown"/>
+    <AgeGroup Code="1" Description="1"/>
+    <AgeGroup Code="2" Description="2"/>
+    <AgeGroup Code="3" Description="3"/>
+    <AgeGroup Code="4" Description="4"/>
+    <AgeGroup Code="5" Description="5"/>
+    <AgeGroup Code="6" Description="6"/>
+    <AgeGroup Code="7" Description="7"/>
+    <AgeGroup Code="8" Description="8"/>
+    <AgeGroup Code="9" Description="9"/>
+  </AgeGroups>
+  <WindDirections>
+    <Direction Code="-1" Description="Select..."/>
+    <Direction Code="N" Description="North"/>
+    <Direction Code="E" Description="East"/>
+    <Direction Code="W" Description="West"/>
+    <Direction Code="S" Description="South"/>
+  </WindDirections>
+  <Equations>
+    <Equation ImageOrientation="0">
+      <Entity Code="INS" Description="Inside Spread" A="0.96699" B="0.28947"/>
+      <Entity Code="TB0" Description="Main Beams" A="0.91774" B="-0.3723" C="1.82496"/>
+      <Entity Code="TB1" Description="Typical Beams 1" A="1.00625" B="0.13404"/>
+      <Entity Code="TB2" Description="Typical Beams 2" A="1.04003" B="0.67407"/>
+      <Entity Code="TB3" Description="Typical Beams 3" A="1.04611" B="0.20640"/>
+      <Entity Code="TB4" Description="Typical Beams 4" A="1.02058" B="0.02518"/>
+      <Entity Code="TB5" Description="Typical Beams 5" A="1.01058" B="-0.0017"/>
+      <Entity Code="CR1" Description="CircumReference 1" A="0.72033"  B="1.06386" />
+      <Entity Code="CR2" Description="CircumReference 2" A="0.8506" B="0.77541" />
+      <Entity Code="CR3" Description="CircumReference 3" A="0.73002" B="0.93973" />
+      <Entity Code="CR4" Description="CircumReference 4" A="0.67962" B="0.93137" />
+      <Entity Code="CR1" Description="CircumReference 1" A="0.72033" B="1.06386"/>
+      <Entity Code="CR2" Description="CircumReference 2" A="0.8506" B="0.77541"/>
+      <Entity Code="CR3" Description="CircumReference 3" A="0.73002" B="0.93973"/>
+      <Entity Code="CR4" Description="CircumReference 4" A="0.67962" B="0.93137"/>
+      <Entity Code="AB1" Description="Abnormal Beams 1" A="1.15572" B="0.02825"/>
+      <Entity Code="AB2" Description="Abnormal Beams 2" A="1.4951" B="0.00385"/>
+      <Entity Code="AB3" Description="Abnormal Beams 3" A="1.37900" B="0.00390"/>
+      <Entity Code="AB4" Description="Abnormal Beams 4" A="1.25376" B="0.0009985"/>
+      <Entity Code="AB5" Description="Abnormal Beams 5" A="1.28198" B="-0.000276"/>
+    </Equation>
+    <Equation ImageOrientation="22">
+      <Entity Code="INS" Description="Inside Spread" A="0.96699" B="0.28947"/>
+      <Entity Direction="Close" Code="TB0" Description="Main Beam" A="0.89521" B="0.34186" C="1.39298"/>
+      <Entity Direction="Far" Code="TB0" Description="Main Beams" A="0.91774" B="-0.3723" C="1.82496"/>
+      <Entity Direction="Close" Code="TB1" Description="Typical Beams 1" A="1.05236" B="0.08821"/>
+      <Entity Direction="Far" Code="TB1" Description="Typical Beams 1" A="1.00625" B="0.13404"/>
+      <Entity Direction="Close" Code="TB2" Description="Typical Beams 2" A="0.95485" B="0.65950"/>
+      <Entity Direction="Far" Code="TB2" Description="Typical Beams 2" A="1.04003" B="0.67407"/>
+      <Entity Direction="Close" Code="TB3" Description="Typical Beams 3" A="0.93192" B="0.34314"/>
+      <Entity Direction="Far" Code="TB3" Description="Typical Beams 3" A="1.04611" B="0.20640"/>
+      <Entity Direction="Close" Code="TB4" Description="Typical Beams 4" A="0.96477" B="-0.00729"/>
+      <Entity Direction="Far" Code="TB4" Description="Typical Beams 4" A="1.02058" B="0.02518"/>
+      <Entity Direction="Close" Code="TB5" Description="Typical Beams 5" A="0.95500" B="0.00353"/>
+      <Entity Direction="Far" Code="TB5" Description="Typical Beams 5" A="1.01058" B="-0.0017"/>
+      <Entity Direction="Close" Code="CR1" Description="CircumReference 1" A="0.72033" B="1.06386"/>
+      <Entity Direction="Far" Code="CR1" Description="CircumReference 1" A="0.65893" B="1.85362"/>
+      <Entity Direction="Close" Code="CR2" Description="CircumReference 2" A="0.8506" B="0.77541"/>
+      <Entity Direction="Far" Code="CR2" Description="CircumReference 2" A="0.65718" B="1.50473"/>
+      <Entity Direction="Close" Code="CR3" Description="CircumReference 3" A="0.73002" B="0.93973"/>
+      <Entity Direction="Far" Code="CR3" Description="CircumReference 3" A="0.84216" B="0.70061"/>
+      <Entity Direction="Close" Code="CR4" Description="CircumReference 4" A="0.67962" B="0.93137"/>
+      <Entity Direction="Far" Code="CR4" Description="CircumReference 4" A="0.81695" B="0.67051"/>
+      <Entity Direction="Close" Code="AB1" Description="Abnormal Beams 1" A="1.10835" B="0.01755"/>
+      <Entity Direction="Far" Code="AB1" Description="Abnormal Beams 1" A="1.15572" B="0.02825"/>
+      <Entity Direction="Close" Code="AB2" Description="Abnormal Beams 2" A="1.26176" B="-0.000507"/>
+      <Entity Direction="Far" Code="AB2" Description="Abnormal Beams 2" A="1.4951" B="0.00385"/>
+      <Entity Direction="Close" Code="AB3" Description="Abnormal Beams 3" A="1.04539" B="-0.00065641"/>
+      <Entity Direction="Far" Code="AB3" Description="Abnormal Beams 3" A="1.37900" B="0.00390"/>
+      <Entity Direction="Close" Code="AB4" Description="Abnormal Beams 4" A="1.13754" B="-0.0000176"/>
+      <Entity Direction="Far" Code="AB4" Description="Abnormal Beams 4" A="1.25376" B="0.0009985"/>
+      <Entity Direction="Close" Code="AB5" Description="Abnormal Beams 5"  A="1.13754" B="-0.0000176"/>
+      <Entity Direction="Far" Code="AB5" Description="Abnormal Beams 5" A="1.28198" B="-0.000276"/>
+    </Equation>
+    <Equation ImageOrientation="45">
+      <Entity Code="INS" Description="Inside Spread" A="1.10704" B="3.95998"/>
+      <Entity Direction="Close" Code="TB0" Description="Main Beam" A="0.89521" B="0.34186" C="1.39298"/>
+      <Entity Direction="Far" Code="TB0" Description="Main Beam" A="1.15929" B="0.34206" C="1.44173"/>
+      <Entity Direction="Close" Code="TB1" Description="Typical Beams 1" A="1.05236" B="0.08821"/>
+      <Entity Direction="Far" Code="TB1" Description="Typical Beams 1" A="1.09918" B="0.10881"/>
+      <Entity Direction="Close" Code="TB2" Description="Typical Beams 2" A="0.95485" B="0.65950"/>
+      <Entity Direction="Far" Code="TB2" Description="Typical Beams 2" A="1.23258" B="0.24131"/>
+      <Entity Direction="Close" Code="TB3" Description="Typical Beams 3" A="0.93192" B="0.34314"/>
+      <Entity Direction="Far" Code="TB3" Description="Typical Beams 3" A="1.28037" B="0.28944"/>
+      <Entity Direction="Close" Code="TB4" Description="Typical Beams 4" A="0.96477" B="-0.00729"/>
+      <Entity Direction="Far" Code="TB4" Description="Typical Beams 4" A="1.35458" B="0.05459"/>
+      <Entity Direction="Close" Code="TB5" Description="Typical Beams 5" A="0.95500" B="0.00353"/>
+      <Entity Direction="Far" Code="TB5" Description="Typical Beams 5" A="1.37227" B="-0.00350"/>
+      <Entity Direction="Close" Code="CR1" Description="CircumReference 1" A="0.73317" B="1.17333"/>
+      <Entity Direction="Far" Code="CR1" Description="CircumReference 1" A="0.65893" B="1.85362"/>
+      <Entity Direction="Close" Code="CR2" Description="CircumReference 2" A="0.82608" B="0.90574"/>
+      <Entity Direction="Far" Code="CR2" Description="CircumReference 2" A="0.65718" B="1.50473"/>
+      <Entity Direction="Close" Code="CR3" Description="CircumReference 3" A="0.64510" B="1.20010"/>
+      <Entity Direction="Far" Code="CR3" Description="CircumReference 3" A="0.84216" B="0.70061"/>
+      <Entity Direction="Close" Code="CR4" Description="CircumReference 4" A="0.67909" B="0.75818"/>
+      <Entity Direction="Far" Code="CR4" Description="CircumReference 4" A="0.81695" B="0.67051"/>
+      <Entity Direction="Close" Code="AB1" Description="Abnormal Beams 1" A="1.10835" B="0.01755"/>
+      <Entity Direction="Far" Code="AB1" Description="Abnormal Beams 1" A="1.28579" B="0.02073"/>
+      <Entity Direction="Close" Code="AB2" Description="Abnormal Beams 2" A="1.26176" B="-0.000507"/>
+      <Entity Direction="Far" Code="AB2" Description="Abnormal Beams 2" A="1.43314" B="0.00456"/>
+      <Entity Direction="Close" Code="AB3" Description="Abnormal Beams 3" A="1.04539" B="-0.00065641"/>
+      <Entity Direction="Far" Code="AB3" Description="Abnormal Beams 3" A="1.67170" B="0.00117"/>
+      <Entity Direction="Close" Code="AB4" Description="Abnormal Beams 4" A="1.13754" B="-0.0000176"/>
+      <Entity Direction="Far" Code="AB4" Description="Abnormal Beams 4" A="1.29854" B="0.00418"/>
+      <Entity Direction="Close" Code="AB5" Description="Abnormal Beams 5"  A="1.13754" B="-0.0000176"/>
+      <Entity Direction="Far" Code="AB5" Description="Abnormal Beams 5" A="1.30645" B="0"/>
+    </Equation>
+    <Equation ImageOrientation="66">
+      <Entity Code="INS" Description="Inside Spread" A="1.10704" B="3.95998"/>
+      <Entity Direction="Close" Code="TB0" Description="Main Beam" A="0.89521" B="0.34186" C="1.39298"/>
+      <Entity Direction="Far" Code="TB0" Description="Main Beam" A="1.15929" B="0.34206" C="1.44173"/>
+      <Entity Direction="Close" Code="TB1" Description="Typical Beams 1" A="1.05236" B="0.08821"/>
+      <Entity Direction="Far" Code="TB1" Description="Typical Beams 1" A="0.94223" B="0.39505"/>
+      <Entity Direction="Close" Code="TB2" Description="Typical Beams 2" A="0.95485" B="0.65950"/>
+      <Entity Direction="Far" Code="TB2" Description="Typical Beams 2" A="0.96683" B="1.31613"/>
+      <Entity Direction="Close" Code="TB3" Description="Typical Beams 3" A="0.93192" B="0.34314"/>
+      <Entity Direction="Far" Code="TB3" Description="Typical Beams 3" A="1.15517" B="0.61521"/>
+      <Entity Direction="Close" Code="TB4" Description="Typical Beams 4" A="0.96477" B="-0.00729"/>
+      <Entity Direction="Far" Code="TB4" Description="Typical Beams 4" A="1.16398" B="0.10086"/>
+      <Entity Direction="Close" Code="TB5" Description="Typical Beams 5" A="0.95500" B="0.00353"/>
+      <Entity Direction="Far" Code="TB5" Description="Typical Beams 5" A="1.25231" B="-0.000027"/>
+      <Entity Direction="Close" Code="CR1" Description="CircumReference 1" A="0.73317" B="1.17333"/>
+      <Entity Direction="Far" Code="CR1" Description="CircumReference 1" A="0.50135" B="2.22035"/>
+      <Entity Direction="Close" Code="CR2" Description="CircumReference 2" A="0.82608" B="0.90574"/>
+      <Entity Direction="Far" Code="CR2" Description="CircumReference 2" A="0.61449" B="1.57836"/>
+      <Entity Direction="Close" Code="CR3" Description="CircumReference 3" A="0.64510" B="1.20010"/>
+      <Entity Direction="Far" Code="CR3" Description="CircumReference 3" A="0.49523" B="1.67138"/>
+      <Entity Direction="Close" Code="CR4" Description="CircumReference 4" A="0.67909" B="0.75818"/>
+      <Entity Direction="Far" Code="CR4" Description="CircumReference 4" A="0.65693" B="1.03987"/>
+      <Entity Direction="Close" Code="AB1" Description="Abnormal Beams 1" A="1.10835" B="0.01755"/>
+      <Entity Direction="Far" Code="AB1" Description="Abnormal Beams 1" A="1.48527" B="0.04220"/>
+      <Entity Direction="Close" Code="AB2" Description="Abnormal Beams 2" A="1.26176" B="-0.000507"/>
+      <Entity Direction="Far" Code="AB2" Description="Abnormal Beams 2" A="1.36804" B="-0.00164"/>
+      <Entity Direction="Close" Code="AB3" Description="Abnormal Beams 3" A="1.04539" B="-0.00065641"/>
+      <Entity Direction="Far" Code="AB3" Description="Abnormal Beams 3" A="1.38203" B="-0.000627"/>
+      <Entity Direction="Close" Code="AB4" Description="Abnormal Beams 4" A="1.13754" B="-0.0000176"/>
+      <Entity Direction="Far" Code="AB4" Description="Abnormal Beams 4" A="1.43654" B="0.00017"/>
+      <Entity Direction="Close" Code="AB5" Description="Abnormal Beams 5"  A="1.13754" B="-0.0000176"/>
+      <Entity Direction="Far" Code="AB5" Description="Abnormal Beams 5" A="1.43654" B="0.00017"/>
+    </Equation>
+    <Equation ImageOrientation="90">
+      <Entity Code="INS" Description="Inside Spread" A="0.69888" B="1.1721"/>
+      <Entity Direction="Close" Code="TB0" Description="Main Beam" A="1.01672" B="0.64468" C="0.94465"/>
+      <Entity Direction="Far" Code="TB0" Description="Main Beam" A="1.14223" B="0.17351" C="1.42523"/>
+      <Entity Direction="Close" Code="TB1" Description="Typical Beams 1" A="1.02624" B="0.07919"/>
+      <Entity Direction="Far" Code="TB1" Description="Typical Beams 1" A="0.94223" B="0.39505"/>
+      <Entity Direction="Close" Code="TB2" Description="Typical Beams 2" A="1.00828" B="0.12816"/>
+      <Entity Direction="Far" Code="TB2" Description="Typical Beams 2" A="0.96683" B="1.31613"/>
+      <Entity Direction="Close" Code="TB3" Description="Typical Beams 3" A="1.04208" B="0.10181"/>
+      <Entity Direction="Far" Code="TB3" Description="Typical Beams 3" A="1.15517" B="0.61521"/>
+      <Entity Direction="Close" Code="TB4" Description="Typical Beams 4" A="1.04753" B="0.03346"/>
+      <Entity Direction="Far" Code="TB4" Description="Typical Beams 4" A="1.16398" B="0.10086"/>
+      <Entity Direction="Close" Code="TB5" Description="Typical Beams 5" A="0.99658" B="0.00402"/>
+      <Entity Direction="Far" Code="TB5" Description="Typical Beams 5" A="1.25231" B="-0.000027"/>
+      <Entity Direction="Close" Code="CR1" Description="CircumReference 1" A="0.60881" B="1.74419"/>
+      <Entity Direction="Far" Code="CR1" Description="CircumReference 1" A="0.50135" B="2.22035"/>
+      <Entity Direction="Close" Code="CR2" Description="CircumReference 2" A="0.67545" B="1.28605"/>
+      <Entity Direction="Far" Code="CR2" Description="CircumReference 2" A="0.61449" B="1.57836"/>
+      <Entity Direction="Close" Code="CR3" Description="CircumReference 3" A="0.65141" B="0.90065"/>
+      <Entity Direction="Far" Code="CR3" Description="CircumReference 3" A="0.49523" B="1.67138"/>
+      <Entity Direction="Close" Code="CR4" Description="CircumReference 4" A="0.64884" B="0.77691"/>
+      <Entity Direction="Far" Code="CR4" Description="CircumReference 4" A="0.65693" B="1.03987"/>
+      <Entity Direction="Close" Code="AB1" Description="Abnormal Beams 1" A="1.11288" B="-0.01188"/>
+      <Entity Direction="Far" Code="AB1" Description="Abnormal Beams 1" A="1.48527" B="0.04220"/>
+      <Entity Direction="Close" Code="AB2" Description="Abnormal Beams 2" A="1.09786" B="0.00600"/>
+      <Entity Direction="Far" Code="AB2" Description="Abnormal Beams 2" A="1.36804" B="-0.00164"/>
+      <Entity Direction="Close" Code="AB3" Description="Abnormal Beams 3" A="1.23403" B="-0.00185"/>
+      <Entity Direction="Far" Code="AB3" Description="Abnormal Beams 3" A="1.38203" B="-0.000627"/>
+      <Entity Direction="Close" Code="AB4" Description="Abnormal Beams 4" A="1.10948" B="-0.00234"/>
+      <Entity Direction="Far" Code="AB4" Description="Abnormal Beams 4" A="1.43654" B="0.00017"/>
+      <Entity Direction="Close" Code="AB5" Description="Abnormal Beams 5"  A="1.10948" B="-0.00234"/>
+      <Entity Direction="Far" Code="AB5" Description="Abnormal Beams 5" A="1.43654" B="0.00017"/>
+    </Equation>
+  </Equations>
+  <VelvetAdjustment A="0.742"/>
+</root>
+

@@ -40,6 +40,9 @@
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.events.IndexChangedEvent;
+			
+			import spark.events.IndexChangeEvent;
 			
 			private var gVersion:String;
 			private var shadowFilter:DropShadowFilter;
@@ -49,6 +52,9 @@
 			
 			[Bindable]
 			public var array:ArrayCollection;
+			
+			[Bindable]
+			public var combo:ArrayCollection;
 			
 
 			public function llenarTabla():void
@@ -68,6 +74,7 @@
 				itemalbumphoto2.tagnumber='';
 				albumphoto.addItem(itemalbumphoto2);
 				array = new ArrayCollection();
+				combo= new ArrayCollection();
 				for(var i:int = 0;i<albumphoto.length;i++)
 				{
 					var name:String =(albumbuckscore)( albumphoto.getItemAt(i)).deername;
@@ -76,6 +83,7 @@
 					trace('From'+i+albumname);
 					array.addItem({name:name,type:albumname});
 					trace(array);
+					combo.addItem(albumname);
 				}
 			}
 			
@@ -166,6 +174,12 @@
 				currentState='stateMain';
 				
 			}
+			protected function button3_referenceFeature(event:MouseEvent):void
+			{
+				currentState='positionphoto';
+				
+			}
+			
 			
 			protected function btnnext_nextphoto(event:MouseEvent):void
 			{
@@ -255,6 +269,15 @@
 				
 			}
 			
+
+			
+			
+			protected function combophoto_changeHandler(event:IndexChangeEvent):void
+			{
+				
+				
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -267,6 +290,7 @@
 		<s:State name="editAlbum"/>
 		<s:State name="scorephoto"/>
 		<s:State name="positionphoto"/>
+		<s:State name="referenceFeature"/>
 	</s:states>
 	
 	<s:transitions>
@@ -294,7 +318,7 @@
 					
 				</s:VGroup>
 				
-				<s:VGroup includeIn="editAlbum,editphoto,positionphoto,scorephoto,stateMain" width="100%" height="100%" gap="0">
+				<s:VGroup includeIn="editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain" width="100%" height="100%" gap="0">
 					<s:HGroup width="100%" height="56" gap="0">
 						<s:VGroup width="5" height="100%"/>
 						<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
@@ -335,7 +359,8 @@
 						<s:VGroup width="6" height="100%"/>
 						<s:VGroup width="308" height="100%">
 							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#cccccc" id="holder">
-								<s:VGroup width="100%" height="100%" gap="0">
+								<s:VGroup width="100%" height="100%" gap="0"
+										  height.referenceFeature="354">
 									<s:SkinnableContainer x="0" y="0" width="100%" height="45"
 														  backgroundColor="#848484"
 														  textAlign="left">
@@ -343,20 +368,25 @@
 											<s:Label x="0" y="0" width="100%" color="#DCD3D3"
 													 fontSize="20" text=" Name"/>
 											<s:Button includeIn="editphoto" label="Delete"/>
-											<s:Button includeIn="positionphoto,scorephoto" label="Close"/>
-											<s:Button includeIn="editAlbum,positionphoto,scorephoto"
+											<s:Button includeIn="positionphoto,referenceFeature,scorephoto" label="Close"/>
+											<s:Button includeIn="editAlbum,positionphoto,referenceFeature,scorephoto"
 													  label="Delete"
 													  label.positionphoto="Back"
 													  click.positionphoto="button3_backeditphoto(event)"
+													  label.referenceFeature="Back"
+													  click.referenceFeature="button3_referenceFeature(event)"
 													  label.scorephoto="Back"
-													  click.scorephoto="button3_backscorephoto(event)"/>
+													  click.scorephoto="button3_backscorephoto(event)"
+													  
+													  />
 											<s:Button includeIn="stateMain" label="Delete"/>
 										</s:HGroup>
 									</s:SkinnableContainer>
-									<s:HGroup x="0" y="0" width="100%" height="109"
+									<s:HGroup x="0" y="0" width="100%"
 											  height.editAlbum="314"
 											  height.editphoto="314"
 											  height.positionphoto="314"
+											  height.referenceFeature="314"
 											  height.scorephoto="314"
 											  height.stateMain="95">
 										<s:VGroup includeIn="stateMain" width="130" height="92">
@@ -369,8 +399,11 @@
 											<s:Label text="Album Name"/>
 											<s:Label fontWeight="bold" text="Album Name"/>
 										</s:VGroup>
-										<s:SkinnableContainer includeIn="editAlbum,editphoto,positionphoto,scorephoto" width="100%"
-															  height="313">
+										<s:SkinnableContainer includeIn="editAlbum,editphoto,positionphoto,referenceFeature,scorephoto"
+															  width="100%" height="313"
+															  height.positionphoto="376"
+															  height.referenceFeature="375"
+															  height.scorephoto="377">
 											<s:BorderContainer includeIn="editphoto" width="68"
 															   height="44" horizontalCenter="-54"
 															   verticalCenter="-122">
@@ -385,55 +418,71 @@
 													 text.editAlbum="Album"
 													 x.positionphoto="20" y.positionphoto="20"
 													 text.positionphoto="Score Deer"
+													 x.referenceFeature="20" y.referenceFeature="20"
+													 text.referenceFeature="Score Deer"
 													 x.scorephoto="20" y.scorephoto="20"
 													 text.scorephoto="Score Deer"/>
 											<s:VGroup includeIn="editAlbum,editphoto,scorephoto"
 													  x="24" y="58" width="100%" height="254"
-													  x.editAlbum="20" y.editAlbum="48"
-													  width.editAlbum="290"
+													  x.editAlbum="21" y.editAlbum="50"
+													  width.editAlbum="279"
+													  x.editphoto="64" y.editphoto="61"
+													  width.editphoto="180"
 													  x.scorephoto="20" y.scorephoto="49"
-													  width.scorephoto="279">
+													  width.scorephoto="279" height.scorephoto="318">
+												<s:Label includeIn="editphoto" text="Deer Name"/>
 											
-												<s:Label text="Deer Name *"
-														 text.editAlbum=" Album Name"
-														 text.scorephoto="State"/>
-												<s:TextInput includeIn="editAlbum,editphoto"
-															width="164" name="txtdeername"
-															width.editAlbum="120"/>
+												<s:TextInput includeIn="editphoto" width="164"
+															 name="txtdeername"/>
+												<s:Label includeIn="scorephoto" text="State"/>
 												<s:ComboBox includeIn="scorephoto"/>
+												<s:HGroup includeIn="editAlbum" width="277"
+														  height="29">
+													<s:Label text="Deer Name *"
+															 text.editAlbum=" Album Name"
+															 text.scorephoto="State"/>
+													<s:TextInput/>
+												</s:HGroup>
+												<s:HGroup includeIn="editAlbum" width="276"
+														  height="94">
+													<s:Label text="Album Name"
+															 text.editAlbum="   Description"
+															 text.scorephoto="Deer Age"/>
+													<s:TextArea includeIn="editAlbum" width="129"
+																height="86"/>
+												</s:HGroup>
+												<s:Label includeIn="editphoto" text="Album Name"/>
+												<s:ComboBox includeIn="editphoto" width="164" dataProvider="{combo}">
+													
 												
-												
-												
-												<s:Label text="Album Name"
-														 text.editAlbum="   Description"
-														 text.scorephoto="Deer Age"/>
-												<s:TextArea includeIn="editAlbum" width="123"
-															height="86"/>
+												</s:ComboBox>
+												<s:Label includeIn="scorephoto" text="Deer Age"/>
 												<s:ComboBox includeIn="scorephoto"/>
 												
 												<s:Group includeIn="editAlbum,scorephoto" width="197"
 														 height="11"
 														 height.scorephoto="26">
 													<s:Button label="Add"
-															  x.editAlbum="53" y.editAlbum="-5"
+															  x.editAlbum="130" y.editAlbum="-5"
 															  x.scorephoto="97" y.scorephoto="1"
 															  label.scorephoto="Next"
 															  click="currentState='positionphoto'"/>
 												</s:Group>
 												<s:HGroup includeIn="editphoto">
 												<s:Label text="Tag Number"/>
-												<s:TextInput width="164"/>
 												</s:HGroup>
+												<s:TextInput includeIn="editphoto"
+															 width="164"/>
 												<s:Label includeIn="editAlbum" text="Delete Album"/>
 												<s:HGroup includeIn="editphoto">
 												<s:Label text="Ranch Name"/>
-												<s:TextInput width="164"/>
 												</s:HGroup>
+												<s:TextInput includeIn="editphoto" width="164"/>
 												<s:HGroup includeIn="editphoto">
 												<s:Label text="Posture Name"/>
-												<s:TextInput width="164"/>
 												</s:HGroup>	
-												<s:DropDownList includeIn="editphoto" width="164"></s:DropDownList>
+												<s:TextInput includeIn="editphoto"
+															 width="164"/>
 												<mx:HRule includeIn="editphoto" width="165"/>
 												<s:HGroup includeIn="editphoto" width="164"
 														  height="27">
@@ -443,10 +492,9 @@
 													<s:Button width="80" label="Add" name="btnadd"/>
 												</s:HGroup>
 												<mx:HRule includeIn="editAlbum" width="200"/>
-												<s:HGroup width.editAlbum="217"
-														  width.scorephoto="217">
-												<s:Label includeIn="editAlbum" text="Album Name"/>
-												<s:ComboBox includeIn="editAlbum" width="133"/>
+												<s:HGroup includeIn="editAlbum" width="217">
+												<s:Label text="Album Name"/>
+												<s:ComboBox width="133"/>
 												</s:HGroup>
 												<s:Group includeIn="editAlbum" width="200"
 														 height="17">
@@ -460,28 +508,67 @@
 												</s:Group>
 											</s:VGroup>
 											<s:Label includeIn="editAlbum" x="20" y="28" text="Add Album"/>
-											<mx:HRule includeIn="editAlbum,positionphoto,scorephoto"
+											<mx:HRule includeIn="editAlbum,positionphoto,referenceFeature,scorephoto"
 													  x="21" y="43" width="200"
 													  x.positionphoto="20" y.positionphoto="33"
 													  width.positionphoto="267"
-													  height.positionphoto="5"/>
+													  height.positionphoto="5"
+													  x.referenceFeature="20"
+													  y.referenceFeature="33"
+													  width.referenceFeature="267"
+													  height.referenceFeature="5"/>
 											<mx:HRule includeIn="editAlbum" x="21" y="196" width="200"/>
-											<s:Label includeIn="positionphoto" x="108" y="46"
+											<s:Label includeIn="positionphoto,referenceFeature" x="108" y="46"
 													 text="Image Orientation"/>
-											<s:Group includeIn="positionphoto" x="20" y="65"
-													 width="267" height="238">
-												<s:Image includeIn="positionphoto" x="65" y="8" id="imageposition"
-														 width="133" height="107" source="Image/0_RL.png" />
-												<s:Button x="69" y="124" width="42"
-														  icon="Image/back.png" 
-														  click="btnback_backphoto(event)"/>
-												<s:Button name="btnnext" x="155" y="125" width="43" alpha="1"
+											<s:Group includeIn="positionphoto,referenceFeature"
+													 x="20" y="65" width="267" height="238"
+													 height.referenceFeature="246"
+													 chromeColor.referenceFeature="#3AB7EB">
+												<s:Button includeIn="positionphoto" x="59" y="129"
+														  width="32" height="28"
+														  click="btnback_backphoto(event)"
+														  cornerRadius="30" icon="Image/back.png"/>
+												<s:Button includeIn="positionphoto" x="177" y="129"
+														  width="29" height="28" alpha="1"
 														  blendMode="layer"
-														  icon="Image/next.png"
-														  click="btnnext_nextphoto(event)"/>
-												<s:Button name="btnback" x="69" y="176" width="129" height="33"
+														  click="btnnext_nextphoto(event)"
+														  cornerRadius="30" icon="Image/next.png"
+														  name="btnnext"/>
+												<s:Button includeIn="positionphoto" x="69" y="176"
+														  width="129" height="33"
 														  label="Lock in View" alpha="4"
-														  />
+														  name="btnback"
+														  click="currentState='referenceFeature'"/>
+												<s:Group includeIn="positionphoto" x="56" y="3"
+														 width="156" height="123">
+													<s:Image id="imageposition" x="11" y="7"
+															 width="133" height="107"
+															 source="Image/0_RL.png"/>
+												</s:Group>
+												<s:BorderContainer includeIn="referenceFeature"
+																   x="57" y="10" width="155"
+																   height="108"
+																   accentColor="#6EC8F6" alpha="15"
+																   backgroundColor="#3F8AF0"
+																   borderAlpha="25"
+																   borderColor="#0C0C0C"
+																   cornerRadius="5">
+													<s:Image x="12" y="6" width="122" height="95"
+															 source="Image/REFFTR_001.png"/>
+													<s:Label x="144" y="26" rotation="90"
+															 text="Ear Width"/>
+												</s:BorderContainer>
+												<s:BorderContainer includeIn="referenceFeature"
+																   x="57" y="126" width="155"
+																   height="110" alpha="15"
+																   backgroundColor="#3F8AF0"
+																   borderAlpha="15"
+																   borderColor="#080707"
+																   cornerRadius="5">
+													<s:Image x="10" y="10" width="122" height="95" source="Image/REFFTR_002.png"/>
+													<s:Label x="145" y="10" rotation="90"
+															 text="Eye to Eye width"/>
+												</s:BorderContainer>
 											</s:Group>
 										</s:SkinnableContainer>
 									</s:HGroup>
@@ -493,9 +580,11 @@
 												  alpha="4" click="button2_callscore(event)"/>
 										<s:ComboBox id="combophoto" x="7" y="76" alpha="4"
 													doubleClick="combophoto_uploadphoto(event)"
-													labelField="Add Photo" selectedItem="Add Photo">
+													labelField="Add Photo" 
+													change="combophoto_changeHandler(event)">
 											<s:dataProvider>
 												<mx:ArrayList>
+													<fx:String>Add new item</fx:String>
 													<fx:String>Album</fx:String>
 													<fx:String>Photo</fx:String>
 													<fx:String>Map</fx:String>
@@ -523,7 +612,7 @@
 											
 										</s:DataGrid>
 									</s:SkinnableContainer>
-									<s:SkinnableContainer includeIn="editAlbum,editphoto,positionphoto,scorephoto" width="310"
+									<s:SkinnableContainer includeIn="editAlbum,editphoto" width="310"
 														  height="175" enabled="false">
 										<s:Label x="10" y="10" text="Choose Deer To Star Scoring (number)"/>
 										<s:Button x="235" y="4" label="Expand"/>
@@ -556,6 +645,12 @@
 										</s:DataGrid>
 									</s:SkinnableContainer>
 								</s:VGroup>
+								<s:Group includeIn="referenceFeature" x="20" y="357" width="267"
+										 height="55">
+									<s:Button includeIn="referenceFeature" x="81" y="10" width="100"
+											  height="31" label="Start" chromeColor="#3F8AF0"
+											  color="#FCFCFC" cornerRadius="5"/>
+								</s:Group>
 								
 							</s:SkinnableContainer>
 						</s:VGroup>
