@@ -43,6 +43,8 @@
 			import flash.filters.DropShadowFilter;
 			import flash.sampler.NewObjectSample;
 			
+			import flashx.textLayout.tlf_internal;
+			
 			import mx.collections.ArrayCollection;
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
@@ -50,6 +52,7 @@
 			import mx.rpc.events.ResultEvent;
 			import mx.utils.ObjectUtil;
 			
+			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
 			
 			private var gVersion:String;
@@ -334,6 +337,20 @@
 				txtdescriptionalbum.text="";
 				currentState='stateMain';
 			}
+			
+////////////////////////////////edition photo//////////////////////////////////////////////// 
+			
+			public function saveAs(filepath:String,filename:String):void {
+				var file:File = new File(filepath+File.separator+filename);
+				var fileStream:FileStream = new FileStream();
+				
+				fileStream.open(file,FileMode.WRITE);
+				fileStream.writeBytes(fileReference.data);
+				fileStream.close();
+				
+			}
+
+			
 			protected function uploadfile():void{
 				var arr:Array = [];
 				arr.push(new FileFilter("Images Buckscore", ".gif;*.jpeg;*.jpg;*.png"));
@@ -349,10 +366,48 @@
 				imgupload.source = fileReference.data;
 				imgupload.visible=true;
 				btnbrowsetoadd.visible=false;
+				
 				//Alert.show(ObjectUtil.toString(fileReference));
 			}
+			private  function savephotoedition():void
+			{
+				var itemalbumphoto:albumbuckscore = new albumbuckscore();
+				itemalbumphoto.deername=txtdeernamesave.text;
+				itemalbumphoto.albumname=cmbalbumnameselection.selectedItem;
+				itemalbumphoto.tagnumber=txttagnumbersave.text;
+				itemalbumphoto.ranchname=txtranchnamesave.text;
+				itemalbumphoto.posturename=txtposturenamesave.text;
+				saveAs("d:/tmp",itemalbumphoto.deername+".jpg");
+				albumphoto.addItem(itemalbumphoto);
+				array.addItem({name:itemalbumphoto.deername,type:itemalbumphoto.albumname});
+				currentState='stateMain';
+				txtdeernamesave.text="";
+				txttagnumbersave.text="";
+				txtranchnamesave.text="";
+				txtposturenamesave.text="";
+				imgupload.visible=false;
+				btnbrowsetoadd.visible=true;
+			}
 			
+///////////////////////////finish edition photo////////////////////////////////////////////
+
 			
+////////////////////////////////datagrid edition filter///////////////////////////////			
+			
+			protected function datagrid1_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				trace(datagridalbumname.selectedItem.name);
+				var croper:ManageCropper;
+				
+				imageforedition.source="d:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
+				
+				
+				//manageCropper.initialize();
+				manageCropper.imageCropper.sourceImage ="d:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
+				manageCropper.imageCropper.enabled=true;
+				
+			}
+			////////////////////////////////datagrid edition filter finish///////////////////////////////			
 		]]>
 	</fx:Script>
 	
@@ -433,7 +488,7 @@
 						<s:VGroup width="6" height="100%"/>
 						<s:VGroup width="100%" height="100%">
 							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#848484">
-								<ns1:ManageCropper includeIn="editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain" width="100%" height="100%"/>
+								<ns1:ManageCropper id="manageCropper" includeIn="editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain" width="100%" height="100%"/>
 							</s:SkinnableContainer>
 						</s:VGroup>
 						<s:VGroup width="6" height="100%"/>
@@ -481,7 +536,7 @@
 												
 												
 												<s:VGroup  includeIn="stateMain" width="130" height="92">
-													<s:Image width="128" height="89"/>
+													<s:Image id="imageforedition" width="128" height="89"/>
 												</s:VGroup>
 												<s:VGroup includeIn="stateMain" width="168" height="93">
 													<s:Group width="166" height="90">
@@ -489,12 +544,12 @@
 																 fontStyle="normal" text="Name"/>
 														<s:Label x="0" y="25" color="#F7F5F5"
 																 fontStyle="normal" fontWeight="bold"
-																 text="Deer Name"/>
+																 text="Deer Name" id="lbldeernastate"/>
 														<s:Label x="0" y="49" color="#F7F5F5"
 																 fontStyle="normal" text="Album Name"/>
 														<s:Label x="0" y="67" color="#F7F5F5"
 																 fontStyle="normal" fontWeight="bold"
-																 text="Album Name"/>
+																 text="Album Name" id="lbldeeralbumstate"/>
 													</s:Group>
 												</s:VGroup>
 											</s:HGroup>
@@ -553,7 +608,7 @@
 												<s:Label includeIn="editphoto" text="Deer Name"/>
 												
 												<s:TextInput includeIn="editphoto" width="164"
-															 name="txtdeername"/>
+															 name="txtdeernamesave" id="txtdeernamesave"/>
 												<s:Label includeIn="scorephoto" text="State"/>
 												<s:ComboBox id="cmbstate"   includeIn="scorephoto"/>
 												<s:HGroup includeIn="editAlbum" width="277"
@@ -572,7 +627,7 @@
 																height="86" id="txtdescriptionalbum" name="txtdescriptionalbum"/>
 												</s:HGroup>
 												<s:Label includeIn="editphoto" text="Album Name"/>
-												<s:ComboBox includeIn="editphoto" width="164" dataProvider="{combo}">
+												<s:ComboBox id="cmbalbumnameselection" includeIn="editphoto" width="164" dataProvider="{combo}">
 													
 													
 												</s:ComboBox>
@@ -593,24 +648,26 @@
 													<s:Label text="Tag Number"/>
 												</s:HGroup>
 												<s:TextInput includeIn="editphoto"
-															 width="164"/>
+															 width="164" name="txttagnumbersave" id="txttagnumbersave"/>
 												<s:Label includeIn="editAlbum" text="Delete Album"/>
 												<s:HGroup includeIn="editphoto">
 													<s:Label text="Ranch Name"/>
 												</s:HGroup>
-												<s:TextInput includeIn="editphoto" width="164"/>
+												<s:TextInput includeIn="editphoto" width="164" name="txtranchnamesave" id="txtranchnamesave"/>
 												<s:HGroup includeIn="editphoto">
 													<s:Label text="Posture Name"/>
 												</s:HGroup>	
 												<s:TextInput includeIn="editphoto"
-															 width="164"/>
+															 width="164" name="txtposturenamesave" id="txtposturenamesave"/>
 												<mx:HRule includeIn="editphoto" width="165"/>
 												<s:HGroup includeIn="editphoto" width="164"
 														  height="27">
+													<s:Button width="80" label="Add" name="btnadd"
+															  
+															  click="savephotoedition()"/>
 													<s:Button width="80" label="Cancel"
 															  click="button1_canceluploadphot(event)"
 															  name="btncancel"/>
-													<s:Button width="80" label="Add" name="btnadd"/>
 												</s:HGroup>
 												<mx:HRule includeIn="editAlbum" width="200"/>
 												<s:HGroup includeIn="editAlbum" width="217">
@@ -718,17 +775,22 @@
 									</s:SkinnableContainer>
 									<s:SkinnableContainer includeIn="stateMain" width="304"
 														  height="175">
-										<s:Label x="10" y="10" text="Choose Deer To Star Scoring (number)"/>
+										<s:Label x="10" y="10" color="#F9F9F9"
+												 text="Choose Deer To Star Scoring (number)"/>
 										<s:Button x="235" y="4" label="Expand"/>
 										<s:TextInput x="45" y="29" width="184"/>
 										<s:Label x="10" y="37" color="#FCFAFA" text="Filter"/>
-										<s:DataGrid creationComplete="llenarTabla()" x="10" y="56" width="290" height="102" dataProvider="{array}">
+										<s:DataGrid x="10" y="56" width="290" height="102"
+													id="datagridalbumname"
+													creationComplete="llenarTabla()"
+													dataProvider="{array}"
+													selectionChange="datagrid1_selectionChangeHandler(event)">
 											<s:columns>
 												<s:ArrayList>
-													<s:GridColumn dataField="name"
-																  headerText="name"></s:GridColumn>
+													<s:GridColumn width="120" dataField="name"
+																  headerText="Name"></s:GridColumn>
 													<s:GridColumn dataField="type"
-																  headerText="type"></s:GridColumn>
+																  headerText="Type"></s:GridColumn>
 												</s:ArrayList>
 											</s:columns>
 											

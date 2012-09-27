@@ -14,6 +14,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			
+			
 			private function init():void {
 				imageCropper.outlineColor = 0xffffff;  	
 				imageCropper.outlineAlpha = 1;
@@ -33,7 +35,10 @@
 				var newImage:BitmapData = imageCropper.croppedBitmapData;
 				imageCropper.sourceImage = newImage;
 				imageCropper.enabled = false;
-			}
+			} 
+			
+			
+			
 		]]>
 	</fx:Script>
 	<s:VGroup x="0" y="0" width="100%" height="100%" gap="0">
