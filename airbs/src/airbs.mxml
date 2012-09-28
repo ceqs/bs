@@ -74,6 +74,8 @@
 			[Bindable]
 			private var competencyListDatAAge:XMLListCollection;
 			
+			private var coleccionpositionphoto:XMLListCollection;
+			
 			[Bindable]
 			private var xmlURL:String;
 			
@@ -231,12 +233,14 @@
 				currentState='positionphoto';
 				
 			}
-			
+			/////////////////////position foto////////////////////////////////////////
 			
 			protected function btnnext_nextphoto(event:MouseEvent):void
 			{
 				
+				var mylistposition:XMLList = prefsXML.child("ModifiedImageOrientations").child("Orientation");
 				
+				trace(mylistposition[0].attribute("Code"));
 				if(imageposition.source=="Image/0_RL.png")
 				{
 					imageposition.source="Image/22_L.png";
@@ -275,12 +279,23 @@
 					imageposition.source="Image/66_R.png";
 				}
 				
+				for(var i:int=0; i<mylistposition.length();i++){
+					
+					if(mylistposition[i].attribute("ImagePath")==imageposition.source.toString()){
+						
+						lblpositionphoto.text=mylistposition[i].attribute("Description");
+					}
+				}
 				
 			}
 			
 			protected function btnback_backphoto(event:MouseEvent):void
 			{
-				// TODO Auto-generated method stub
+				
+				var mylistposition:XMLList = prefsXML.child("ModifiedImageOrientations").child("Orientation");
+				
+				trace(mylistposition[0].attribute("Code"));
+				
 				if(imageposition.source=="Image/0_RL.png")
 				{
 					imageposition.source="Image/22_R.png";
@@ -319,10 +334,18 @@
 					imageposition.source="Image/66_L.png";
 				}
 				
+				for(var i:int=0; i<mylistposition.length();i++){
+					
+					if(mylistposition[i].attribute("ImagePath")==imageposition.source.toString()){
+						
+						lblpositionphoto.text=mylistposition[i].attribute("Description");
+					}
+				}
+				
 			}
 			
 			
-			
+			/////////////////////position foto////////////////////////////////////////
 			
 			
 			
@@ -773,6 +796,8 @@
 													<s:Label x="196" y="120" rotation="90"
 															 text="Eye to Eye width" id="lblEyetoEyewidth"/>
 												</s:BorderContainer>
+												<s:Label includeIn="positionphoto" x="228" y="30"
+														 rotation="90" text="Zero Degrees" id="lblpositionphoto"/>
 											</s:Group>
 										</s:SkinnableContainer>
 									</s:HGroup>

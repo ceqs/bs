@@ -93,55 +93,55 @@
     </ImageOrientation>
   </ImageOrientations>
   <ModifiedImageOrientations>
-    <Orientation Code="90" Direction="R" FillColor="#FFF55656" Description="90 Right  Degrees" ImagePath="pack://application:,,,/Images/90_R.png">
+    <Orientation Code="90" Direction="R" FillColor="#FFF55656" Description="90 Right  Degrees" ImagePath="Image/90_R.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="005"/>
       </RelatedReferenceFeatures>
     </Orientation>
-    <Orientation Code="66" Direction="R" FillColor="#FF78F556" Description="66 Right Degrees" ImagePath="pack://application:,,,/Images/66_R.png">
+    <Orientation Code="66" Direction="R" FillColor="#FF78F556" Description="66 Right Degrees" ImagePath="Image/66_R.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="005"/>
       </RelatedReferenceFeatures>
     </Orientation>
-    <Orientation Code="45" Direction="R" FillColor="#FF56F5E3" Description="45 Right Degrees" ImagePath="pack://application:,,,/Images/45_R.png">
+    <Orientation Code="45" Direction="R" FillColor="#FF56F5E3" Description="45 Right Degrees" ImagePath="Image/45_R.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="005"/>
       </RelatedReferenceFeatures>
     </Orientation>
-    <Orientation Code="22" Direction="R" FillColor="#FF5B56F5" Description="22 Right Degrees" ImagePath="pack://application:,,,/Images/22_R.png">
+    <Orientation Code="22" Direction="R" FillColor="#FF5B56F5" Description="22 Right Degrees" ImagePath="Image/22_R.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="005"/>
       </RelatedReferenceFeatures>
     </Orientation>
-    <Orientation Code="0" Direction="RL" FillColor="#FFC856F5" Description="Zero Degrees" ImagePath="pack://application:,,,/Images/0_RL.png">
+    <Orientation Code="0" Direction="RL" FillColor="#FFC856F5" Description="Zero Degrees" ImagePath="Image/0_RL.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="002"/>
       </RelatedReferenceFeatures>
     </Orientation>
-    <Orientation Code="22" Direction="L" FillColor="#FF56F5D4" Description="22 Left Degrees" ImagePath="pack://application:,,,/Images/22_L.png">
+    <Orientation Code="22" Direction="L" FillColor="#FF56F5D4" Description="22 Left Degrees" ImagePath="Image/22_L.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="005"/>
       </RelatedReferenceFeatures>
     </Orientation>
-    <Orientation Code="45" Direction="L" FillColor="#FFF5955E" Description="45 Left Degrees" ImagePath="pack://application:,,,/Images/45_L.png">
+    <Orientation Code="45" Direction="L" FillColor="#FFF5955E" Description="45 Left Degrees" ImagePath="Image/45_L.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="005"/>
       </RelatedReferenceFeatures>
     </Orientation>
-    <Orientation Code="66" Direction="L" FillColor="#FFF55EA3" Description="66 Left Degrees" ImagePath="pack://application:,,,/Images/66_L.png">
+    <Orientation Code="66" Direction="L" FillColor="#FFF55EA3" Description="66 Left Degrees" ImagePath="Image/66_L.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="005"/>
       </RelatedReferenceFeatures>
     </Orientation>
-    <Orientation Code="90" Direction="L" FillColor="#FFFF2034" Description="90 Left Degrees" ImagePath="pack://application:,,,/Images/90_L.png">
+    <Orientation Code="90" Direction="L" FillColor="#FFFF2034" Description="90 Left Degrees" ImagePath="Image/90_L.png">
       <RelatedReferenceFeatures>
         <RelatedReferenceFeature key="001"/>
         <RelatedReferenceFeature key="005"/>
