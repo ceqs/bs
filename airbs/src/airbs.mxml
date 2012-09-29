@@ -79,21 +79,24 @@
 			[Bindable]
 			private var xmlURL:String;
 			
+			private var bandera:String;
+			
 			public function llenarTabla():void
 			{
 				var itemalbumphoto:albumbuckscore = new albumbuckscore();
 				itemalbumphoto.albumname='henry';
 				itemalbumphoto.deername='venado 1';
 				itemalbumphoto.posturename='center';
-				itemalbumphoto.ranchname='';
-				itemalbumphoto.tagnumber='';
+				itemalbumphoto.ranchname='123';
+				itemalbumphoto.tagnumber='12';
+				itemalbumphoto.posturename='left';
 				albumphoto.addItem(itemalbumphoto);
 				var itemalbumphoto2:albumbuckscore = new albumbuckscore();
 				itemalbumphoto2.albumname='henry2';
 				itemalbumphoto2.deername='venado 2';
 				itemalbumphoto2.posturename='rigth';
-				itemalbumphoto2.ranchname='';
-				itemalbumphoto2.tagnumber='';
+				itemalbumphoto2.ranchname='123';
+				itemalbumphoto2.tagnumber='15';
 				albumphoto.addItem(itemalbumphoto2);
 				array = new ArrayCollection();
 				combo= new ArrayCollection();
@@ -139,7 +142,7 @@
 					});    
 				
 				setApplicationVersion();
-				
+				bandera="0";
 				//appUpdater.updateURL = "http://localhost/buckscore/update.xml";
 				appUpdater.updateURL = "http://www.complexless.com/buckscore/update.xml";
 				appUpdater.isCheckForUpdateVisible = false;
@@ -363,23 +366,24 @@
 			
 ////////////////////////////////edition photo//////////////////////////////////////////////// 
 			
-			public function saveAs(filepath:String,filename:String):void {
-				var file:File = new File(filepath+File.separator+filename);
-				var fileStream:FileStream = new FileStream();
-				
-				fileStream.open(file,FileMode.WRITE);
-				fileStream.writeBytes(fileReference.data);
-				fileStream.close();
-				
-			}
-
 			
+
+////////////////////////////////////////////////////upload photo file explorer///////////			
 			protected function uploadfile():void{
 				var arr:Array = [];
 				arr.push(new FileFilter("Images Buckscore", ".gif;*.jpeg;*.jpg;*.png"));
 				fileReference.browse(arr);
 				
 			}
+			
+			protected function uploadfile2():void{
+				var arr:Array = [];
+				arr.push(new FileFilter("Images Buckscore", ".gif;*.jpeg;*.jpg;*.png"));
+				fileReference.browse(arr);
+				bandera="1";
+				
+			}
+			
 			
 			private function fileReference_select(evt:Event):void {
 				fileReference.load();
@@ -388,10 +392,13 @@
 			private function fileReference_complete(evt:Event):void {
 				imgupload.source = fileReference.data;
 				imgupload.visible=true;
+				if(bandera=="0")
 				btnbrowsetoadd.visible=false;
 				
 				//Alert.show(ObjectUtil.toString(fileReference));
 			}
+			
+		
 			private  function savephotoedition():void
 			{
 				var itemalbumphoto:albumbuckscore = new albumbuckscore();
@@ -400,7 +407,7 @@
 				itemalbumphoto.tagnumber=txttagnumbersave.text;
 				itemalbumphoto.ranchname=txtranchnamesave.text;
 				itemalbumphoto.posturename=txtposturenamesave.text;
-				saveAs("d:/tmp",itemalbumphoto.deername+".jpg");
+				saveAs("c:/tmp",itemalbumphoto.deername+".jpg");
 				albumphoto.addItem(itemalbumphoto);
 				array.addItem({name:itemalbumphoto.deername,type:itemalbumphoto.albumname});
 				currentState='stateMain';
@@ -410,6 +417,17 @@
 				txtposturenamesave.text="";
 				imgupload.visible=false;
 				btnbrowsetoadd.visible=true;
+				
+				
+			}
+			public function saveAs(filepath:String,filename:String):void {
+				var file:File = new File(filepath+File.separator+filename);
+				var fileStream:FileStream = new FileStream();
+				
+				fileStream.open(file,FileMode.WRITE);
+				fileStream.writeBytes(fileReference.data);
+				fileStream.close();
+				
 			}
 			
 ///////////////////////////finish edition photo////////////////////////////////////////////
@@ -422,11 +440,11 @@
 				trace(datagridalbumname.selectedItem.name);
 				var croper:ManageCropper;
 				
-				imageforedition.source="d:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
+				imageforedition.source="c:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
 				
 				
 				//manageCropper.initialize();
-				manageCropper.imageCropper.sourceImage ="d:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
+				manageCropper.imageCropper.sourceImage ="c:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
 				manageCropper.imageCropper.enabled=true;
 				
 				lbldeernastate.text=datagridalbumname.selectedItem.name;
@@ -449,6 +467,71 @@
 				birdlist.dataProvider = birdListAC; 
 			} 
 			
+			
+			
+/////////////////////////////////////////////update data statemain/////////////////////////////////////////////////
+			
+			protected function btnupdatedeername_clickHandler(event:MouseEvent):void
+			{
+				currentState="updatephotodata";	
+				imgupload.visible=true;
+				txtdeernamesave.text=txtNamepaneltitle.text;
+				imgupload.source="c:/tmp/"+txtdeernamesave.text+".jpg";
+				for(var i:int =0;i<albumphoto.length;i++){
+					if((albumbuckscore)(albumphoto.getItemAt(i)).deername==txtdeernamesave.text){
+					 cmbalbumnameselection.selectedItem= (albumbuckscore)(albumphoto.getItemAt(i)).albumname;
+					 txttagnumbersave.text= (albumbuckscore)(albumphoto.getItemAt(i)).tagnumber;
+					 txtranchnamesave.text= (albumbuckscore)(albumphoto.getItemAt(i)).ranchname;
+					 txtposturenamesave.text=(albumbuckscore)(albumphoto.getItemAt(i)).posturename;
+					}
+				}
+				
+				
+				
+			}
+			protected function updatesavephotoedition():void
+			{
+				
+				//saveAs("c:/tmp",itemalbumphoto.deername+".jpg");
+				
+				
+				for(var i:int=0;i<albumphoto.length;i++){
+					if((albumbuckscore)(albumphoto.getItemAt(i)).deername==txtNamepaneltitle.text){
+						
+							(albumbuckscore)(albumphoto.getItemAt(i)).deername=txtdeernamesave.text;
+							(albumbuckscore)(albumphoto.getItemAt(i)).albumname=cmbalbumnameselection.selectedItem;
+							(albumbuckscore)(albumphoto.getItemAt(i)).tagnumber=txttagnumbersave.text;
+							(albumbuckscore)(albumphoto.getItemAt(i)).ranchname=txtranchnamesave.text;
+							(albumbuckscore)(albumphoto.getItemAt(i)).posturename=txtposturenamesave.text;
+							
+							saveAs("c:/tmp",txtdeernamesave.text+".jpg");
+							//array.addItem({name:txtdeernamesave.text,type:cmbalbumnameselection.selectedItem});
+							array.removeItemAt(i);
+							array.addItemAt({name:txtdeernamesave.text,type:cmbalbumnameselection.selectedItem},i);
+						}
+						
+				}
+				
+			
+				txtdeernamesave.text="";
+				txttagnumbersave.text="";
+				txtranchnamesave.text="";
+				txtposturenamesave.text="";
+				imgupload.visible=false;
+					 
+				txtNamepaneltitle.text=txtdeernamesave.text;
+				currentState="stateMain";
+				bandera="0";
+			}
+			
+			protected function selectiontypefeature_clickHandler(event:MouseEvent):void
+			{
+				var index:int=birdlist.selectedIndex;
+				if(index==0)currentState='RecordEarWidth';
+				else if(index==1) currentState='RecordEyetoEyeWidth';
+				
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -462,6 +545,9 @@
 		<s:State name="scorephoto"/>
 		<s:State name="positionphoto"/>
 		<s:State name="referenceFeature"/>
+		<s:State name="updatephotodata"/>
+		<s:State name="RecordEarWidth"/>
+		<s:State name="RecordEyetoEyeWidth"/>
 	</s:states>
 	
 	<s:transitions>
@@ -493,7 +579,7 @@
 					
 				</s:VGroup>
 				
-				<s:VGroup includeIn="editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain" width="100%" height="100%" gap="0">
+				<s:VGroup includeIn="updatephotodata,stateMain,editAlbum,RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth,editphoto" width="100%" height="100%" gap="0">
 					<s:HGroup width="100%" height="56" gap="0">
 						<s:VGroup width="5" height="100%"/>
 						<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
@@ -529,7 +615,7 @@
 						<s:VGroup width="6" height="100%"/>
 						<s:VGroup width="100%" height="100%">
 							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#848484">
-								<ns1:ManageCropper id="manageCropper" includeIn="editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain" width="100%" height="100%"/>
+								<ns1:ManageCropper id="manageCropper" width="100%" height="100%"/>
 							</s:SkinnableContainer>
 						</s:VGroup>
 						<s:VGroup width="6" height="100%"/>
@@ -538,10 +624,15 @@
 												  backgroundColor.editAlbum="#3F8AF0"
 												  backgroundColor.editphoto="#3F8AF0"
 												  backgroundColor.positionphoto="#3F8AF0"
+												  backgroundColor.RecordEarWidth="#3F8AF0"
+												  backgroundColor.RecordEyetoEyeWidth="#3F8AF0"
 												  backgroundColor.referenceFeature="#3F8AF0"
 												  backgroundColor.scorephoto="#3F8AF0"
-												  backgroundColor.stateMain="#040404">
+												  backgroundColor.stateMain="#040404"
+												  backgroundColor.updatephotodata="#3F8AF0">
 								<s:VGroup width="100%" height="100%" gap="0"
+										  height.RecordEarWidth="354"
+										  height.RecordEyetoEyeWidth="354"
 										  height.referenceFeature="354">
 									<s:SkinnableContainer x="0" y="0" width="100%" height="45"
 														  backgroundColor="#848484"
@@ -549,18 +640,20 @@
 										<s:HGroup x="0" y="0" width="100%" height="100%" verticalAlign="middle">
 											<s:Label x="0" y="0" width="100%" color="#DCD3D3"
 													 fontSize="20" text=" Name" id="txtNamepaneltitle"/>
-											<s:Button includeIn="editphoto" label="Delete"/>
-											<s:Button includeIn="positionphoto,referenceFeature,scorephoto" label="Close"/>
-											<s:Button includeIn="editAlbum,positionphoto,referenceFeature,scorephoto"
+											<s:Button includeIn="editphoto,updatephotodata" label="Delete"/>
+											<s:Button includeIn="RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth" label="Close"/>
+											<s:Button includeIn="editAlbum,RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth"
 													  label="Delete"
 													  label.positionphoto="Back"
 													  click.positionphoto="button3_backeditphoto(event)"
+													  label.RecordEarWidth="Back"
+													  click.RecordEarWidth="currentState='referenceFeature'"
+													  label.RecordEyetoEyeWidth="Back"
+													  click.RecordEyetoEyeWidth="currentState='referenceFeature'"
 													  label.referenceFeature="Back"
 													  click.referenceFeature="button3_referenceFeature(event)"
 													  label.scorephoto="Back"
-													  click.scorephoto="button3_backscorephoto(event)"
-													  
-													  />
+													  click.scorephoto="button3_backscorephoto(event)"/>
 											<s:Button includeIn="stateMain" label="Delete"/>
 										</s:HGroup>
 									</s:SkinnableContainer>
@@ -568,18 +661,21 @@
 											  height.editAlbum="314"
 											  height.editphoto="314"
 											  height.positionphoto="314"
+											  height.RecordEarWidth="314"
+											  height.RecordEyetoEyeWidth="314"
 											  height.referenceFeature="314"
 											  height.scorephoto="314"
-											  height.stateMain="95" accentColor.stateMain="#3F8AF0">
+											  height.stateMain="95" accentColor.stateMain="#3F8AF0"
+											  height.updatephotodata="314">
 										<s:SkinnableContainer includeIn="stateMain" width="307"
 															  backgroundColor="#040404">
 											<s:HGroup>
 												
 												
-												<s:VGroup  includeIn="stateMain" width="130" height="92">
+												<s:VGroup width="130" height="92">
 													<s:Image id="imageforedition" width="128" height="89"/>
 												</s:VGroup>
-												<s:VGroup includeIn="stateMain" width="168" height="93">
+												<s:VGroup width="168" height="93">
 													<s:Group width="166" height="90">
 														<s:Label x="0" y="8" color="#F7F5F5"
 																 fontStyle="normal" text="Name"/>
@@ -597,7 +693,7 @@
 										</s:SkinnableContainer>			
 										
 										
-										<s:SkinnableContainer includeIn="editAlbum,editphoto,positionphoto,referenceFeature,scorephoto"
+										<s:SkinnableContainer includeIn="updatephotodata,editAlbum,RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth,editphoto"
 															  width="100%" height="313"
 															  height.editAlbum="376"
 															  backgroundColor.editAlbum="#3F8AF0"
@@ -605,27 +701,35 @@
 															  backgroundColor.editphoto="#3F8AF0"
 															  height.positionphoto="376"
 															  backgroundColor.positionphoto="#3F8AF0"
+															  height.RecordEarWidth="375"
+															  backgroundColor.RecordEarWidth="#3F8AF0"
+															  chromeColor.RecordEarWidth="#03F8AF"
+															  height.RecordEyetoEyeWidth="375"
+															  backgroundColor.RecordEyetoEyeWidth="#3F8AF0"
+															  chromeColor.RecordEyetoEyeWidth="#03F8AF"
 															  height.referenceFeature="375"
 															  backgroundColor.referenceFeature="#3F8AF0"
 															  chromeColor.referenceFeature="#03F8AF"
 															  height.scorephoto="377"
-															  backgroundColor.scorephoto="#3F8AF0">
-											<s:BorderContainer includeIn="editphoto" width="98"
+															  backgroundColor.scorephoto="#3F8AF0"
+															  height.updatephotodata="372"
+															  backgroundColor.updatephotodata="#3F8AF0">
+											<s:BorderContainer includeIn="editphoto,updatephotodata" width="98"
 															   height="62" backgroundColor="#131212"
 															   id="imageuploadfile"
 															   horizontalCenter="-6"
 															   verticalCenter="-150">
-												<s:Button x="4" y="3" width="89" height="47"
+												<s:Button id="btnbrowsetoadd" includeIn="editphoto"
+														  x="4" y="3" width="89" height="47"
 														  label="Browse to add "
-														  id="btnbrowsetoadd"
-														  chromeColor="#131212" color="#FAF5F5"
-														  cornerRadius="5" focusColor="#3F3636"
-														  focusEnabled="true" fontSize="10"
-														  textAlignLast="center" textAlpha="2"
-														  textDecoration="none"
-														  textJustify="distribute"
-														  click="uploadfile()"/>
-												<s:Image id="imgupload" x="0" y="0" width="96" height="60" visible="false"/>
+														  chromeColor="#131212" click="uploadfile()"
+														  color="#FAF5F5" cornerRadius="5"
+														  focusColor="#3F3636" focusEnabled="true"
+														  fontSize="10" textAlignLast="center"
+														  textAlpha="2" textDecoration="none"
+														  textJustify="distribute"/>
+												<s:Image id="imgupload" x="0" y="0" width="96" height="60" visible="false"
+														 click="uploadfile2()"/>
 												
 											</s:BorderContainer>
 											
@@ -634,41 +738,49 @@
 													 x.editphoto="20" y.editphoto="5"
 													 x.positionphoto="20" y.positionphoto="20"
 													 text.positionphoto="Score Deer"
+													 x.RecordEarWidth="20" y.RecordEarWidth="13"
+													 text.RecordEarWidth="Score Deer"
+													 x.RecordEyetoEyeWidth="20"
+													 y.RecordEyetoEyeWidth="13"
+													 text.RecordEyetoEyeWidth="Score Deer"
 													 x.referenceFeature="20" y.referenceFeature="20"
 													 text.referenceFeature="Score Deer"
 													 x.scorephoto="20" y.scorephoto="20"
-													 text.scorephoto="Score Deer"/>
-											<s:VGroup includeIn="editAlbum,editphoto,scorephoto"
+													 text.scorephoto="Score Deer"
+													 x.updatephotodata="20" y.updatephotodata="5"/>
+											<s:VGroup includeIn="editAlbum,editphoto,scorephoto,updatephotodata"
 													  x="24" y="58" width="100%" height="254"
 													  x.editAlbum="21" y.editAlbum="50"
 													  width.editAlbum="279" height.editAlbum="316"
 													  x.editphoto="64" y.editphoto="74"
 													  width.editphoto="218" height.editphoto="285"
 													  x.scorephoto="20" y.scorephoto="49"
-													  width.scorephoto="279" height.scorephoto="318">
-												<s:Label includeIn="editphoto" text="Deer Name"/>
+													  width.scorephoto="279" height.scorephoto="318"
+													  x.updatephotodata="64" y.updatephotodata="74"
+													  width.updatephotodata="218"
+													  height.updatephotodata="285">
+												<s:Label includeIn="editphoto,updatephotodata" text="Deer Name"/>
 												
-												<s:TextInput includeIn="editphoto" width="164"
+												<s:TextInput includeIn="editphoto,updatephotodata" width="164"
 															 name="txtdeernamesave" id="txtdeernamesave"/>
 												<s:Label includeIn="scorephoto" text="State"/>
 												<s:ComboBox id="cmbstate"   includeIn="scorephoto"/>
 												<s:HGroup includeIn="editAlbum" width="277"
 														  height="29">
-													<s:Label text="Deer Name *"
-															 text.editAlbum=" Album Name"
+													<s:Label text=" Album Name"
 															 text.scorephoto="State"/>
 													<s:TextInput  id="txtalbumname" name="txtalbumname"/>
 												</s:HGroup>
 												<s:HGroup includeIn="editAlbum" width="276"
 														  height="94">
-													<s:Label text="Album Name"
-															 text.editAlbum="   Description"
+													<s:Label text="   Description"
 															 text.scorephoto="Deer Age"/>
-													<s:TextArea includeIn="editAlbum" width="129"
-																height="86" id="txtdescriptionalbum" name="txtdescriptionalbum"/>
+													<s:TextArea id="txtdescriptionalbum" width="129"
+																height="86"
+																name="txtdescriptionalbum"/>
 												</s:HGroup>
-												<s:Label includeIn="editphoto" text="Album Name"/>
-												<s:ComboBox id="cmbalbumnameselection" includeIn="editphoto" width="164" dataProvider="{combo}">
+												<s:Label includeIn="editphoto,updatephotodata" text="Album Name"/>
+												<s:ComboBox id="cmbalbumnameselection" includeIn="editphoto,updatephotodata" width="164" dataProvider="{combo}">
 													
 													
 												</s:ComboBox>
@@ -685,28 +797,31 @@
 															  click.scorephoto="currentState='positionphoto'"
 															  click.editAlbum="editAlbum_clickHandler(event)"/>
 												</s:Group>
-												<s:HGroup includeIn="editphoto">
+												<s:HGroup includeIn="editphoto,updatephotodata">
 													<s:Label text="Tag Number"/>
 												</s:HGroup>
-												<s:TextInput includeIn="editphoto"
+												<s:TextInput includeIn="editphoto,updatephotodata"
 															 width="164" name="txttagnumbersave" id="txttagnumbersave"/>
 												<s:Label includeIn="editAlbum" text="Delete Album"/>
-												<s:HGroup includeIn="editphoto">
+												<s:HGroup includeIn="editphoto,updatephotodata">
 													<s:Label text="Ranch Name"/>
 												</s:HGroup>
-												<s:TextInput includeIn="editphoto" width="164" name="txtranchnamesave" id="txtranchnamesave"/>
-												<s:HGroup includeIn="editphoto">
+												<s:TextInput includeIn="editphoto,updatephotodata" width="164" name="txtranchnamesave" id="txtranchnamesave"/>
+												<s:HGroup includeIn="editphoto,updatephotodata">
 													<s:Label text="Posture Name"/>
 												</s:HGroup>	
-												<s:TextInput includeIn="editphoto"
+												<s:TextInput includeIn="editphoto,updatephotodata"
 															 width="164" name="txtposturenamesave" id="txtposturenamesave"/>
-												<mx:HRule includeIn="editphoto" width="165"/>
-												<s:HGroup includeIn="editphoto" width="164"
+												<mx:HRule includeIn="editphoto,updatephotodata" width="165"/>
+												<s:HGroup includeIn="editphoto,updatephotodata" width="164"
 														  height="27">
-													<s:Button width="80" label="Add" name="btnadd"
-															  
-															  click="savephotoedition()"/>
-													<s:Button width="80" label="Cancel"
+													<s:Button width="80" label="Add"
+															  click="savephotoedition()"
+															  name="btnadd"
+															  label.updatephotodata="Done"
+															  click.updatephotodata="updatesavephotoedition()" />
+													<s:Button includeIn="editphoto" width="80"
+															  label="Cancel"
 															  click="button1_canceluploadphot(event)"
 															  name="btncancel"/>
 												</s:HGroup>
@@ -728,19 +843,30 @@
 												</s:Group>
 											</s:VGroup>
 											<s:Label includeIn="editAlbum" x="20" y="28" text="Add Album"/>
-											<mx:HRule includeIn="editAlbum,positionphoto,referenceFeature,scorephoto"
+											<mx:HRule includeIn="editAlbum,RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth"
 													  x="21" y="43" width="200"
 													  x.positionphoto="20" y.positionphoto="33"
 													  width.positionphoto="267"
 													  height.positionphoto="5"
+													  x.RecordEarWidth="20" y.RecordEarWidth="33"
+													  width.RecordEarWidth="267"
+													  height.RecordEarWidth="5"
+													  x.RecordEyetoEyeWidth="20"
+													  y.RecordEyetoEyeWidth="33"
+													  width.RecordEyetoEyeWidth="267"
+													  height.RecordEyetoEyeWidth="5"
 													  x.referenceFeature="20"
 													  y.referenceFeature="33"
 													  width.referenceFeature="267"
 													  height.referenceFeature="5"/>
 											<s:Label includeIn="positionphoto,referenceFeature" x="108" y="46"
 													 text="Image Orientation"/>
-											<s:Group includeIn="positionphoto,referenceFeature"
+											<s:Group includeIn="RecordEyetoEyeWidth,positionphoto,referenceFeature,RecordEarWidth"
 													 x="20" y="65" width="267" height="238"
+													 height.RecordEarWidth="117"
+													 chromeColor.RecordEarWidth="#3AB7EB"
+													 height.RecordEyetoEyeWidth="117"
+													 chromeColor.RecordEyetoEyeWidth="#3AB7EB"
 													 height.referenceFeature="246"
 													 chromeColor.referenceFeature="#3AB7EB">
 												<s:Button includeIn="positionphoto" x="59" y="129"
@@ -779,11 +905,13 @@
 																   mouseFocusEnabled="true"
 																   rollOverColor="#F7C7C7"
 																   >
-												<mx:List id="birdlist" x="5" y="7" width="170" height="208"
+												<mx:List id="birdlist" x="5" y="7" width="170"
+														 height="208"
 														 contentBackgroundColor="#3F8AF0"
-														 rowHeight="100"	   															
-													rowCount="2"
-													itemRenderer="mx.controls.Image" creationComplete="initCatalog()">
+														 creationComplete="initCatalog()"
+														 itemRenderer="mx.controls.Image"
+														 rowCount="2" rowHeight="100"
+														 selectedIndex="0">
 														
 												
 								
@@ -798,12 +926,30 @@
 												</s:BorderContainer>
 												<s:Label includeIn="positionphoto" x="228" y="30"
 														 rotation="90" text="Zero Degrees" id="lblpositionphoto"/>
+												<s:ToggleButton includeIn="RecordEyetoEyeWidth,RecordEarWidth"
+																x="28" y="12" width="208"
+																height="33"
+																label="Record Ear Width Feature"
+																alpha="5" cornerRadius="10"
+																label.RecordEyetoEyeWidth="Record Eye to Eye Width Feature"/>
+												<s:ToggleButton includeIn="RecordEyetoEyeWidth,RecordEarWidth" x="28"
+																y="63" width="208" height="34"
+																label="Erase Lines" alpha="5"
+																cornerRadius="10"/>
 											</s:Group>
+											<mx:HRule includeIn="RecordEyetoEyeWidth,RecordEarWidth" x="20" y="216"
+													  width="267" height="5"/>
+											<mx:HRule includeIn="RecordEyetoEyeWidth,RecordEarWidth" x="20" y="235"
+													  width="267" height="5"/>
+											<s:Image includeIn="RecordEyetoEyeWidth,RecordEarWidth" x="50" y="247"
+													 width="196" height="117" source.RecordEarWidth="Image/REFFTR_001.png"
+													 source.RecordEyetoEyeWidth="Image/REFFTR_002.png"/>
 										</s:SkinnableContainer>
 									</s:HGroup>
 									<s:SkinnableContainer includeIn="stateMain" width="307"
 														  height="105">
-										<s:Button x="46" y="3" label="Deer Info" alpha="4"/>
+										<s:Button x="46" y="3" label="Deer Info" alpha="4"
+											click="btnupdatedeername_clickHandler(event)"	 />
 										<s:Button x="187" y="3" label="Score Sheet" alpha="4"/>
 										<s:Button x="86" y="31" width="126" height="28" label="SCORE"
 												  alpha="4" click="button2_callscore(event)"/>
@@ -849,9 +995,9 @@
 								</s:VGroup>
 								<s:Group includeIn="referenceFeature" x="20" y="357" width="267"
 										 height="55">
-									<s:Button includeIn="referenceFeature" x="81" y="10" width="100"
-											  height="31" label="Start" chromeColor="#3F8AF0"
-											  color="#FCFCFC" cornerRadius="5"/>
+									<s:Button x="81" y="10" width="100" height="31" label="Start"
+											  chromeColor="#3F8AF0" color="#FCFCFC" cornerRadius="5"
+											  click="selectiontypefeature_clickHandler(event)"/>
 								</s:Group>
 								
 							</s:SkinnableContainer>
