@@ -150,11 +150,11 @@
   </ModifiedImageOrientations>
   <ReferenceFeatures>
     <ReferenceFeature Code="-1" Description="Select..."/>
-    <ReferenceFeature Code="001" Description="Ear Width" ImagePath="pack://application:,,,/Images/REFFTR_001.png"/>
-    <ReferenceFeature Code="002" Description="Eye to Eye Width" ImagePath="pack://application:,,,/Images/REFFTR_002.png"/>
-    <ReferenceFeature Code="003" Description="Lower Nostril Width" ImagePath="pack://application:,,,/Images/REFFTR_003.jpg"/>
-    <ReferenceFeature Code="004" Description="Upper Nostril Width" ImagePath="pack://application:,,,/Images/REFFTR_004.jpg"/>
-    <ReferenceFeature Code="005" Description="Eyeball Width" ImagePath="pack://application:,,,/Images/REFFTR_005.png"/>
+    <ReferenceFeature Code="001" Description="Ear Width" ImagePath="Image/REFFTR_001.png"/>
+    <ReferenceFeature Code="002" Description="Eye to Eye Width" ImagePath="Image/REFFTR_002.png"/>
+    <ReferenceFeature Code="003" Description="Lower Nostril Width" ImagePath="Image/REFFTR_003.jpg"/>
+    <ReferenceFeature Code="004" Description="Upper Nostril Width" ImagePath="Image/REFFTR_004.jpg"/>
+    <ReferenceFeature Code="005" Description="Eyeball Width" ImagePath="Image/REFFTR_005.png"/>
   </ReferenceFeatures>
   <AgeGroups>
     <AgeGroup Code="-1" Description="Select..."/>

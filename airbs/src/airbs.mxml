@@ -48,9 +48,11 @@
 			import mx.collections.ArrayCollection;
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
+			import mx.events.FlexEvent;
 			import mx.events.IndexChangedEvent;
 			import mx.rpc.events.ResultEvent;
 			import mx.utils.ObjectUtil;
+			import mx.utils.StringUtil;
 			
 			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
@@ -80,7 +82,8 @@
 			private var xmlURL:String;
 			
 			private var bandera:String;
-			
+			public static var birdList:Array=new Array(); 
+			public static var textList:Array=new Array();
 			public function llenarTabla():void
 			{
 				var itemalbumphoto:albumbuckscore = new albumbuckscore();
@@ -460,12 +463,7 @@
 				
 			}
 			
-			private static var birdList:Array = ["Image/REFFTR_001.png","Image/REFFTR_002.png"]; 
-			[Bindable] 
-			private var birdListAC:ArrayCollection = new ArrayCollection(birdList); 
-			private function initCatalog():void { 
-				birdlist.dataProvider = birdListAC; 
-			} 
+			
 			
 			
 			
@@ -503,7 +501,7 @@
 							(albumbuckscore)(albumphoto.getItemAt(i)).tagnumber=txttagnumbersave.text;
 							(albumbuckscore)(albumphoto.getItemAt(i)).ranchname=txtranchnamesave.text;
 							(albumbuckscore)(albumphoto.getItemAt(i)).posturename=txtposturenamesave.text;
-							
+							if(bandera=="1")
 							saveAs("c:/tmp",txtdeernamesave.text+".jpg");
 							//array.addItem({name:txtdeernamesave.text,type:cmbalbumnameselection.selectedItem});
 							array.removeItemAt(i);
@@ -527,8 +525,109 @@
 			protected function selectiontypefeature_clickHandler(event:MouseEvent):void
 			{
 				var index:int=birdlist.selectedIndex;
-				if(index==0)currentState='RecordEarWidth';
-				else if(index==1) currentState='RecordEyetoEyeWidth';
+				if(index==0){currentState='RecordEarWidth';}
+				else if(index==1) 
+				{
+					if(lblEyetoEyewidth.text!="Eyeball Width") currentState='RecordEyetoEyeWidth';
+					else currentState='RecordEyeballWidthFeature';
+				}
+				
+			}
+			
+			protected function toggle_EarWidthHandler(event:MouseEvent):void
+			{
+				if(!tglearwidth.selected){
+					currentState='MeasureInsideSpread';
+				}
+			}
+			
+			protected function button4_positionphoto(event:MouseEvent):void
+			{
+				var mylistposition:XMLList = prefsXML.child("ModifiedImageOrientations").child("Orientation");
+				
+				var position:String =lblpositionphoto.text; 
+				var key1:String="";
+				var key2:String="";
+			    //trace(position.toString());				
+				//birdList
+				
+				for(var i:int=0; i<mylistposition.length();i++){
+					
+					var desc:String=mylistposition[i].attribute("Description");
+					
+					trace(mylistposition[i].attribute("Description"));
+					if(desc.toString()==position.toString()){
+						trace("ntre");
+						//var mylistcode:XMLList=prefsXML.child("ModifiedImageOrientations").child("Orientation").child("RelatedReferenceFeatures").child("RelatedReferenceFeature");
+						//trace(mylistposition.child("RelatedReferenceFeatures").child("RelatedReferenceFeature").toString());
+						var mylistcode:XMLList= mylistposition[i].child("RelatedReferenceFeatures");
+						var mylistcode1:XMLList=mylistcode.child("RelatedReferenceFeature");
+						//mylistcode.
+						trace(mylistcode1.toString());
+						key1=mylistcode1[0].attribute("key");
+						key2=mylistcode1[1].attribute("key");
+						trace(key1+"."+key2);
+						
+						
+					}
+				}
+				
+				var mylistcodeImage:XMLList=prefsXML.child("ReferenceFeatures").child("ReferenceFeature");	
+				var cont:int=0;
+				var image1:String;
+				var image2:String;
+				for(var i:int=1; i<mylistcodeImage.length();i++){
+					
+					//trace(mylistcodeImage[i].attribute("Description"));
+					if(mylistcodeImage[i].attribute("Code")==key1.toString()){
+						
+						image1=mylistcodeImage[i].attribute("ImagePath");
+						
+						birdList[0]=image1;
+						trace(mylistcodeImage[i].attribute("Description")+"--"+birdList[0]);
+						textList[0]=mylistcodeImage[i].attribute("Description");
+						
+						
+						
+					}else if(mylistcodeImage[i].attribute("Code")==key2.toString()) {
+						
+							image2=mylistcodeImage[i].attribute("ImagePath");
+							birdList[1]=image2;
+						trace(mylistcodeImage[i].attribute("Description")+"--"+birdList[1]);
+						textList[1]=mylistcodeImage[i].attribute("Description");
+					}
+					
+					
+				}
+				
+				
+				//birdlist=new Array[image1),StringUtil.trim(image2)];
+				
+				currentState='referenceFeature';
+				birdlist.dataProvider.refresh();
+				lblEarWidth.text=textList[0];
+				lblEyetoEyewidth.text=textList[1];
+				
+				//initCatalog(birdList);
+			}
+			
+			//private static var birdList:Array ; 
+			
+			
+			[Bindable] 
+			private static var birdListAC:ArrayCollection;
+			
+			
+			
+			protected function birdlist_complete(event:FlexEvent):void
+			{
+				trace(birdList[0],birdList[1]);
+				
+				birdListAC = new ArrayCollection(birdList);
+				
+				birdlist.dataProvider = birdListAC;
+				
+				
 				
 			}
 			
@@ -548,6 +647,9 @@
 		<s:State name="updatephotodata"/>
 		<s:State name="RecordEarWidth"/>
 		<s:State name="RecordEyetoEyeWidth"/>
+		<s:State name="MeasureInsideSpread"/>
+		<s:State name="RecorderInsideSpread"/>
+		<s:State name="RecordEyeballWidthFeature"/>
 	</s:states>
 	
 	<s:transitions>
@@ -579,7 +681,7 @@
 					
 				</s:VGroup>
 				
-				<s:VGroup includeIn="updatephotodata,stateMain,editAlbum,RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth,editphoto" width="100%" height="100%" gap="0">
+				<s:VGroup includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata" width="100%" height="100%" gap="0">
 					<s:HGroup width="100%" height="56" gap="0">
 						<s:VGroup width="5" height="100%"/>
 						<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
@@ -623,15 +725,21 @@
 							<s:SkinnableContainer id="holder" width="100%" height="100%"
 												  backgroundColor.editAlbum="#3F8AF0"
 												  backgroundColor.editphoto="#3F8AF0"
+												  backgroundColor.MeasureInsideSpread="#3F8AF0"
 												  backgroundColor.positionphoto="#3F8AF0"
 												  backgroundColor.RecordEarWidth="#3F8AF0"
+												  backgroundColor.RecorderInsideSpread="#3F8AF0"
+												  backgroundColor.RecordEyeballWidthFeature="#3F8AF0"
 												  backgroundColor.RecordEyetoEyeWidth="#3F8AF0"
 												  backgroundColor.referenceFeature="#3F8AF0"
 												  backgroundColor.scorephoto="#3F8AF0"
 												  backgroundColor.stateMain="#040404"
 												  backgroundColor.updatephotodata="#3F8AF0">
 								<s:VGroup width="100%" height="100%" gap="0"
+										  height.MeasureInsideSpread="354"
 										  height.RecordEarWidth="354"
+										  height.RecorderInsideSpread="354"
+										  height.RecordEyeballWidthFeature="354"
 										  height.RecordEyetoEyeWidth="354"
 										  height.referenceFeature="354">
 									<s:SkinnableContainer x="0" y="0" width="100%" height="45"
@@ -641,13 +749,19 @@
 											<s:Label x="0" y="0" width="100%" color="#DCD3D3"
 													 fontSize="20" text=" Name" id="txtNamepaneltitle"/>
 											<s:Button includeIn="editphoto,updatephotodata" label="Delete"/>
-											<s:Button includeIn="RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth" label="Close"/>
-											<s:Button includeIn="editAlbum,RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth"
+											<s:Button includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,positionphoto,referenceFeature,scorephoto" label="Close"/>
+											<s:Button includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,editAlbum,positionphoto,referenceFeature,scorephoto"
 													  label="Delete"
+													  label.MeasureInsideSpread="Back"
+													  click.MeasureInsideSpread="currentState='referenceFeature'"
 													  label.positionphoto="Back"
 													  click.positionphoto="button3_backeditphoto(event)"
 													  label.RecordEarWidth="Back"
 													  click.RecordEarWidth="currentState='referenceFeature'"
+													  label.RecorderInsideSpread="Back"
+													  click.RecorderInsideSpread="currentState='referenceFeature'"
+													  label.RecordEyeballWidthFeature="Back"
+													  click.RecordEyeballWidthFeature="currentState='referenceFeature'"
 													  label.RecordEyetoEyeWidth="Back"
 													  click.RecordEyetoEyeWidth="currentState='referenceFeature'"
 													  label.referenceFeature="Back"
@@ -660,8 +774,11 @@
 									<s:HGroup x="0" y="0" width="100%"
 											  height.editAlbum="314"
 											  height.editphoto="314"
+											  height.MeasureInsideSpread="314"
 											  height.positionphoto="314"
 											  height.RecordEarWidth="314"
+											  height.RecorderInsideSpread="314"
+											  height.RecordEyeballWidthFeature="314"
 											  height.RecordEyetoEyeWidth="314"
 											  height.referenceFeature="314"
 											  height.scorephoto="314"
@@ -693,17 +810,26 @@
 										</s:SkinnableContainer>			
 										
 										
-										<s:SkinnableContainer includeIn="updatephotodata,editAlbum,RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth,editphoto"
+										<s:SkinnableContainer includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,updatephotodata"
 															  width="100%" height="313"
 															  height.editAlbum="376"
 															  backgroundColor.editAlbum="#3F8AF0"
 															  height.editphoto="372"
 															  backgroundColor.editphoto="#3F8AF0"
+															  height.MeasureInsideSpread="375"
+															  backgroundColor.MeasureInsideSpread="#3F8AF0"
+															  chromeColor.MeasureInsideSpread="#03F8AF"
 															  height.positionphoto="376"
 															  backgroundColor.positionphoto="#3F8AF0"
 															  height.RecordEarWidth="375"
 															  backgroundColor.RecordEarWidth="#3F8AF0"
 															  chromeColor.RecordEarWidth="#03F8AF"
+															  height.RecorderInsideSpread="375"
+															  backgroundColor.RecorderInsideSpread="#3F8AF0"
+															  chromeColor.RecorderInsideSpread="#03F8AF"
+															  height.RecordEyeballWidthFeature="375"
+															  backgroundColor.RecordEyeballWidthFeature="#3F8AF0"
+															  chromeColor.RecordEyeballWidthFeature="#03F8AF"
 															  height.RecordEyetoEyeWidth="375"
 															  backgroundColor.RecordEyetoEyeWidth="#3F8AF0"
 															  chromeColor.RecordEyetoEyeWidth="#03F8AF"
@@ -736,10 +862,19 @@
 											<s:Label x="20" y="2" text="Add Deer"
 													 text.editAlbum="Album"
 													 x.editphoto="20" y.editphoto="5"
+													 x.MeasureInsideSpread="20"
+													 y.MeasureInsideSpread="13"
+													 text.MeasureInsideSpread="Score Deer"
 													 x.positionphoto="20" y.positionphoto="20"
 													 text.positionphoto="Score Deer"
 													 x.RecordEarWidth="20" y.RecordEarWidth="13"
 													 text.RecordEarWidth="Score Deer"
+													 x.RecorderInsideSpread="20"
+													 y.RecorderInsideSpread="13"
+													 text.RecorderInsideSpread="Score Deer"
+													 x.RecordEyeballWidthFeature="20"
+													 y.RecordEyeballWidthFeature="13"
+													 text.RecordEyeballWidthFeature="Score Deer"
 													 x.RecordEyetoEyeWidth="20"
 													 y.RecordEyetoEyeWidth="13"
 													 text.RecordEyetoEyeWidth="Score Deer"
@@ -843,14 +978,26 @@
 												</s:Group>
 											</s:VGroup>
 											<s:Label includeIn="editAlbum" x="20" y="28" text="Add Album"/>
-											<mx:HRule includeIn="editAlbum,RecordEyetoEyeWidth,scorephoto,positionphoto,referenceFeature,RecordEarWidth"
+											<mx:HRule includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,editAlbum,positionphoto,referenceFeature,scorephoto"
 													  x="21" y="43" width="200"
+													  x.MeasureInsideSpread="20"
+													  y.MeasureInsideSpread="33"
+													  width.MeasureInsideSpread="267"
+													  height.MeasureInsideSpread="5"
 													  x.positionphoto="20" y.positionphoto="33"
 													  width.positionphoto="267"
 													  height.positionphoto="5"
 													  x.RecordEarWidth="20" y.RecordEarWidth="33"
 													  width.RecordEarWidth="267"
 													  height.RecordEarWidth="5"
+													  x.RecorderInsideSpread="20"
+													  y.RecorderInsideSpread="33"
+													  width.RecorderInsideSpread="267"
+													  height.RecorderInsideSpread="5"
+													  x.RecordEyeballWidthFeature="20"
+													  y.RecordEyeballWidthFeature="33"
+													  width.RecordEyeballWidthFeature="267"
+													  height.RecordEyeballWidthFeature="5"
 													  x.RecordEyetoEyeWidth="20"
 													  y.RecordEyetoEyeWidth="33"
 													  width.RecordEyetoEyeWidth="267"
@@ -861,10 +1008,16 @@
 													  height.referenceFeature="5"/>
 											<s:Label includeIn="positionphoto,referenceFeature" x="108" y="46"
 													 text="Image Orientation"/>
-											<s:Group includeIn="RecordEyetoEyeWidth,positionphoto,referenceFeature,RecordEarWidth"
+											<s:Group includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,positionphoto,referenceFeature"
 													 x="20" y="65" width="267" height="238"
+													 height.MeasureInsideSpread="64"
+													 chromeColor.MeasureInsideSpread="#3AB7EB"
 													 height.RecordEarWidth="117"
 													 chromeColor.RecordEarWidth="#3AB7EB"
+													 height.RecorderInsideSpread="117"
+													 chromeColor.RecorderInsideSpread="#3AB7EB"
+													 height.RecordEyeballWidthFeature="117"
+													 chromeColor.RecordEyeballWidthFeature="#3AB7EB"
 													 height.RecordEyetoEyeWidth="117"
 													 chromeColor.RecordEyetoEyeWidth="#3AB7EB"
 													 height.referenceFeature="246"
@@ -883,7 +1036,7 @@
 														  width="129" height="33"
 														  label="Lock in View" alpha="4"
 														  name="btnback"
-														  click="currentState='referenceFeature'"/>
+														  click="button4_positionphoto(event)"/>
 												<s:Group includeIn="positionphoto" x="56" y="3"
 														 width="156" height="123">
 													<s:Image id="imageposition" x="11" y="7"
@@ -908,7 +1061,7 @@
 												<mx:List id="birdlist" x="5" y="7" width="170"
 														 height="208"
 														 contentBackgroundColor="#3F8AF0"
-														 creationComplete="initCatalog()"
+														 creationComplete="birdlist_complete(event)"
 														 itemRenderer="mx.controls.Image"
 														 rowCount="2" rowHeight="100"
 														 selectedIndex="0">
@@ -926,23 +1079,50 @@
 												</s:BorderContainer>
 												<s:Label includeIn="positionphoto" x="228" y="30"
 														 rotation="90" text="Zero Degrees" id="lblpositionphoto"/>
-												<s:ToggleButton includeIn="RecordEyetoEyeWidth,RecordEarWidth"
+												<s:ToggleButton id="tglearwidth"
+																includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
 																x="28" y="12" width="208"
 																height="33"
 																label="Record Ear Width Feature"
 																alpha="5" cornerRadius="10"
-																label.RecordEyetoEyeWidth="Record Eye to Eye Width Feature"/>
-												<s:ToggleButton includeIn="RecordEyetoEyeWidth,RecordEarWidth" x="28"
-																y="63" width="208" height="34"
-																label="Erase Lines" alpha="5"
-																cornerRadius="10"/>
+																label.MeasureInsideSpread="Measure Inside Spread"
+																alpha.MeasureInsideSpread="10"
+																click.MeasureInsideSpread="currentState='RecorderInsideSpread';"
+																alpha.RecordEarWidth="10"
+																click.RecordEarWidth="toggle_EarWidthHandler(event)"
+																label.RecorderInsideSpread="Record Eye to Eye Width Feature"
+																alpha.RecorderInsideSpread="10"
+																label.RecordEyeballWidthFeature="Record Eyeball Width Feature"
+																alpha.RecordEyeballWidthFeature="10"
+																click.RecordEyeballWidthFeature="toggle_EarWidthHandler(event)"
+																label.RecordEyetoEyeWidth="Record Inside Spread"
+																alpha.RecordEyetoEyeWidth="10"
+																click.RecordEyetoEyeWidth="toggle_EarWidthHandler(event)"/>
+												<s:ToggleButton includeIn="RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+																x="28" y="63" width="208"
+																height="34" label="Erase Lines"
+																alpha="5" cornerRadius="10"
+																alpha.RecordEarWidth="10"
+																alpha.RecorderInsideSpread="10"
+																alpha.RecordEyeballWidthFeature="10"
+																alpha.RecordEyetoEyeWidth="10"/>
 											</s:Group>
-											<mx:HRule includeIn="RecordEyetoEyeWidth,RecordEarWidth" x="20" y="216"
-													  width="267" height="5"/>
-											<mx:HRule includeIn="RecordEyetoEyeWidth,RecordEarWidth" x="20" y="235"
-													  width="267" height="5"/>
-											<s:Image includeIn="RecordEyetoEyeWidth,RecordEarWidth" x="50" y="247"
-													 width="196" height="117" source.RecordEarWidth="Image/REFFTR_001.png"
+											<mx:HRule includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+													  x="20" y="216" width="267" height="5"
+													  x.MeasureInsideSpread="20"
+													  y.MeasureInsideSpread="171"/>
+											<mx:HRule includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+													  x="20" y="235" width="267" height="5"
+													  x.MeasureInsideSpread="20"
+													  y.MeasureInsideSpread="190"/>
+											<s:Image includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+													 x="50" y="247" width="196" height="117"
+													 x.MeasureInsideSpread="50"
+													 y.MeasureInsideSpread="215"
+													 source.MeasureInsideSpread="Image/INSSPR_0.jpg"
+													 source.RecordEarWidth="Image/REFFTR_001.png"
+													 source.RecorderInsideSpread="Image/INSSPR_0.jpg"
+													 source.RecordEyeballWidthFeature="Image/REFFTR_005.png"
 													 source.RecordEyetoEyeWidth="Image/REFFTR_002.png"/>
 										</s:SkinnableContainer>
 									</s:HGroup>
