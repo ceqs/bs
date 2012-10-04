@@ -12,6 +12,7 @@ package component
 		public var ranchname:String;
 		public var posturename:String;
 		public var urlimage:String;
+		public var score:String;
 		
 		
 	}

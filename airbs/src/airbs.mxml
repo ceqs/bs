@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
-					   xmlns:s="library://ns.adobe.com/flex/spark" 
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
-					   creationComplete="initApp()"
-					   styleName="main"
-					   showStatusBar="false"
-					   width="750"
-					   height="550"
 					   xmlns:net="flash.net.*"
-					   backgroundAlpha="0"  xmlns:imagecropper="com.flexblocks.imagecropper.*"
+					   xmlns:imagecropper="com.flexblocks.imagecropper.*"
 					   xmlns:component="component.*"
-					   xmlns:ns1="*">
+					   xmlns:ns1="*"
+					   width="750" height="550" backgroundAlpha="0" creationComplete="initApp()"
+					   currentState="stateMain" showStatusBar="false" styleName="main">
 	
 	<fx:Style>
 		.main {
@@ -60,12 +57,16 @@
 			private var gVersion:String;
 			private var shadowFilter:DropShadowFilter;
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
+			
 			private var albumphoto:ArrayCollection = new ArrayCollection();
 			private var createalbum:ArrayCollection = new ArrayCollection();
 			private var fr:FileReference;
 			private var prefsXML:XML;
 			[Bindable]
 			public var array:ArrayCollection;
+			
+			[Bindable]
+			public var array2:ArrayCollection;
 			
 			[Bindable]
 			public var combo:ArrayCollection;
@@ -81,6 +82,10 @@
 			[Bindable]
 			private var xmlURL:String;
 			
+			
+			
+			 
+			
 			private var bandera:String;
 			public static var birdList:Array=new Array(); 
 			public static var textList:Array=new Array();
@@ -93,6 +98,7 @@
 				itemalbumphoto.ranchname='123';
 				itemalbumphoto.tagnumber='12';
 				itemalbumphoto.posturename='left';
+				itemalbumphoto.score='135.2';
 				albumphoto.addItem(itemalbumphoto);
 				var itemalbumphoto2:albumbuckscore = new albumbuckscore();
 				itemalbumphoto2.albumname='henry2';
@@ -100,16 +106,22 @@
 				itemalbumphoto2.posturename='rigth';
 				itemalbumphoto2.ranchname='123';
 				itemalbumphoto2.tagnumber='15';
+				itemalbumphoto2.score='147.25';
 				albumphoto.addItem(itemalbumphoto2);
 				array = new ArrayCollection();
+				array2= new ArrayCollection();
 				combo= new ArrayCollection();
 				for(var i:int = 0;i<albumphoto.length;i++)
 				{
 					var name:String =(albumbuckscore)( albumphoto.getItemAt(i)).deername;
+					var images:String="c:/tmp/"+name+".jpg";
 					var albumname:String = (albumbuckscore)( albumphoto.getItemAt(i)).albumname;
+				
+					var score:String = (albumbuckscore)( albumphoto.getItemAt(i)).score;
 					trace('Subject'+i+name);
 					trace('From'+i+albumname);
 					array.addItem({name:name,type:albumname});
+					array2.addItem({image:images ,name:name,type:albumname,score:score});
 					trace(array);
 					combo.addItem(albumname);
 				}
@@ -579,7 +591,7 @@
 				var cont:int=0;
 				var image1:String;
 				var image2:String;
-				for(var i:int=1; i<mylistcodeImage.length();i++){
+				for( i=1; i<mylistcodeImage.length();i++){
 					
 					//trace(mylistcodeImage[i].attribute("Description"));
 					if(mylistcodeImage[i].attribute("Code")==key1.toString()){
@@ -642,6 +654,27 @@
 				
 			}
 			
+			
+			
+			protected function ScoringDeer_btn(event:MouseEvent):void
+			{
+				currentState='ScoringFinalBuck';
+				
+			}
+			
+			protected function btn_scoringreview(event:MouseEvent):void
+			{
+				currentState='ScoringFinalBuck';
+				
+			}
+			
+			protected function button5_numberpoint(event:MouseEvent):void
+			{
+				txttypicalleft.text=cmbletftypical.selectedItem;
+				txttypicalrigth.text=cmbrigthtypical.selectedItem;
+				
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -680,6 +713,8 @@
 		<s:State name="MeasureRigthAnormalTine"/>
 		<s:State name="RecordRigthAbnormalTine"/>
 		<s:State name="CompleteScoringfinal"/>
+		<s:State name="ScoringFinalBuck"/>
+		<s:State name="ExpandDeerName"/>
 	</s:states>
 	
 	<s:transitions>
@@ -696,13 +731,14 @@
 						   select="fileReference_select(event);"
 						   complete="fileReference_complete(event);" />
 		
+		
 	</fx:Declarations>
 	<s:layout.stateLogin>
 		<s:BasicLayout/>
 	</s:layout.stateLogin>
 	
 	
-	<s:HGroup x="0" y="0" width="100%" height="100%" gap="0" >
+	<s:HGroup x="0" y="0" width="100%" height="100%" gap="0">
 		<s:VGroup id="borderLeft" width="15" height="100%"/>
 		<s:VGroup width="100%" height="100%" gap="0">
 			<s:HGroup id="borderTop" height="15" width="100%"/>
@@ -711,7 +747,8 @@
 					
 				</s:VGroup>
 				
-				<s:VGroup includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata" width="100%" height="100%" gap="0">
+				<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+						  width="100%" height="100%" gap="0">
 					<s:HGroup width="100%" height="56" gap="0">
 						<s:VGroup width="5" height="100%"/>
 						<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
@@ -745,19 +782,72 @@
 							</fx:XMLList>
 						</mx:MenuBar>
 					</s:HGroup>
+					
+					<s:HGroup includeIn="ExpandDeerName" width="100%" height="35" alpha="15"
+							  verticalAlign="middle">
+						<s:Label width="90%" color="#FDFBFB" fontSize="22" fontWeight="bold"
+								 text="Deer Data"/>
+						<s:Button label="Back" chromeColor="#155FE8"    click="currentState='stateMain'"
+								  color="#F5F5F9"/>
+					</s:HGroup>
+					
+					
+					
 					<s:HGroup width="100%" height="100%" gap="0">
-						<s:VGroup width="6" height="100%"/>
-						<s:VGroup width="100%" height="100%">
-							<s:SkinnableContainer width="100%" height="100%" backgroundColor="#848484">
-								<ns1:ManageCropper id="manageCropper" width="100%" height="100%"/>
+						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+								  width="6" height="100%"/>
+						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+								  width="100%" height="100%">
+							<s:SkinnableContainer width="100%" height="100%"
+												  backgroundColor="#848484"
+												  height.ExpandDeerName="43">
+								<ns1:ManageCropper id="manageCropper"
+												   includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+												   width="100%" height="100%"/>
+								<s:Label includeIn="ExpandDeerName" x="14" y="15" fontSize="18"
+										 text="Filter"/>
+								<s:TextInput includeIn="ExpandDeerName" x="62" y="10" width="225"/>
 							</s:SkinnableContainer>
+							<s:Group includeIn="ExpandDeerName" width="100%" height="100%">
+								
+								<mx:VBox width="100%">
+									
+									
+									<mx:DataGrid id="myGridExpand" y="43" width="100%" height="338"
+												 dataProvider="{array2}" rowHeight="60" >
+										<mx:columns>
+											<mx:DataGridColumn  headerText="Image" dataField="image"  itemRenderer="mx.controls.Image" paddingLeft="0" />
+											<mx:DataGridColumn headerText="Deer Name" dataField="name" />
+											<mx:DataGridColumn headerText="Album Name" dataField="type" />											
+											<mx:DataGridColumn headerText="Score#" dataField="score" />
+										</mx:columns>
+									</mx:DataGrid>
+									
+									
+									
+								</mx:VBox>
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+							</s:Group>
 						</s:VGroup>
-						<s:VGroup width="6" height="100%"/>
-						<s:VGroup width="308" height="100%">
+						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+								  width="6" height="100%">
+						</s:VGroup>
+						<s:VGroup width="308" height="100%"
+								  width.ScoringFinalBuck="100%">
 							<s:SkinnableContainer id="holder" width="100%" height="100%"
 												  backgroundColor.CompleteScoringfinal="#3F8AF0"
 												  backgroundColor.editAlbum="#3F8AF0"
 												  backgroundColor.editphoto="#3F8AF0"
+												  backgroundColor.ExpandDeerName="#040404"
 												  backgroundColor.MeasureAnormalPoints="#3F8AF0"
 												  backgroundColor.MeasureInsideSpread="#3F8AF0"
 												  backgroundColor.MeasureLeftAnormalTine="#3F8AF0"
@@ -784,6 +874,7 @@
 												  backgroundColor.RecordRigthTineLine="#3F8AF0"
 												  backgroundColor.referenceFeature="#3F8AF0"
 												  backgroundColor.scorephoto="#3F8AF0"
+												  backgroundColor.ScoringFinalBuck="#FBFBFB"
 												  backgroundColor.stateMain="#040404"
 												  backgroundColor.updatephotodata="#3F8AF0">
 								<s:VGroup width="100%" height="100%" gap="0"
@@ -811,13 +902,16 @@
 										  height.RecordRigthCircumference="422"
 										  height.RecordRigthMainBeam="422"
 										  height.RecordRigthTineLine="422"
-										  height.referenceFeature="354">
+										  height.referenceFeature="354"
+										  width.ScoringFinalBuck="100%">
 									<s:SkinnableContainer x="0" y="0" width="100%" height="45"
-														  backgroundColor="#848484"
-														  textAlign="left">
-										<s:HGroup x="0" y="0" width="100%" height="100%" verticalAlign="middle">
-											<s:Label x="0" y="0" width="100%" color="#DCD3D3"
-													 fontSize="20" text=" Name" id="txtNamepaneltitle"/>
+														  backgroundColor="#848484" textAlign="left">
+										<s:HGroup x="0" y="0" width="100%" height="100%"
+												  verticalAlign="middle">
+											<s:Label id="txtNamepaneltitle"
+													 includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+													 x="0" y="0" width="100%" color="#DCD3D3"
+													 fontSize="20" text=" Name"/>
 											<s:Button includeIn="editphoto,updatephotodata" label="Delete"/>
 											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,positionphoto,referenceFeature,scorephoto" label="Close"/>
 											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,positionphoto,referenceFeature,scorephoto"
@@ -876,13 +970,35 @@
 													  click.referenceFeature="button3_referenceFeature(event)"
 													  label.scorephoto="Back"
 													  click.scorephoto="button3_backscorephoto(event)"/>
+											<s:Label includeIn="ExpandDeerName" width="209"
+													 color="#FCF9F9" fontSize="20" fontWeight="bold"
+													 text="Deer Statistic"/>
 											<s:Button includeIn="stateMain" label="Delete"/>
+											<s:HGroup includeIn="ScoringFinalBuck" y="10" width="470"
+													  height="26">
+												<s:Button label="Facebook" alpha="8"
+														  chromeColor="#3923DD" cornerRadius="6"/>
+												<s:Button label="Twitter" alpha="8"
+														  chromeColor="#3923DD" cornerRadius="6"/>
+												<s:Button label="Email" alpha="8"
+														  chromeColor="#3923DD" cornerRadius="6"/>
+												<s:Button label="Save" alpha="8"
+														  chromeColor="#3923DD" cornerRadius="6"/>
+												<s:Button label="Print" alpha="8"
+														  chromeColor="#3923DD" cornerRadius="6"/>
+												<s:Button label="Finish" alpha="8"
+														  chromeColor="#3923DD" cornerRadius="6"
+														  click="currentState='stateMain'"/>
+											</s:HGroup>
 										</s:HGroup>
 									</s:SkinnableContainer>
-									<s:HGroup x="0" y="0" width="100%"
+									<s:HGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+											  x="0" y="0" width="100%"
 											  height.CompleteScoringfinal="374"
 											  height.editAlbum="314"
 											  height.editphoto="314"
+											  height.ExpandDeerName="82"
+											  accentColor.ExpandDeerName="#3F8AF0"
 											  height.MeasureAnormalPoints="374"
 											  height.MeasureInsideSpread="314"
 											  height.MeasureLeftAnormalTine="374"
@@ -911,26 +1027,47 @@
 											  height.scorephoto="314"
 											  height.stateMain="95" accentColor.stateMain="#3F8AF0"
 											  height.updatephotodata="314">
-										<s:SkinnableContainer includeIn="stateMain" width="307"
+										<s:SkinnableContainer includeIn="ExpandDeerName,stateMain" width="307"
 															  backgroundColor="#040404">
 											<s:HGroup>
 												
 												
-												<s:VGroup width="130" height="92">
-													<s:Image id="imageforedition" width="128" height="89"/>
+												<s:VGroup includeIn="stateMain" width="130"
+														  height="92">
+													<s:Image id="imageforedition" width="128"
+															 height="89"/>
 												</s:VGroup>
-												<s:VGroup width="168" height="93">
-													<s:Group width="166" height="90">
-														<s:Label x="0" y="8" color="#F7F5F5"
-																 fontStyle="normal" text="Name"/>
-														<s:Label x="0" y="25" color="#F7F5F5"
-																 fontStyle="normal" fontWeight="bold"
-																 text="Deer Name" id="lbldeernastate"/>
+												<s:VGroup width="168" height="93"
+														  width.ExpandDeerName="304"
+														  height.ExpandDeerName="80">
+													<s:Group width="166" height="90"
+															 width.ExpandDeerName="306"
+															 height.ExpandDeerName="78">
+														<s:Label includeIn="stateMain" x="0" y="8"
+																 color="#F7F5F5" fontStyle="normal"
+																 text="Name"/>
+														<s:Label id="lbldeernastate"
+																 includeIn="stateMain" x="0" y="25"
+																 color="#F7F5F5" fontStyle="normal"
+																 fontWeight="bold" text="Deer Name"/>
 														<s:Label x="0" y="49" color="#F7F5F5"
-																 fontStyle="normal" text="Album Name"/>
-														<s:Label x="0" y="67" color="#F7F5F5"
-																 fontStyle="normal" fontWeight="bold"
-																 text="Album Name" id="lbldeeralbumstate"/>
+																 fontStyle="normal"
+																 text="Album Name"
+																 x.ExpandDeerName="0"
+																 y.ExpandDeerName="18"
+																 fontSize.ExpandDeerName="18"
+																 fontWeight.ExpandDeerName="normal"/>
+														<s:Label id="lbldeeralbumstate" x="0" y="67"
+																 color="#F7F5F5" fontStyle="normal"
+																 fontWeight="bold" text="Album Name"
+																 x.ExpandDeerName="0"
+																 y.ExpandDeerName="50"
+																 fontSize.ExpandDeerName="18"
+																 text.ExpandDeerName="Henry"/>
+														<s:HGroup includeIn="stateMain" width="482"
+																  height="13">
+															<s:Label text="Date"/>
+														</s:HGroup>
 													</s:Group>
 												</s:VGroup>
 											</s:HGroup>
@@ -1426,13 +1563,57 @@
 															 text.RecordRigthCircumference="Left Typical Points"
 															 text.RecordRigthMainBeam="Left Typical Points"
 															 text.RecordRigthTineLine="Left Typical Points"/>
-													<s:ComboBox includeIn="NumberTypicalPoints"/>
+													<s:ComboBox id="cmbletftypical"
+																includeIn="NumberTypicalPoints">
+														<s:dataProvider>
+															<mx:ArrayList>
+																<fx:String>1</fx:String>
+																<fx:String>2</fx:String>
+																<fx:String>3</fx:String>
+																<fx:String>4</fx:String>
+																<fx:String>5</fx:String>
+																<fx:String>6</fx:String>
+																<fx:String>7</fx:String>
+																<fx:String>8</fx:String>
+																<fx:String>9</fx:String>
+																<fx:String>10</fx:String>
+															</mx:ArrayList>
+														</s:dataProvider>	
+													</s:ComboBox>	
 													<s:TextInput includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"/>
-													<s:TextInput includeIn="MeasureLeftMainBeam"/>
+													<s:TextInput id="txttypicalleft"
+																 includeIn="MeasureLeftMainBeam"/>
 													<s:TextInput includeIn="RecordLeftMainBeamLine"/>
 													<s:TextInput includeIn="RecordRigthMainBeam"/>
 													<s:TextInput includeIn="MeasureLeftAnormalTine,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthTineLine"/>
-													<s:ComboBox includeIn="MeasureAnormalPoints"/>
+													<s:ComboBox includeIn="MeasureAnormalPoints">
+														<s:dataProvider>
+															<mx:ArrayList>
+																<fx:String>1</fx:String>
+																<fx:String>2</fx:String>
+																<fx:String>3</fx:String>
+																<fx:String>4</fx:String>
+																<fx:String>5</fx:String>
+																<fx:String>6</fx:String>
+																<fx:String>7</fx:String>
+																<fx:String>8</fx:String>
+																<fx:String>9</fx:String>
+																<fx:String>10</fx:String>
+																<fx:String>11</fx:String>
+																<fx:String>12</fx:String>
+																<fx:String>13</fx:String>
+																<fx:String>14</fx:String>
+																<fx:String>15</fx:String>
+																<fx:String>16</fx:String>
+																<fx:String>17</fx:String>
+																<fx:String>18</fx:String>
+																<fx:String>19</fx:String>
+																<fx:String>20</fx:String>
+															</mx:ArrayList>
+														</s:dataProvider>
+														
+														
+													</s:ComboBox>	
 													<s:TextInput includeIn="CompleteScoringfinal"/>
 													<s:Label text="Number of Rigth Typical Points"
 															 text.CompleteScoringfinal="Rigth Abnormal Points"
@@ -1453,13 +1634,57 @@
 															 text.RecordRigthCircumference="Rigth Typical Points"
 															 text.RecordRigthMainBeam="Rigth Typical Points"
 															 text.RecordRigthTineLine="Rigth Typical Points"/>
-													<s:ComboBox includeIn="NumberTypicalPoints"/>
+													<s:ComboBox id="cmbrigthtypical"
+																includeIn="NumberTypicalPoints">
+														<s:dataProvider>
+															<mx:ArrayList>
+																<fx:String>1</fx:String>
+																<fx:String>2</fx:String>
+																<fx:String>3</fx:String>
+																<fx:String>4</fx:String>
+																<fx:String>5</fx:String>
+																<fx:String>6</fx:String>
+																<fx:String>7</fx:String>
+																<fx:String>8</fx:String>
+																<fx:String>9</fx:String>
+																<fx:String>10</fx:String>
+															</mx:ArrayList>
+														</s:dataProvider>
+													</s:ComboBox>	
 													<s:TextInput includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"/>
-													<s:TextInput includeIn="MeasureLeftMainBeam"/>
+													<s:TextInput id="txttypicalrigth"
+																 includeIn="MeasureLeftMainBeam"/>
 													<s:TextInput includeIn="RecordLeftMainBeamLine"/>
 													<s:TextInput includeIn="RecordRigthMainBeam"/>
 													<s:TextInput includeIn="MeasureLeftAnormalTine,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthTineLine"/>
-													<s:ComboBox includeIn="MeasureAnormalPoints"/>
+													<s:ComboBox includeIn="MeasureAnormalPoints">
+														<s:dataProvider>
+															<mx:ArrayList>
+																<fx:String>1</fx:String>
+																<fx:String>2</fx:String>
+																<fx:String>3</fx:String>
+																<fx:String>4</fx:String>
+																<fx:String>5</fx:String>
+																<fx:String>6</fx:String>
+																<fx:String>7</fx:String>
+																<fx:String>8</fx:String>
+																<fx:String>9</fx:String>
+																<fx:String>10</fx:String>
+																<fx:String>11</fx:String>
+																<fx:String>12</fx:String>
+																<fx:String>13</fx:String>
+																<fx:String>14</fx:String>
+																<fx:String>15</fx:String>
+																<fx:String>16</fx:String>
+																<fx:String>17</fx:String>
+																<fx:String>18</fx:String>
+																<fx:String>19</fx:String>
+																<fx:String>20</fx:String>
+															</mx:ArrayList>
+														</s:dataProvider>
+													 </s:ComboBox>	
+														
+														
 													<s:TextInput includeIn="CompleteScoringfinal"/>
 												</s:VGroup>
 												<s:Button includeIn="MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
@@ -1548,15 +1773,13 @@
 														  click.RecordLefAbnormalTine="currentState='MeasureRigthAnormalTine'"
 														  click.MeasureRigthAnormalTine="currentState='RecordRigthAbnormalTine'"
 														  click.RecordRigthAbnormalTine="currentState='CompleteScoringfinal'"
-														  />
+														  click="button5_numberpoint(event)" />
 												<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-														  x="20" y="216" width="267" height="5"
+														  width="267" height="5"
 														  x.CompleteScoringfinal="0"
 														  y.CompleteScoringfinal="105"
 														  x.MeasureAnormalPoints="0"
 														  y.MeasureAnormalPoints="142"
-														  x.MeasureInsideSpread="20"
-														  y.MeasureInsideSpread="171"
 														  x.MeasureLeftAnormalTine="0"
 														  y.MeasureLeftAnormalTine="150"
 														  x.MeasureLeftCircunference="0"
@@ -1629,15 +1852,14 @@
 														  x.RecordRigthMainBeam="34"
 														  y.RecordRigthMainBeam="161"
 														  x.RecordRigthTineLine="34"
-														  y.RecordRigthTineLine="175"/>
+														  y.RecordRigthTineLine="175"
+														  click="ScoringDeer_btn(event)"/>
 												<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-														  x="20" y="235" width="267" height="5"
+														  width="267" height="5"
 														  x.CompleteScoringfinal="0"
 														  y.CompleteScoringfinal="165"
 														  x.MeasureAnormalPoints="0"
 														  y.MeasureAnormalPoints="182"
-														  x.MeasureInsideSpread="20"
-														  y.MeasureInsideSpread="190"
 														  x.MeasureLeftAnormalTine="0"
 														  y.MeasureLeftAnormalTine="207"
 														  x.MeasureLeftCircunference="0"
@@ -1888,17 +2110,23 @@
 													  height.referenceFeature="5"/>
 										</s:SkinnableContainer>
 									</s:HGroup>
-									<s:SkinnableContainer includeIn="stateMain" width="307"
-														  height="105">
-										<s:Button x="46" y="3" label="Deer Info" alpha="4"
-											click="btnupdatedeername_clickHandler(event)"	 />
-										<s:Button x="187" y="3" label="Score Sheet" alpha="4"/>
-										<s:Button x="86" y="31" width="126" height="28" label="SCORE"
-												  alpha="4" click="button2_callscore(event)"/>
-										<s:ComboBox id="combophoto" x="7" y="76" alpha="4"
+									<s:SkinnableContainer includeIn="ExpandDeerName,stateMain"
+														  width="307" height="105"
+														  height.ExpandDeerName="200">
+										<s:Button includeIn="stateMain" x="46" y="3"
+												  label="Deer Info" alpha="4"
+												  click="btnupdatedeername_clickHandler(event)"/>
+										<s:Button includeIn="stateMain" x="187" y="3"
+												  label="Score Sheet" alpha="4"
+												  click="btn_scoringreview(event)"/>
+										<s:Button includeIn="stateMain" x="86" y="31" width="126"
+												  height="28" label="SCORE" alpha="4"
+												  click="button2_callscore(event)"/>
+										<s:ComboBox id="combophoto" includeIn="stateMain" x="7"
+													y="76" alpha="4"
+													change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo')currentState='editphoto';   "
 													doubleClick="combophoto_uploadphoto(event)"
-													labelField="Add Photo" prompt="Add new item"
-													change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo')currentState='editphoto';   ">
+													labelField="Add Photo" prompt="Add new item">
 											<s:dataProvider>
 												<mx:ArrayList>
 													<fx:String>Add new item</fx:String>
@@ -1910,16 +2138,30 @@
 											
 										</s:ComboBox>
 										<s:Label x="7" y="66" text="Create Item"/>
+										<s:Label includeIn="ExpandDeerName" x="10" y="10"
+												 color="#FEFCFC" text="Score Distributions"/>
+										<s:Group includeIn="ExpandDeerName" x="35" y="29" width="240"
+												 height="161">
+											<mx:ColumnChart id="scoreChart" x="12" y="4" width="218"
+															height="147">
+												<mx:series>
+													<mx:ColumnSeries displayName="score" yField=""/>
+												</mx:series>
+											</mx:ColumnChart>
+										</s:Group>
 									</s:SkinnableContainer>
-									<s:SkinnableContainer includeIn="stateMain" width="304"
-														  height="175">
-										<s:Label x="10" y="10" color="#F9F9F9"
+									<s:SkinnableContainer includeIn="ExpandDeerName,stateMain"
+														  width="304" height="175"
+														  height.ExpandDeerName="64">
+										<s:Label includeIn="stateMain" x="10" y="10" color="#F9F9F9"
 												 text="Choose Deer To Star Scoring (number)"/>
-										<s:Button x="235" y="4" label="Expand"/>
-										<s:TextInput x="45" y="29" width="184"/>
-										<s:Label x="10" y="37" color="#FCFAFA" text="Filter"/>
-										<s:DataGrid x="10" y="56" width="290" height="102"
-													id="datagridalbumname"
+										<s:Button includeIn="stateMain" x="235" y="4" label="Expand"
+												  click="currentState='ExpandDeerName'"/>
+										<s:TextInput includeIn="stateMain" x="45" y="29" width="184"/>
+										<s:Label includeIn="stateMain" x="10" y="37" color="#FCFAFA"
+												 text="Filter"/>
+										<s:DataGrid id="datagridalbumname" includeIn="stateMain"
+													x="10" y="56" width="290" height="102"
 													creationComplete="llenarTabla()"
 													dataProvider="{array}"
 													selectionChange="datagrid1_selectionChangeHandler(event)">
@@ -1933,24 +2175,995 @@
 											</s:columns>
 											
 										</s:DataGrid>
+										<s:BorderContainer includeIn="ExpandDeerName" x="10" y="4"
+														   width="284" height="36"
+														   backgroundColor="#A3AEB0">
+											<s:Label x="19" y="3" text="0-50"/>
+											<s:Label x="19" y="19" text="venado 1"/>
+										</s:BorderContainer>
 									</s:SkinnableContainer>
+									
+										
+									
+									<s:SkinnableContainer includeIn="ScoringFinalBuck" width="100%"
+														  height="100%" >
+										<s:VGroup width="100%" height="100%" >
+											<s:HGroup width="100%" height="95" accentColor="#3F8AF0">
+												<s:SkinnableContainer width="698" backgroundColor="#FEFAFA">
+													<s:HGroup>
+														
+														
+														<s:VGroup width="130" height="92">
+															<s:Image id="imageforedition0"
+																	 width="128" height="89"
+																	 source="c:/tmp/22_L.png"/>
+														</s:VGroup>
+														<s:VGroup width="100%" height="93">
+															<s:Group width="100%" height="90">
+																<s:HGroup x="10" y="6" width="482"
+																		  height="15">
+																	<s:Label text="Deer NickName"/>
+																	<s:Label text="Name"/>
+																</s:HGroup>
+																<s:HGroup x="10" y="28" width="482"
+																		  height="13">
+																	<s:Label text="Location"/>
+																	<s:Label text="0006"/>
+																</s:HGroup>
+																<s:HGroup x="10" y="67" width="482"
+																		  height="13">
+																	<s:Label text="Comments"/>
+																	<s:TextInput width="342"/>
+																</s:HGroup>
+																<s:HGroup x="11" y="49" width="482"
+																		  height="13">
+																	<s:Label text="Date"/>
+																	<s:Label text="10/3/2012 11:10:58 AM"/>
+																</s:HGroup>
+															</s:Group>
+														</s:VGroup>
+													</s:HGroup>
+												</s:SkinnableContainer>			
+											</s:HGroup>
+											<s:Scroller y="81" width="100%" height="100%">
+												<s:VGroup width="100%" height="100%">
+													<s:SkinnableContainer width="100%" height="900" >
+														<s:Image x="10" y="4" width="207"
+																 height="203"
+																 source="Image/logo.png"/>
+														
+														
+														<mx:Grid id="myGrid" x="251" y="3"
+																 width="100%" height="261"
+																 borderColor="#0B0A0A"
+																 borderStyle="solid"
+																 borderVisible="true" >
+															
+															<!-- Define Row 0. -->
+															<mx:GridRow id="row0" width="100%"
+																		borderColor="#0B0A0A"
+																		borderStyle="solid">
+																<!-- Define the first cell of Row 1. -->
+																<mx:GridItem width="100%" colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	
+																															
+																	<s:Label paddingTop="3"
+																			 text="ABNORMAL POINTS"
+																			 verticalAlign="middle"/>														
+																</mx:GridItem>
+															</mx:GridRow>
+															
+															<!-- Define Row 1. -->
+															<mx:GridRow id="row1" width="100%">
+																<!-- Define the first cell of Row 1. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="2"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="LEFT"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<!-- Define the second cell of Row 1. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="2"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="RIGTH"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<!-- Define the third cell of Row 1. -->
+																
+															</mx:GridRow>
+															
+															<!-- Define Row 2. -->
+															<mx:GridRow id="row2" width="100%">
+																<!-- Define a single cell to span three columns of Row 2. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="1"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="11"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="1"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="11"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															
+															<!-- Define Row 3. -->
+															<mx:GridRow id="row3" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="2"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="12"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="2"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="12"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="row4" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="3"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="13"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="3"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="13"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="row5" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="4"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="14"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="4"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="14"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="row6" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="5"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="15"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="5"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="15"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="row7" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="6"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="16"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="6"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="16"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="row8" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="7"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="17"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="7"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="17"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="row9" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="8"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="18"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="8"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="18"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="row10" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="9"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="19"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="9"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="19"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="row11" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="10"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3" text="20"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="10"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3" text="20"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															
+														</mx:Grid>
+														
+														<mx:Grid id="myGridResult" x="7" y="250"
+																 width="100%" height="100%"
+																 
+																 borderVisible="true" >
+														<mx:GridRow id="Rrow0" width="100%">
+															<!-- Define the first cell of Row 1. -->
+															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+																
+																
+																<s:Label paddingTop="3"
+																		 text="NO. POINTS LEFT"
+																		 verticalAlign="middle"/>														
+															</mx:GridItem>
+															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+																
+																
+																<s:Label paddingTop="3" text="3"
+																		 verticalAlign="middle"/>														
+															</mx:GridItem>
+															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+																
+																
+																<s:Label paddingTop="3"
+																		 text="NO. POINTS RIGHT"
+																		 verticalAlign="middle"/>														
+															</mx:GridItem>
+															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+																
+																
+																<s:Label paddingTop="3" text="5"
+																		 verticalAlign="middle"/>														
+															</mx:GridItem>
+															<mx:GridItem width="100%" colSpan="3"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																
+																
+																<s:Label paddingTop="3" text=""
+																		 verticalAlign="middle"/>														
+															</mx:GridItem>
+															
+														</mx:GridRow>
+														
+														<!-- Define Row 1. -->
+														<mx:GridRow id="Rrow1" width="100%">
+															<!-- Define the first cell of Row 1. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="ANTLER CHARACTERISTICS"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<!-- Define the second cell of Row 1. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="1"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3" text="LEFT"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<!-- Define the third cell of Row 1. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="1"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3" text="RIGTH"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="1"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="DIFFERENCE"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															
+														</mx:GridRow>
+														
+														<!-- Define Row 2. -->
+														<mx:GridRow id="Rrow2" width="100%">
+															<!-- Define a single cell to span three columns of Row 2. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="3"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="INSIDE SPREAD"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="1"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="13.8192"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="3"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3" text=""
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														
+														<!-- Define Row 3. -->
+														<mx:GridRow id="Rrow3" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="MAIN BEAM LENGTH"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3"
+																		 text="18.1636"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3"
+																		 text="25.0055"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.84"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														<mx:GridRow id="Rrow4" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="TYPICAL POINT 1"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3" text="5.6967"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.4259"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="0.73"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														<mx:GridRow id="Rrow5" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="TYPICAL POINT 2"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3" text="5.6967"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.4259"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="0.73"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														<mx:GridRow id="Rrow6" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="TYPICAL POINT 3"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3" text="5.6967"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.4259"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="0.73"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														<mx:GridRow id="Rrow7" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="TYPICAL POINT 4"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3" text="5.6967"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.4259"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="0.73"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														<mx:GridRow id="Rrow8" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="TYPICAL POINT 5"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3" text="5.6967"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.4259"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="0.73"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														<mx:GridRow id="Rrow9" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="TYPICAL POINT 6"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3" text="5.6967"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.4259"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="0.73"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														<mx:GridRow id="Rrow10" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="TYPICAL POINT 7"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3" text="5.6967"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.4259"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="0.73"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+														<mx:GridRow id="Rrow11" width="100%">
+															<!-- Define an empty first cell of Row 3. -->
+															<mx:GridItem width="100%"
+																		 borderColor="#0B0A0A"
+																		 borderStyle="solid"
+																		 colSpan="4"
+																		 horizontalAlign="center"
+																		 verticalAlign="bottom">
+																<s:Label paddingTop="3"
+																		 text="TYPICAL POINT 8"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																<s:Label paddingTop="3" text="5.6967"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="6.4259"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																<s:Label paddingTop="3" text="0.73"
+																		 verticalAlign="middle"/>
+															</mx:GridItem>
+														</mx:GridRow>
+															
+															<mx:GridRow id="Rrow12" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 9"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3"
+																			 text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow13" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 10"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3"
+																			 text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow14" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="CIRCUMFERENCE 1"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3"
+																			 text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															
+															<mx:GridRow id="Rrow15" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="CIRCUMFERENCE 2"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3"
+																			 text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow16" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="CIRCUMFERENCE 3"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3"
+																			 text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															
+															<mx:GridRow id="Rrow17" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="CIRCUMFERENCE 4"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3"
+																			 text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow18" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TOTALS"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
+																	<s:Label paddingTop="3"
+																			 text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label paddingTop="3"
+																			 text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															
+															
+															<mx:GridRow id="Rrow19" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="left"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="BUCKSCORE RESULTS"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="3"
+																			 horizontalAlign="left"
+																			 verticalAlign="bottom">																
+																	<s:Label paddingTop="3" text=""
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																
+															</mx:GridRow>
+															
+															<mx:GridRow id="Rrow20" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="left"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="GROSS SCORE"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="3"
+																			 horizontalAlign="left"
+																			 verticalAlign="bottom">																
+																	<s:Label paddingTop="3"
+																			 text="156.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															
+															<mx:GridRow id="Rrow21" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="left"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TOTAL DIFFERENCES"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="3"
+																			 horizontalAlign="left"
+																			 verticalAlign="bottom">																
+																	<s:Label paddingTop="3"
+																			 text="31.91"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															
+															<mx:GridRow id="Rrow22" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="left"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3" text=""
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="3"
+																			 horizontalAlign="left"
+																			 verticalAlign="bottom">																
+																	<s:Label paddingTop="3" text=""
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															
+															
+														
+														</mx:Grid>
+														
+														
+														
+														
+														
+														
+													</s:SkinnableContainer>
+												</s:VGroup>
+											</s:Scroller>
+										</s:VGroup>
+									</s:SkinnableContainer>
+								
 								</s:VGroup>
+					
 								<s:Group includeIn="referenceFeature" x="20" y="357" width="267"
 										 height="55">
 									<s:Button x="81" y="10" width="100" height="31" label="Start"
 											  chromeColor="#3F8AF0" color="#FCFCFC" cornerRadius="5"
 											  click="selectiontypefeature_clickHandler(event)"/>
 								</s:Group>
+								<s:VGroup includeIn="ScoringFinalBuck" x="705" y="0" width="6"
+										  height="100%">
+								</s:VGroup>
 								
 							</s:SkinnableContainer>
+					
 						</s:VGroup>
-						<s:VGroup width="6" height="100%"/>
+						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+								  width="6" height="100%"/>
 					</s:HGroup>
 					<s:HGroup width="100%" height="6"/>
 				</s:VGroup>
 				
 			</s:SkinnableContainer>
-			<s:HGroup id="borderBottom" height="15" width="100%"/>
+			<s:HGroup id="borderBottom" width="100%" height="15"/>
 		</s:VGroup>
 		<s:VGroup id="borderRight" width="15" height="100%"/>
 	</s:HGroup>
