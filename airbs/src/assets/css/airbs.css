@@ -1,11 +1,54 @@
 /* CSS file */
 @namespace s "library://ns.adobe.com/flex/spark";
 @namespace mx "library://ns.adobe.com/flex/mx";
+@namespace bs "library://ns.adobe.com/flex/mx";
 
-.main {
-	showFlexChrome: true;
+global
+{
+	vertical-align: middle;
+	font-size: 11;
+	font-family: "Calibri";
+	
+	chrome-color: #303030;
+	content-background-color: #323232;
+	content-background-alpha: 1.0;
+	
+	color: #cecece;
+	text-roll-over-color: #cecece;
+	text-selected-color: #cecece;
 }
 
-.bg {
-	backgroundColor: #000000;
+bs|MenuBar
+{
+	font-size: 11;
+	font-anti-alias-type: advanced;
+	font-grid-fit-type: subpixel;
+	
+	chrome-color: #303030;
+	content-background-color: #323232;
+	content-background-alpha: 1.0;
+	
+	color: #cecece;
+	text-roll-over-color: #cecece;
+	text-selected-color: #cecece;
+	color: #ffffff;
+}
+
+bs|Menu
+{
+	roll-over-color: #666666;
+	selection-color: #aeaeae;
+	color: #ffffff;  
+	symbol-color: #ffffff;
+}
+
+#mainBox {
+	backgroundColor: #323232;
+	backgroundAlpha: 1.0;
+}
+
+#titleMain {
+	borderColor: #000000;
+	borderWeight: 1;
+	borderVisible: true;
 }

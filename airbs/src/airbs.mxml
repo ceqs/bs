@@ -2,6 +2,7 @@
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
 					   xmlns:s="library://ns.adobe.com/flex/spark"
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:bs="library://ns.adobe.com/flex/mx"
 					   xmlns:net="flash.net.*"
 					   xmlns:imagecropper="com.flexblocks.imagecropper.*"
 					   xmlns:component="component.*"
@@ -9,25 +10,7 @@
 					   width="750" height="550" backgroundAlpha="0" creationComplete="initApp()"
 					   currentState="stateMain" showStatusBar="false" styleName="main">
 	
-	<fx:Style>
-		.main {
-			showFlexChrome: true;
-		}
-		
-		.bg {
-			backgroundColor: #000000;
-			backgroundImage: " "; 
-			
-		}
-		global
-		{
-			vertical-align: middle;
-			content-background-color: #F5FBFB;
-			font-size: 12;
-			font-family: "Times New Roman";
-			content-background-alpha: 0.91;
-		}
-	</fx:Style>
+	<fx:Style source="assets/css/airbs.css"/>
 	
 	<fx:Script>
 		<![CDATA[
@@ -47,6 +30,7 @@
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
 			import mx.events.IndexChangedEvent;
+			import mx.managers.PopUpManager;
 			import mx.rpc.events.ResultEvent;
 			import mx.utils.ObjectUtil;
 			import mx.utils.StringUtil;
@@ -82,7 +66,10 @@
 			[Bindable]
 			private var xmlURL:String;
 			
-			
+			private var numbertypicalleft:int=1;
+			private var numbertypicalrigth:int=1;
+			private var numberabnormalleft:int=1;
+			private var numberabnormalright:int=1;
 			
 			 
 			
@@ -147,6 +134,7 @@
 				
 				nativeWindow.x = (Capabilities.screenResolutionX - nativeWindow.width) / 2;
 				nativeWindow.y = (Capabilities.screenResolutionY - nativeWindow.height) / 2;
+				maximize();
 				
 				NativeApplication.nativeApplication.addEventListener( Event.EXITING, 
 					function(e:Event):void {
@@ -184,10 +172,61 @@
 				var ns:Namespace = appXML.namespace();
 				gVersion = appXML.ns::version;
 			}
+////////////////////////////////datagrid filtrer/////////////////////////////////			
 			
+			
+			private var firstTime:Boolean = true;
+			private function filter():void {
+				array.filterFunction = filterMyArrayCollection;
+				array.refresh();
+			}
+			
+			private function filterMyArrayCollection(item:Object):Boolean {
+				var searchString:String = txtfilterdatagrid.text.toLowerCase();
+				var itemName:String = (item.name as String).toLowerCase();
+				return itemName.indexOf(searchString) > -1;
+			}
+			
+			private function clearMyTextInput():void {
+				
+				if (firstTime == true )
+				{
+					txtfilterdatagrid.text = "";
+					firstTime = false;
+				}
+			}
+			
+			
+			
+			private var firstTime2:Boolean = true;
+			private function filter2():void {
+				array2.filterFunction = filterMyArrayCollection2;
+				array2.refresh();
+			}
+			
+			private function filterMyArrayCollection2(item:Object):Boolean {
+				var searchString:String = txtexpandfilter.text.toLowerCase();
+				var itemName:String = (item.name as String).toLowerCase();
+				return itemName.indexOf(searchString) > -1;
+			}
+			
+			private function clearMyTextInput2():void {
+				
+				if (firstTime2 == true )
+				{
+					txtexpandfilter.text = "";
+					firstTime2 = false;
+				}
+			}
+			
+			
+			
+			
+			
+/////////////////////////////////finish//////////////////////////////////////////			
 			protected function combophoto_uploadphoto(event:MouseEvent):void
-			{
-				currentState='editphoto';
+			{	
+				
 				
 			}
 			
@@ -196,6 +235,7 @@
 				currentState='stateMain';
 				imgupload.visible=false;
 				btnbrowsetoadd.visible=true;
+				combophoto.selectedIndex=0;
 			}
 			
 			protected function button2_callscore(event:MouseEvent):void
@@ -229,7 +269,9 @@
 					competencyListData =  new XMLListCollection(mylist);
 					competencyListDatAAge = new XMLListCollection(mylistage);
 					cmbstate.dataProvider=competencyListData;
+					cmbstate.selectedIndex=0;
 					cmbage.dataProvider=competencyListDatAAge;
+					cmbage.selectedIndex=0;
 				}
 				
 				
@@ -376,7 +418,19 @@
 				combo.addItem(itemalbum.namealbum);
 				txtalbumname.text='';
 				txtdescriptionalbum.text="";
+				combophoto.selectedIndex=0;
 				currentState='stateMain';
+			}
+			
+			protected function DeleteAlbum_clickHandler(event:MouseEvent):void
+			{
+				var albumdelete:String=combodeletealbum.selectedItem;
+				for(var i:int=0;i<combo.length;i++){
+					if(albumdelete==combo[i].toString()){
+						combo.removeItemAt(i);
+					}
+				}
+				
 			}
 			
 ////////////////////////////////edition photo//////////////////////////////////////////////// 
@@ -532,6 +586,7 @@
 				txtNamepaneltitle.text=txtdeernamesave.text;
 				currentState="stateMain";
 				bandera="0";
+				combophoto.selectedIndex=0;
 			}
 			
 			protected function selectiontypefeature_clickHandler(event:MouseEvent):void
@@ -637,6 +692,8 @@
 			protected function birdlist_complete(event:FlexEvent):void
 			{
 				trace(birdList[0],birdList[1]);
+				birdList[0]=StringUtil.trim(birdList[0]);
+				birdList[1]=StringUtil.trim(birdList[1]);
 				
 				birdListAC = new ArrayCollection(birdList);
 				
@@ -672,6 +729,268 @@
 			{
 				txttypicalleft.text=cmbletftypical.selectedItem;
 				txttypicalrigth.text=cmbrigthtypical.selectedItem;
+				
+			}
+			///////////////zoom image buckscore//////////////////////////////////////////////
+			public function doZoomProduct (event:MouseEvent): void {
+				
+				if (zoomProduct.isPlaying) {
+					zoomProduct.reverse();
+					trace("hola reverse");
+				}
+				else {
+					// If this is a ROLL_OUT event, play the effect backwards. 
+					
+					// If this is a ROLL_OVER event, play the effect forwards.
+					zoomProduct.play([event.target], event.type == MouseEvent.ROLL_OUT ? true : false);
+					trace("hola play");
+								}
+				
+			}
+			
+			private function launchPopUp(e:MouseEvent):void {
+				
+					var win : Window = new Window();
+					win.sourceImage = imagezoomscoring.source.toString();
+					win.title =  "Buckscore";
+					PopUpManager.addPopUp(win,this,true);
+					PopUpManager.centerPopUp(win);
+				
+			}
+			private function launchPopUp2(e:MouseEvent):void {
+				
+				var win : Window = new Window();
+				win.sourceImage = imagebusckscorezoom.source.toString();
+				win.title =  "Buckscore";
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+				
+			}
+			
+			/////////////////////////////finish////////////////////////////////////////////////
+			
+			
+			
+			
+			////////////////////////////navigation in points ///////////////////
+			protected function TypicalPoints_clickHandler(event:MouseEvent):void
+			{	
+				currentState='MeasureLeftMainBeam';
+				txttypicalleft.text=cmbletftypical.selectedItem;
+				txttypicalrigth.text=cmbrigthtypical.selectedItem;
+				
+			}
+			
+			protected function LeftMainBeam_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordLeftMainBeamLine';	
+				txtRecordMainLeftPoints.text=cmbletftypical.selectedItem;
+				txtRecordMainRigthPoints.text=cmbrigthtypical.selectedItem;
+				
+			}
+			
+			protected function RecordLeftMainBeamLine_clickHandler(event:MouseEvent):void
+			{
+				currentState='MeasureRigthMainBeam';
+				txtTypicalLeftPonitsRigthMain.text=cmbletftypical.selectedItem;
+				txtTypicalRigthPonitsRigthMain.text=cmbrigthtypical.selectedItem;
+					
+				
+			}
+			
+			protected function MeasureRigthMainBeam_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordRigthMainBeam';
+				txtTypicalLeftRecordRigth.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordRigth.text=cmbrigthtypical.selectedItem;
+				
+			}
+			
+			
+			/////////////typical points lef//////////////////
+			protected function MeasureLeftTine_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordLeftTineLine';
+				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+				
+			}
+			
+			protected function RecordLeftTineLine_clickHandler(event:MouseEvent):void
+			{
+				
+				if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)){
+					
+					currentState='MeasureLeftTine';
+					numbertypicalleft++;
+					btnRecordLeftTine.label="Measure Left Tine "+numbertypicalleft;
+					
+					
+					
+				}else{
+					currentState='MeasureRigthTine';
+					numbertypicalleft=1;
+				}
+			}
+			
+			
+			
+			/////////////typical points Rigth//////////////////
+			
+			protected function MeasureRigthTine_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordRigthTineLine';
+				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Record Rigth Tine "+numbertypicalrigth;
+				
+			}
+			protected function RecordRigthTineLine_clickHandler(event:MouseEvent):void
+			{
+				if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)){
+					
+					currentState='MeasureRigthTine';
+					numbertypicalrigth++;
+					btnRecordLeftTine.label="Measure Rigth Tine "+numbertypicalrigth;
+					
+				}else{
+					currentState='MeasureLeftCircunference';
+					numbertypicalrigth=1;
+				}
+				
+			}
+			
+			
+			/////////////Circumference points lef//////////////////
+			private var numbercincumferenceleft:int=1;
+			
+			protected function MeasureLeftCircunference_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordLeftCircunference';
+				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Record Letf Circumference "+numbercincumferenceleft;
+				
+			}
+			
+			
+			protected function RecordLeftCircunference_clickHandler(event:MouseEvent):void
+			{
+				
+				if(numbercincumferenceleft<4){
+					
+					currentState='MeasureLeftCircunference';
+					numbercincumferenceleft++;
+					btnRecordLeftTine.label="Measure Letf Circumference "+numbercincumferenceleft;
+					
+				}else{
+					currentState='MeasureRigthCircumference'
+					numbercincumferenceleft=1;
+				}
+					
+			}
+			/////////////Circumference  points Rigth//////////////////
+			private var numbercincumferencerigth:int=1;
+			
+			protected function MeasureRigthCircumference_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordRigthCircumference';
+				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Record Rigth Circumference "+numbercincumferencerigth;
+				
+			}
+			
+			
+			protected function RecordRigthCircumference_clickHandler(event:MouseEvent):void
+			{
+				
+				if(numbercincumferencerigth<4){
+					
+					currentState='MeasureRigthCircumference';
+					numbercincumferencerigth++;
+					btnRecordLeftTine.label="Measure Rigth Circumference "+numbercincumferencerigth;
+					
+				}else{
+					currentState='MeasureAnormalPoints'
+					numbercincumferencerigth=1;
+				}
+				
+			}
+			
+			
+			/////////////////////abnormal points ////////////////////////////////////
+			
+			
+			protected function MeasureAnormalPoints_clickHandler(event:MouseEvent):void
+			{
+				
+				
+				if(parseInt(cmbabnormalpointsleft.selectedItem)==0 && parseInt(cmbabnormalpointsrigth.selectedItem)==0){
+					currentState='CompleteScoringfinal';
+				}
+				else if(parseInt(cmbabnormalpointsleft.selectedItem)>0){
+					currentState='MeasureLeftAnormalTine';
+				}
+				else if(parseInt(cmbabnormalpointsrigth.selectedItem)>0){
+					currentState='MeasureRigthAnormalTine';
+				}
+				
+				txtleftanormalpoints.text=cmbabnormalpointsleft.selectedItem;
+				txtrigthanormalpoints.text=cmbabnormalpointsrigth.selectedItem;				
+			}
+			
+			protected function MeasureLeftAnormalTine_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordLefAbnormalTine';
+				
+				btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
+				
+			}
+			
+			
+			protected function RecordLefAbnormalTine_clickHandler(event:MouseEvent):void
+			{
+				if(numberabnormalleft<parseInt(cmbabnormalpointsleft.selectedItem)){
+					
+					currentState='MeasureLeftAnormalTine';
+					numberabnormalleft++;
+					btnRecordLeftTine.label="Measure Left Anormal Tine "+numberabnormalleft;
+					
+				}else{
+					currentState='MeasureRigthAnormalTine'
+					numberabnormalleft=1;
+				}
+			}
+			
+			protected function MeasureRigthAnormalTine_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordRigthAbnormalTine';
+				
+				btnRecordLeftTine.label="Record Rigth Abnormal Tine "+numberabnormalright;
+				
+			}
+			
+			protected function RecordRigthAbnormalTine_clickHandler(event:MouseEvent):void
+			{
+				if(numberabnormalright<parseInt(cmbabnormalpointsrigth.selectedItem)){
+					
+					currentState='MeasureRigthAnormalTine';
+					numberabnormalright++;
+					btnRecordLeftTine.label="Measure Rigth Anormal Tine "+numberabnormalright;
+					
+				}else{
+					currentState='CompleteScoringfinal'
+					numberabnormalright=1;
+				}
+			}
+			
+			
+			
+			protected function imagezoomscoring_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
 				
 			}
 			
@@ -730,6 +1049,8 @@
 		<net:FileReference id="fileReference"
 						   select="fileReference_select(event);"
 						   complete="fileReference_complete(event);" />
+		<mx:Zoom id="zoomProduct" zoomWidthTo="1.5" zoomHeightTo="1.5" zoomWidthFrom="1" zoomHeightFrom="1" originX="50" originY="30" />
+		
 		
 		
 	</fx:Declarations>
@@ -742,27 +1063,27 @@
 		<s:VGroup id="borderLeft" width="15" height="100%"/>
 		<s:VGroup width="100%" height="100%" gap="0">
 			<s:HGroup id="borderTop" height="15" width="100%"/>
-			<s:SkinnableContainer id="mainBox" width="100%" height="100%" backgroundColor="#000000">
+			<s:SkinnableContainer id="mainBox" width="100%" height="100%">
 				<s:VGroup includeIn="stateLogin" width="100%" height="100%">
 					
 				</s:VGroup>
 				
 				<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
-						  width="100%" height="100%" gap="0">
-					<s:HGroup width="100%" height="56" gap="0">
-						<s:VGroup width="5" height="100%"/>
-						<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
-								 text=" What's you buckscore?" verticalAlign="middle"
-								 width.RecordLeftCircunference="257"
-								 width.RecordRigthCircumference="260"/>
-						<s:Label width="100%" height="100%" color="#DCD3D3" fontFamily="Arial"
-								 fontSize="24" fontWeight="normal" text="Powered by the MSU Deer Lab "
-								 textAlign="right" verticalAlign="middle"/>
-						<s:VGroup width="5" height="100%"/>
-					</s:HGroup>
-					<s:SkinnableContainer width="100%" height="1" backgroundColor="#848484"/>
-					<s:HGroup width="100%" height="35" verticalAlign="middle">
-						<mx:MenuBar id="myMenuBar" labelField="@label">
+						  width="100%" height="100%" gap="0" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6">
+					<s:SkinnableContainer width="100%" height="56" backgroundColor="#323232" >
+						<s:HGroup id="titleMain" width="100%" height="100%" gap="0" paddingLeft="5" paddingRight="5">
+							<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
+									 text=" What's you buckscore?" verticalAlign="middle"
+									 width.RecordLeftCircunference="257"
+									 width.RecordRigthCircumference="260"/>
+							<s:Label width="100%" height="100%" color="#DCD3D3" fontFamily="Arial"
+									 fontSize="24" fontWeight="normal" text="Powered by the MSU Deer Lab "
+									 textAlign="right" verticalAlign="middle"/>
+						</s:HGroup>
+					</s:SkinnableContainer>
+					
+					<s:HGroup width="100%" verticalAlign="middle" height="34">
+						<bs:MenuBar id="myMenuBar" labelField="@label" height="24" width="100%">
 							<fx:XMLList>
 								<menuitem label="New">
 									<menuitem label="Album"/>
@@ -780,22 +1101,16 @@
 									<menuitem label="About Buckscore Application"/>
 								</menuitem>
 							</fx:XMLList>
-						</mx:MenuBar>
+						</bs:MenuBar>
 					</s:HGroup>
-					
 					<s:HGroup includeIn="ExpandDeerName" width="100%" height="35" alpha="15"
 							  verticalAlign="middle">
-						<s:Label width="90%" color="#FDFBFB" fontSize="22" fontWeight="bold"
+						<s:Label width="93%" color="#FDFBFB" fontSize="22" fontWeight="bold"
 								 text="Deer Data"/>
-						<s:Button label="Back" chromeColor="#155FE8"    click="currentState='stateMain'"
-								  color="#F5F5F9"/>
+						<s:Button width="7%" label="Back" chromeColor="#155FE8"
+								  click="currentState='stateMain'" color="#F5F5F9"/>
 					</s:HGroup>
-					
-					
-					
-					<s:HGroup width="100%" height="100%" gap="0">
-						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
-								  width="6" height="100%"/>
+					<mx:HDividedBox id="mainPanel" width="100%" height="100%" hasFocusableChildren="true" focusEnabled="true">
 						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 								  width="100%" height="100%">
 							<s:SkinnableContainer width="100%" height="100%"
@@ -806,7 +1121,10 @@
 												   width="100%" height="100%"/>
 								<s:Label includeIn="ExpandDeerName" x="14" y="15" fontSize="18"
 										 text="Filter"/>
-								<s:TextInput includeIn="ExpandDeerName" x="62" y="10" width="225"/>
+								<s:TextInput includeIn="ExpandDeerName" x="62" y="10" width="225"
+											 id="txtexpandfilter"
+											 change="filter2()" 
+											 focusIn="clearMyTextInput2()"/>
 							</s:SkinnableContainer>
 							<s:Group includeIn="ExpandDeerName" width="100%" height="100%">
 								
@@ -822,24 +1140,8 @@
 											<mx:DataGridColumn headerText="Score#" dataField="score" />
 										</mx:columns>
 									</mx:DataGrid>
-									
-									
-									
-								</mx:VBox>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
+								</mx:VBox>								
 							</s:Group>
-						</s:VGroup>
-						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
-								  width="6" height="100%">
 						</s:VGroup>
 						<s:VGroup width="308" height="100%"
 								  width.ScoringFinalBuck="100%">
@@ -977,17 +1279,17 @@
 											<s:HGroup includeIn="ScoringFinalBuck" y="10" width="470"
 													  height="26">
 												<s:Button label="Facebook" alpha="8"
-														  chromeColor="#3923DD" cornerRadius="6"/>
+														  chromeColor="#323232" cornerRadius="6"/>
 												<s:Button label="Twitter" alpha="8"
-														  chromeColor="#3923DD" cornerRadius="6"/>
+														  chromeColor="#323232" cornerRadius="6"/>
 												<s:Button label="Email" alpha="8"
-														  chromeColor="#3923DD" cornerRadius="6"/>
+														  chromeColor="#323232" cornerRadius="6"/>
 												<s:Button label="Save" alpha="8"
-														  chromeColor="#3923DD" cornerRadius="6"/>
+														  chromeColor="#323232" cornerRadius="6"/>
 												<s:Button label="Print" alpha="8"
-														  chromeColor="#3923DD" cornerRadius="6"/>
+														  chromeColor="#323232" cornerRadius="6"/>
 												<s:Button label="Finish" alpha="8"
-														  chromeColor="#3923DD" cornerRadius="6"
+														  chromeColor="#323232" cornerRadius="6"
 														  click="currentState='stateMain'"/>
 											</s:HGroup>
 										</s:HGroup>
@@ -1066,7 +1368,6 @@
 																 text.ExpandDeerName="Henry"/>
 														<s:HGroup includeIn="stateMain" width="482"
 																  height="13">
-															<s:Label text="Date"/>
 														</s:HGroup>
 													</s:Group>
 												</s:VGroup>
@@ -1336,11 +1637,11 @@
 												<mx:HRule includeIn="editAlbum" width="200"/>
 												<s:HGroup includeIn="editAlbum" width="217">
 													<s:Label text="Album Name"/>
-													<s:ComboBox dataProvider="{combo}" width="133"/>
+													<s:ComboBox id="combodeletealbum" dataProvider="{combo}" width="133"/>
 												</s:HGroup>
 												<s:Group includeIn="editAlbum" width="200"
 														 height="17">
-													<s:Button x="130" y="7" label="Delete"/>
+													<s:Button x="130" y="7" label="Delete" click="DeleteAlbum_clickHandler(event)"/>
 												</s:Group>
 												<mx:HRule includeIn="editAlbum,scorephoto" width="200"
 														  height="0"/>
@@ -1506,26 +1807,35 @@
 																cornerRadius="10"
 																label.MeasureInsideSpread="Measure Inside Spread"
 																alpha.MeasureInsideSpread="10"
+																chromeColor.MeasureInsideSpread="#323232"
 																click.MeasureInsideSpread="currentState='RecorderInsideSpread';"
 																alpha.RecordEarWidth="10"
+																chromeColor.RecordEarWidth="#323232"
 																click.RecordEarWidth="toggle_EarWidthHandler(event)"
 																label.RecorderInsideSpread="Record Eye to Eye Width Feature"
 																alpha.RecorderInsideSpread="10"
+																chromeColor.RecorderInsideSpread="#323232"
+																click.RecorderInsideSpread="toggle_RecorderInsideSpread(event)"
 																label.RecordEyeballWidthFeature="Record Eyeball Width Feature"
 																alpha.RecordEyeballWidthFeature="10"
+																chromeColor.RecordEyeballWidthFeature="#323232"
 																click.RecordEyeballWidthFeature="toggle_EarWidthHandler(event)"
 																label.RecordEyetoEyeWidth="Record Inside Spread"
 																alpha.RecordEyetoEyeWidth="10"
-																click.RecordEyetoEyeWidth="toggle_EarWidthHandler(event)"
-																click.RecorderInsideSpread="toggle_RecorderInsideSpread(event)"/>
+																chromeColor.RecordEyetoEyeWidth="#323232"
+																click.RecordEyetoEyeWidth="toggle_EarWidthHandler(event)"/>
 												<s:ToggleButton includeIn="RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
 																x="28" y="63" width="208"
 																height="34" label="Erase Lines"
 																cornerRadius="10"
 																alpha.RecordEarWidth="10"
+																chromeColor.RecordEarWidth="#323232"
 																alpha.RecorderInsideSpread="10"
+																chromeColor.RecorderInsideSpread="#323232"
 																alpha.RecordEyeballWidthFeature="10"
-																alpha.RecordEyetoEyeWidth="10"/>
+																chromeColor.RecordEyeballWidthFeature="#323232"
+																alpha.RecordEyetoEyeWidth="10"
+																chromeColor.RecordEyetoEyeWidth="#323232"/>
 												<s:VGroup includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 														  x="10" y="8" width="238" height="87"
 														  x.MeasureLeftAnormalTine="10"
@@ -1564,7 +1874,9 @@
 															 text.RecordRigthMainBeam="Left Typical Points"
 															 text.RecordRigthTineLine="Left Typical Points"/>
 													<s:ComboBox id="cmbletftypical"
-																includeIn="NumberTypicalPoints">
+																includeIn="NumberTypicalPoints"
+																chromeColor="#323232"
+																selectedIndex="0">
 														<s:dataProvider>
 															<mx:ArrayList>
 																<fx:String>1</fx:String>
@@ -1580,15 +1892,26 @@
 															</mx:ArrayList>
 														</s:dataProvider>	
 													</s:ComboBox>	
-													<s:TextInput includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"/>
+													<s:TextInput id="txtTypicalLeftPonitsRigthMain"
+																 includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"
+																 editable.MeasureRigthMainBeam="false"/>
 													<s:TextInput id="txttypicalleft"
-																 includeIn="MeasureLeftMainBeam"/>
-													<s:TextInput includeIn="RecordLeftMainBeamLine"/>
-													<s:TextInput includeIn="RecordRigthMainBeam"/>
-													<s:TextInput includeIn="MeasureLeftAnormalTine,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthTineLine"/>
-													<s:ComboBox includeIn="MeasureAnormalPoints">
+																 includeIn="MeasureLeftMainBeam"
+																 editable="false"/>
+													<s:TextInput includeIn="RecordLeftMainBeamLine" editable="false" id="txtRecordMainLeftPoints"/>
+													<s:TextInput id="txtTypicalLeftRecordRigth"
+																 includeIn="RecordRigthMainBeam"
+																 editable="false"/>
+													<s:TextInput id="txtTypicalLeftRecordLeftTine"
+																 includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
+																 editable.RecordLeftTineLine="false"/>
+													<s:ComboBox id="cmbabnormalpointsleft"
+																includeIn="MeasureAnormalPoints"
+																chromeColor="#323232"
+																selectedIndex="0">
 														<s:dataProvider>
 															<mx:ArrayList>
+																<fx:String>0</fx:String>
 																<fx:String>1</fx:String>
 																<fx:String>2</fx:String>
 																<fx:String>3</fx:String>
@@ -1614,7 +1937,8 @@
 														
 														
 													</s:ComboBox>	
-													<s:TextInput includeIn="CompleteScoringfinal"/>
+													<s:TextInput id="txtleftanormalpoints"
+																 includeIn="MeasureLeftAnormalTine,RecordLefAbnormalTine,MeasureRigthAnormalTine,RecordRigthAbnormalTine,CompleteScoringfinal"/>
 													<s:Label text="Number of Rigth Typical Points"
 															 text.CompleteScoringfinal="Rigth Abnormal Points"
 															 text.MeasureAnormalPoints="Number of Rigth Abnormal Points"
@@ -1635,7 +1959,9 @@
 															 text.RecordRigthMainBeam="Rigth Typical Points"
 															 text.RecordRigthTineLine="Rigth Typical Points"/>
 													<s:ComboBox id="cmbrigthtypical"
-																includeIn="NumberTypicalPoints">
+																includeIn="NumberTypicalPoints"
+																chromeColor="#323232"
+																selectedIndex="0">
 														<s:dataProvider>
 															<mx:ArrayList>
 																<fx:String>1</fx:String>
@@ -1651,15 +1977,26 @@
 															</mx:ArrayList>
 														</s:dataProvider>
 													</s:ComboBox>	
-													<s:TextInput includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"/>
+													<s:TextInput id="txtTypicalRigthPonitsRigthMain"
+																 includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"
+																 editable.MeasureRigthMainBeam="false"/>
 													<s:TextInput id="txttypicalrigth"
-																 includeIn="MeasureLeftMainBeam"/>
-													<s:TextInput includeIn="RecordLeftMainBeamLine"/>
-													<s:TextInput includeIn="RecordRigthMainBeam"/>
-													<s:TextInput includeIn="MeasureLeftAnormalTine,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthTineLine"/>
-													<s:ComboBox includeIn="MeasureAnormalPoints">
+																 includeIn="MeasureLeftMainBeam"
+																 editable="false"/>
+													<s:TextInput includeIn="RecordLeftMainBeamLine" editable="false" id="txtRecordMainRigthPoints"/>
+													<s:TextInput id="txtTypicalRigthRecordRigth"
+																 includeIn="RecordRigthMainBeam"
+																 editable="false"/>
+													<s:TextInput id="txtTypicalRigthRecordLeftTine"
+																 includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
+																 editable.RecordLeftTineLine="false"/>
+													<s:ComboBox id="cmbabnormalpointsrigth"
+																includeIn="MeasureAnormalPoints"
+																chromeColor="#323232"
+																selectedIndex="0"> 
 														<s:dataProvider>
 															<mx:ArrayList>
+																<fx:String>0</fx:String>
 																<fx:String>1</fx:String>
 																<fx:String>2</fx:String>
 																<fx:String>3</fx:String>
@@ -1683,97 +2020,115 @@
 															</mx:ArrayList>
 														</s:dataProvider>
 													 </s:ComboBox>	
-														
-														
-													<s:TextInput includeIn="CompleteScoringfinal"/>
+													<s:TextInput id="txtrigthanormalpoints"
+																 includeIn="MeasureLeftAnormalTine,RecordLefAbnormalTine,MeasureRigthAnormalTine,RecordRigthAbnormalTine,CompleteScoringfinal"/>
 												</s:VGroup>
-												<s:Button includeIn="MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
+												<s:Button id="btnRecordLeftTine"
+														  includeIn="MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 														  width="144" label="Measure Main Beams"
 														  alpha="8"
+														  click="button5_numberpoint(event)"
 														  x.MeasureAnormalPoints="26"
 														  y.MeasureAnormalPoints="103"
 														  width.MeasureAnormalPoints="212"
-														  label.MeasureAnormalPoints="Continue Measuring Abnormal Point?"
+														  label.MeasureAnormalPoints="Measure left Abnormal Tine"
+														  chromeColor.MeasureAnormalPoints="#323232"
+														  click.MeasureAnormalPoints="MeasureAnormalPoints_clickHandler(event)"
 														  x.MeasureLeftAnormalTine="42"
 														  y.MeasureLeftAnormalTine="114"
-														  width.MeasureLeftAnormalTine="180"
-														  label.MeasureLeftAnormalTine="Measure left Abnormal Tine"
-														  x.MeasureLeftCircunference="51"
+														  width.MeasureLeftAnormalTine="185"
+														  label.MeasureLeftAnormalTine="Measure left Abnormal Tine 1"
+														  chromeColor.MeasureLeftAnormalTine="#323232"
+														  click.MeasureLeftAnormalTine="MeasureLeftAnormalTine_clickHandler(event)"
+														  x.MeasureLeftCircunference="34"
 														  y.MeasureLeftCircunference="103"
-														  width.MeasureLeftCircunference="162"
-														  label.MeasureLeftCircunference="Measure Letf Circumference "
+														  width.MeasureLeftCircunference="187"
+														  label.MeasureLeftCircunference="Measure Letf Circumference 1"
+														  chromeColor.MeasureLeftCircunference="#323232"
+														  click.MeasureLeftCircunference="MeasureLeftCircunference_clickHandler(event)"
 														  x.MeasureLeftMainBeam="59"
 														  y.MeasureLeftMainBeam="107"
 														  label.MeasureLeftMainBeam="Measure Letf Main Beam"
+														  chromeColor.MeasureLeftMainBeam="#323232"
+														  click.MeasureLeftMainBeam="LeftMainBeam_clickHandler(event)"
 														  x.MeasureLeftTine="51"
 														  y.MeasureLeftTine="103"
 														  width.MeasureLeftTine="162"
-														  label.MeasureLeftTine="Measure Left Tine "
+														  label.MeasureLeftTine="Measure Left Tine 1 "
+														  chromeColor.MeasureLeftTine="#323232"
+														  click.MeasureLeftTine="MeasureLeftTine_clickHandler(event)"
 														  x.MeasureRigthAnormalTine="42"
 														  y.MeasureRigthAnormalTine="114"
 														  width.MeasureRigthAnormalTine="180"
 														  label.MeasureRigthAnormalTine="Measure Right Abnormal Tine"
+														  chromeColor.MeasureRigthAnormalTine="#323232"
+														  click.MeasureRigthAnormalTine="MeasureRigthAnormalTine_clickHandler(event)"
 														  x.MeasureRigthCircumference="36"
 														  y.MeasureRigthCircumference="103"
 														  width.MeasureRigthCircumference="188"
-														  label.MeasureRigthCircumference="Measure Rigth Circumference "
+														  label.MeasureRigthCircumference="Measure Rigth Circumference 1"
+														  chromeColor.MeasureRigthCircumference="#323232"
+														  click.MeasureRigthCircumference="MeasureRigthCircumference_clickHandler(event)"
 														  x.MeasureRigthMainBeam="51"
 														  y.MeasureRigthMainBeam="103"
 														  width.MeasureRigthMainBeam="162"
 														  label.MeasureRigthMainBeam="Measure Rigth Main Beam"
+														  chromeColor.MeasureRigthMainBeam="#323232"
+														  click.MeasureRigthMainBeam="MeasureRigthMainBeam_clickHandler(event)"
 														  x.MeasureRigthTine="51"
 														  y.MeasureRigthTine="103"
 														  width.MeasureRigthTine="162"
-														  label.MeasureRigthTine="Measure Rigth Tine "
+														  label.MeasureRigthTine="Measure Rigth Tine 1 "
+														  chromeColor.MeasureRigthTine="#323232"
+														  click.MeasureRigthTine="MeasureRigthTine_clickHandler(event)"
 														  x.NumberTypicalPoints="59"
 														  y.NumberTypicalPoints="105"
+														  chromeColor.NumberTypicalPoints="#323232"
+														  click.NumberTypicalPoints="TypicalPoints_clickHandler(event)"
 														  x.RecordLefAbnormalTine="42"
 														  y.RecordLefAbnormalTine="114"
-														  width.RecordLefAbnormalTine="180"
-														  label.RecordLefAbnormalTine="Record left Abnormal Tine"
+														  width.RecordLefAbnormalTine="185"
+														  label.RecordLefAbnormalTine="Record left Abnormal Tine 1"
+														  chromeColor.RecordLefAbnormalTine="#323232"
+														  click.RecordLefAbnormalTine="RecordLefAbnormalTine_clickHandler(event)"
 														  x.RecordLeftCircunference="47"
 														  y.RecordLeftCircunference="97"
 														  width.RecordLeftCircunference="173"
-														  label.RecordLeftCircunference="Measure Letf Circumference "
+														  label.RecordLeftCircunference="Recorder Letf Circumference 1"
+														  chromeColor.RecordLeftCircunference="#323232"
+														  click.RecordLeftCircunference="RecordLeftCircunference_clickHandler(event)"
 														  x.RecordLeftMainBeamLine="59"
 														  y.RecordLeftMainBeamLine="103"
 														  label.RecordLeftMainBeamLine="Record Left Main Beam"
+														  chromeColor.RecordLeftMainBeamLine="#323232"
+														  click.RecordLeftMainBeamLine="RecordLeftMainBeamLine_clickHandler(event)"
 														  x.RecordLeftTineLine="59"
 														  y.RecordLeftTineLine="97"
-														  label.RecordLeftTineLine="Record Left Tine"
+														  label.RecordLeftTineLine="Record Left Tine 1"
+														  chromeColor.RecordLeftTineLine="#323232"
+														  click.RecordLeftTineLine="RecordLeftTineLine_clickHandler(event)"
 														  x.RecordRigthAbnormalTine="42"
 														  y.RecordRigthAbnormalTine="114"
 														  width.RecordRigthAbnormalTine="180"
 														  label.RecordRigthAbnormalTine="Record Rigth Abnormal Tine"
+														  chromeColor.RecordRigthAbnormalTine="#323232"
+														  click.RecordRigthAbnormalTine="RecordRigthAbnormalTine_clickHandler(event)"
 														  x.RecordRigthCircumference="42"
 														  y.RecordRigthCircumference="97"
 														  width.RecordRigthCircumference="180"
-														  label.RecordRigthCircumference="Measure Rigth Circumference "
+														  label.RecordRigthCircumference="Recorder Rigth Circumference 1 "
+														  chromeColor.RecordRigthCircumference="#323232"
+														  click.RecordRigthCircumference="RecordRigthCircumference_clickHandler(event)"
 														  x.RecordRigthMainBeam="61"
 														  y.RecordRigthMainBeam="101"
 														  label.RecordRigthMainBeam="Record Right Main Beam"
+														  chromeColor.RecordRigthMainBeam="#323232"
+														  click.RecordRigthMainBeam="currentState='MeasureLeftTine'"
 														  x.RecordRigthTineLine="59"
 														  y.RecordRigthTineLine="97"
-														  label.RecordRigthTineLine="Record Rigth Tine"
-														  click.NumberTypicalPoints="currentState='MeasureLeftMainBeam'"
-														  click.MeasureLeftMainBeam="currentState='RecordLeftMainBeamLine'"
-														  click.RecordLeftMainBeamLine="currentState='MeasureRigthMainBeam'"
-														  click.MeasureRigthMainBeam="currentState='RecordRigthMainBeam'"
-														  click.RecordRigthMainBeam="currentState='MeasureLeftTine'"
-														  click.MeasureLeftTine="currentState='RecordLeftTineLine'"
-														  click.RecordLeftTineLine="currentState='MeasureRigthTine'"
-														  click.MeasureRigthTine="currentState='RecordRigthTineLine'"
-														  click.RecordRigthTineLine="currentState='MeasureLeftCircunference'"
-														  click.MeasureLeftCircunference="currentState='RecordLeftCircunference'"
-														  click.RecordLeftCircunference="currentState='MeasureRigthCircumference'"
-														  click.MeasureRigthCircumference="currentState='RecordRigthCircumference'"
-														  click.RecordRigthCircumference="currentState='MeasureAnormalPoints'"
-														  click.MeasureAnormalPoints="currentState='MeasureLeftAnormalTine'"
-														  click.MeasureLeftAnormalTine="currentState='RecordLefAbnormalTine'"
-														  click.RecordLefAbnormalTine="currentState='MeasureRigthAnormalTine'"
-														  click.MeasureRigthAnormalTine="currentState='RecordRigthAbnormalTine'"
-														  click.RecordRigthAbnormalTine="currentState='CompleteScoringfinal'"
-														  click="button5_numberpoint(event)" />
+														  label.RecordRigthTineLine="Record Rigth Tine 1"
+														  chromeColor.RecordRigthTineLine="#323232"
+														  click.RecordRigthTineLine="RecordRigthTineLine_clickHandler(event)"/>
 												<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 														  width="267" height="5"
 														  x.CompleteScoringfinal="0"
@@ -1817,43 +2172,62 @@
 												<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 														  x="34" y="144" width="187" height="30"
 														  label="Complete Scoring" alpha="8"
+														  click="ScoringDeer_btn(event)"
 														  fontSize="18" fontStyle="normal"
 														  fontWeight="normal"
 														  x.CompleteScoringfinal="36"
 														  y.CompleteScoringfinal="121"
+														  chromeColor.CompleteScoringfinal="#323232"
 														  x.MeasureAnormalPoints="36"
 														  y.MeasureAnormalPoints="149"
+														  chromeColor.MeasureAnormalPoints="#323232"
 														  x.MeasureLeftAnormalTine="40"
 														  y.MeasureLeftAnormalTine="166"
+														  chromeColor.MeasureLeftAnormalTine="#323232"
 														  x.MeasureLeftCircunference="34"
 														  y.MeasureLeftCircunference="149"
+														  chromeColor.MeasureLeftCircunference="#323232"
+														  chromeColor.MeasureLeftMainBeam="#323232"
 														  x.MeasureLeftTine="34"
 														  y.MeasureLeftTine="149"
+														  chromeColor.MeasureLeftTine="#323232"
 														  x.MeasureRigthAnormalTine="40"
 														  y.MeasureRigthAnormalTine="166"
+														  chromeColor.MeasureRigthAnormalTine="#323232"
 														  x.MeasureRigthCircumference="36"
 														  y.MeasureRigthCircumference="149"
+														  chromeColor.MeasureRigthCircumference="#323232"
 														  x.MeasureRigthMainBeam="34"
 														  y.MeasureRigthMainBeam="149"
+														  chromeColor.MeasureRigthMainBeam="#323232"
 														  x.MeasureRigthTine="34"
 														  y.MeasureRigthTine="149"
+														  chromeColor.MeasureRigthTine="#323232"
+														  chromeColor.NumberTypicalPoints="#323232"
 														  x.RecordLefAbnormalTine="40"
 														  y.RecordLefAbnormalTine="176"
+														  chromeColor.RecordLefAbnormalTine="#323232"
 														  x.RecordLeftCircunference="39"
 														  y.RecordLeftCircunference="198"
+														  chromeColor.RecordLeftCircunference="#323232"
 														  x.RecordLeftMainBeamLine="34"
 														  y.RecordLeftMainBeamLine="157"
+														  chromeColor.RecordLeftMainBeamLine="#323232"
 														  x.RecordLeftTineLine="34"
 														  y.RecordLeftTineLine="175"
+														  chromeColor.RecordLeftTineLine="#323232"
 														  x.RecordRigthAbnormalTine="40"
 														  y.RecordRigthAbnormalTine="176"
+														  chromeColor.RecordRigthAbnormalTine="#323232"
 														  x.RecordRigthCircumference="40"
 														  y.RecordRigthCircumference="198"
+														  chromeColor.RecordRigthCircumference="#323232"
 														  x.RecordRigthMainBeam="34"
 														  y.RecordRigthMainBeam="161"
+														  chromeColor.RecordRigthMainBeam="#323232"
 														  x.RecordRigthTineLine="34"
 														  y.RecordRigthTineLine="175"
-														  click="ScoringDeer_btn(event)"/>
+														  chromeColor.RecordRigthTineLine="#323232"/>
 												<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 														  width="267" height="5"
 														  x.CompleteScoringfinal="0"
@@ -1909,30 +2283,53 @@
 															 text.MeasureRigthTine="Rigth MainBeam=10.9605"/>
 													<s:Button width="188" height="29"
 															  label="View ScoreSheet" alpha="8"
-															  fontSize="18"/>
+															  fontSize="18"
+															  chromeColor.CompleteScoringfinal="#323232"
+															  chromeColor.MeasureAnormalPoints="#323232"
+															  chromeColor.MeasureLeftCircunference="#323232"
+															  chromeColor.MeasureLeftTine="#323232"
+															  chromeColor.MeasureRigthCircumference="#323232"
+															  chromeColor.MeasureRigthMainBeam="#323232"
+															  chromeColor.MeasureRigthTine="#323232"
+															  chromeColor.NumberTypicalPoints="#323232"/>
 													<s:Button width="186" height="29"
 															  label="View Instructions" alpha="8"
-															  fontSize="18"/>
+															  fontSize="18"
+															  chromeColor.CompleteScoringfinal="#323232"
+															  chromeColor.MeasureAnormalPoints="#323232"
+															  chromeColor.MeasureLeftCircunference="#323232"
+															  chromeColor.MeasureLeftTine="#323232"
+															  chromeColor.MeasureRigthCircumference="#323232"
+															  chromeColor.MeasureRigthMainBeam="#323232"
+															  chromeColor.MeasureRigthTine="#323232"
+															  chromeColor.NumberTypicalPoints="#323232"/>
 												</s:VGroup>
-												<s:Image includeIn="MeasureLeftAnormalTine,MeasureLeftMainBeam,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
+												<s:Image id="imagezoomscoring"
+														 includeIn="MeasureLeftAnormalTine,MeasureLeftMainBeam,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 														 x="34" y="195" width="187" height="113"
+														 rollOut="doZoomProduct(event)"
+														 rollOver="doZoomProduct(event)" scaleX="1"
+														 scaleY="1" 
 														 source="Image/MAINBM_0.jpg"
+														 click="launchPopUp(event)"
 														 x.MeasureLeftAnormalTine="37"
 														 y.MeasureLeftAnormalTine="217"
 														 source.MeasureLeftAnormalTine="Image/ABNTIN_0.jpg"
+														 x.MeasureLeftMainBeam="39"
+														 y.MeasureLeftMainBeam="203"
 														 x.MeasureRigthAnormalTine="37"
 														 y.MeasureRigthAnormalTine="217"
 														 source.MeasureRigthAnormalTine="Image/ABNTIN_0.jpg"
 														 x.RecordLefAbnormalTine="37"
 														 y.RecordLefAbnormalTine="223"
 														 source.RecordLefAbnormalTine="Image/ABNTIN_0.jpg"
-														 x.RecordLeftCircunference="37"
-														 y.RecordLeftCircunference="239"
+														 x.RecordLeftCircunference="41"
+														 y.RecordLeftCircunference="242"
 														 source.RecordLeftCircunference="Image/CRCFRN_0.jpg"
-														 x.RecordLeftMainBeamLine="34"
-														 y.RecordLeftMainBeamLine="199"
-														 x.RecordLeftTineLine="34"
-														 y.RecordLeftTineLine="215"
+														 x.RecordLeftMainBeamLine="37"
+														 y.RecordLeftMainBeamLine="209"
+														 x.RecordLeftTineLine="40"
+														 y.RecordLeftTineLine="220"
 														 source.RecordLeftTineLine="Image/TYPTIN_0.jpg"
 														 x.RecordRigthAbnormalTine="37"
 														 y.RecordRigthAbnormalTine="223"
@@ -1940,10 +2337,10 @@
 														 x.RecordRigthCircumference="37"
 														 y.RecordRigthCircumference="239"
 														 source.RecordRigthCircumference="Image/CRCFRN_0.jpg"
-														 x.RecordRigthMainBeam="34"
-														 y.RecordRigthMainBeam="209"
-														 x.RecordRigthTineLine="34"
-														 y.RecordRigthTineLine="215"
+														 x.RecordRigthMainBeam="45"
+														 y.RecordRigthMainBeam="217"
+														 x.RecordRigthTineLine="37"
+														 y.RecordRigthTineLine="217"
 														 source.RecordRigthTineLine="Image/TYPTIN_0.jpg"/>
 												<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints" x="0"
 														  y="96" width="268" height="6"/>
@@ -1951,12 +2348,12 @@
 														  y="97" width="268"/>
 												<s:Button includeIn="RecordLeftMainBeamLine" x="59"
 														  y="127" width="144" label="Erase Lines"
-														  alpha="8"/>
+														  alpha="8" chromeColor="#323232"/>
 												<mx:HRule includeIn="RecordRigthMainBeam" x="0"
 														  y="96" width="267" height="2"/>
 												<s:Button includeIn="RecordRigthMainBeam" x="61"
 														  y="127" width="144" label="Erase Lines"
-														  alpha="8"/>
+														  alpha="8" chromeColor="#323232"/>
 												<mx:HRule includeIn="MeasureLeftAnormalTine,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthTineLine"
 														  x="0" y="91" width="267"
 														  x.MeasureLeftAnormalTine="0"
@@ -1973,37 +2370,62 @@
 																x.RecordLeftCircunference="47"
 																y.RecordLeftCircunference="121"
 																width.RecordLeftCircunference="173"
+																chromeColor.RecordLeftCircunference="#323232"
+																chromeColor.RecordLeftTineLine="#323232"
 																x.RecordRigthCircumference="42"
 																y.RecordRigthCircumference="121"
-																width.RecordRigthCircumference="180"/>
+																width.RecordRigthCircumference="180"
+																chromeColor.RecordRigthCircumference="#323232"
+																chromeColor.RecordRigthTineLine="#323232"/>
 												<s:ToggleButton includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
 																x="59" y="146" width="144"
 																label="Erase Lines" alpha="8"
 																x.RecordLeftCircunference="47"
 																y.RecordLeftCircunference="145"
 																width.RecordLeftCircunference="173"
+																chromeColor.RecordLeftCircunference="#323232"
+																chromeColor.RecordLeftTineLine="#323232"
 																x.RecordRigthCircumference="42"
 																y.RecordRigthCircumference="145"
-																width.RecordRigthCircumference="180"/>
+																width.RecordRigthCircumference="180"
+																chromeColor.RecordRigthCircumference="#323232"
+																chromeColor.RecordRigthTineLine="#323232"/>
 												<s:ToggleButton includeIn="RecordLeftCircunference,RecordRigthCircumference"
 																x="46" y="168" width="174"
 																label="Help" alpha="8"
+																chromeColor.RecordLeftCircunference="#323232"
 																x.RecordRigthCircumference="41"
 																y.RecordRigthCircumference="168"
-																width.RecordRigthCircumference="181"/>
+																width.RecordRigthCircumference="181"
+																chromeColor.RecordRigthCircumference="#323232"/>
 												<s:ToggleButton includeIn="RecordLefAbnormalTine,RecordRigthAbnormalTine"
 																x="42" y="139" width="180"
-																label="Erase Lines" alpha="8"/>
+																label="Erase Lines" alpha="8"
+																x.RecordLefAbnormalTine="40"
+																width.RecordLefAbnormalTine="187"
+																chromeColor.RecordLefAbnormalTine="#323232"
+																chromeColor.RecordRigthAbnormalTine="#323232"/>
 											</s:Group>
 											<s:Image includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
 													 x="50" y="247" width="196" height="117"
-													 x.MeasureInsideSpread="50"
+													 id="imagebusckscorezoom"
+													 rollOut="doZoomProduct(event)"
+													 rollOver="doZoomProduct(event)"
+													 click="launchPopUp2(event)"
+													 scaleX="1" scaleY="1"
+													 x.MeasureInsideSpread="58"
 													 y.MeasureInsideSpread="215"
 													 source.MeasureInsideSpread="Image/INSSPR_0.jpg"
-													 x.RecordEarWidth="51" y.RecordEarWidth="251"
+													 x.RecordEarWidth="51" y.RecordEarWidth="232"
 													 source.RecordEarWidth="Image/REFFTR_001.png"
+													 x.RecorderInsideSpread="69"
+													 y.RecorderInsideSpread="252"
 													 source.RecorderInsideSpread="Image/INSSPR_0.jpg"
+													 x.RecordEyeballWidthFeature="57"
+													 y.RecordEyeballWidthFeature="247"
 													 source.RecordEyeballWidthFeature="Image/REFFTR_005.png"
+													 x.RecordEyetoEyeWidth="58"
+													 y.RecordEyetoEyeWidth="247"
 													 source.RecordEyetoEyeWidth="Image/REFFTR_002.png"/>
 											<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,positionphoto,referenceFeature,scorephoto"
 													  x="21" y="43" width="200"
@@ -2112,21 +2534,24 @@
 									</s:HGroup>
 									<s:SkinnableContainer includeIn="ExpandDeerName,stateMain"
 														  width="307" height="105"
-														  height.ExpandDeerName="200">
+														  height.ExpandDeerName="200"
+														  fontStyle.stateMain="normal">
 										<s:Button includeIn="stateMain" x="46" y="3"
 												  label="Deer Info" alpha="4"
-												  click="btnupdatedeername_clickHandler(event)"/>
+												  click="btnupdatedeername_clickHandler(event)"
+												  color="#FEFEFE"/>
 										<s:Button includeIn="stateMain" x="187" y="3"
 												  label="Score Sheet" alpha="4"
-												  click="btn_scoringreview(event)"/>
+												  click="btn_scoringreview(event)" color="#FCF9F9"/>
 										<s:Button includeIn="stateMain" x="86" y="31" width="126"
 												  height="28" label="SCORE" alpha="4"
-												  click="button2_callscore(event)"/>
+												  click="button2_callscore(event)" color="#FEFDFD"/>
 										<s:ComboBox id="combophoto" includeIn="stateMain" x="7"
 													y="76" alpha="4"
 													change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo')currentState='editphoto';   "
+													cornerRadius="5"
 													doubleClick="combophoto_uploadphoto(event)"
-													labelField="Add Photo" prompt="Add new item">
+													labelField="Add Photo" selectedIndex="0">
 											<s:dataProvider>
 												<mx:ArrayList>
 													<fx:String>Add new item</fx:String>
@@ -2157,7 +2582,10 @@
 												 text="Choose Deer To Star Scoring (number)"/>
 										<s:Button includeIn="stateMain" x="235" y="4" label="Expand"
 												  click="currentState='ExpandDeerName'"/>
-										<s:TextInput includeIn="stateMain" x="45" y="29" width="184"/>
+										<s:TextInput id="txtfilterdatagrid" includeIn="stateMain"
+													 x="45" y="29" width="184"
+													 change="filter()" 
+													 focusIn="clearMyTextInput()" />
 										<s:Label includeIn="stateMain" x="10" y="37" color="#FCFAFA"
 												 text="Filter"/>
 										<s:DataGrid id="datagridalbumname" includeIn="stateMain"
@@ -2202,21 +2630,27 @@
 															<s:Group width="100%" height="90">
 																<s:HGroup x="10" y="6" width="482"
 																		  height="15">
-																	<s:Label text="Deer NickName"/>
-																	<s:Label text="Name"/>
+																	<s:Label color="#323232"
+																			 text="Deer NickName"/>
+																	<s:Label color="#323232"
+																			 text="Name"/>
 																</s:HGroup>
 																<s:HGroup x="10" y="28" width="482"
 																		  height="13">
-																	<s:Label text="Location"/>
-																	<s:Label text="0006"/>
+																	<s:Label color="#323232"
+																			 text="Location"/>
+																	<s:Label color="#323232"
+																			 text="0006"/>
 																</s:HGroup>
 																<s:HGroup x="10" y="67" width="482"
 																		  height="13">
-																	<s:Label text="Comments"/>
+																	<s:Label color="#323232"
+																			 text="Comments"/>
 																	<s:TextInput width="342"/>
 																</s:HGroup>
 																<s:HGroup x="11" y="49" width="482"
-																		  height="13">
+																		  height="13"
+																		  color="#323232">
 																	<s:Label text="Date"/>
 																	<s:Label text="10/3/2012 11:10:58 AM"/>
 																</s:HGroup>
@@ -2235,9 +2669,8 @@
 														
 														<mx:Grid id="myGrid" x="251" y="3"
 																 width="100%" height="261"
-																 borderColor="#0B0A0A"
-																 borderStyle="solid"
-																 borderVisible="true" >
+																 borderAlpha="5"
+																 color="#323232">
 															
 															<!-- Define Row 0. -->
 															<mx:GridRow id="row0" width="100%"
@@ -2481,8 +2914,8 @@
 														
 														<mx:Grid id="myGridResult" x="7" y="250"
 																 width="100%" height="100%"
-																 
-																 borderVisible="true" >
+																 borderAlpha="5"
+																 color="#323232">
 														<mx:GridRow id="Rrow0" width="100%">
 															<!-- Define the first cell of Row 1. -->
 															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
@@ -3146,7 +3579,7 @@
 								<s:Group includeIn="referenceFeature" x="20" y="357" width="267"
 										 height="55">
 									<s:Button x="81" y="10" width="100" height="31" label="Start"
-											  chromeColor="#3F8AF0" color="#FCFCFC" cornerRadius="5"
+											  chromeColor="#323232" color="#FCFCFC" cornerRadius="5"
 											  click="selectiontypefeature_clickHandler(event)"/>
 								</s:Group>
 								<s:VGroup includeIn="ScoringFinalBuck" x="705" y="0" width="6"
@@ -3156,10 +3589,7 @@
 							</s:SkinnableContainer>
 					
 						</s:VGroup>
-						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
-								  width="6" height="100%"/>
-					</s:HGroup>
-					<s:HGroup width="100%" height="6"/>
+					</mx:HDividedBox>
 				</s:VGroup>
 				
 			</s:SkinnableContainer>
