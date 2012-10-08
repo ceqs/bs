@@ -513,8 +513,12 @@
 				
 				
 				//manageCropper.initialize();
-				manageCropper.imageCropper.sourceImage ="c:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
+				//var image:BitmapData = new Image(
 				manageCropper.imageCropper.enabled=true;
+				manageCropper.imageCropper.sourceImage ="c:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
+				
+				
+				
 				
 				lbldeernastate.text=datagridalbumname.selectedItem.name;
 				lbldeeralbumstate.text=datagridalbumname.selectedItem.type;
@@ -1070,7 +1074,7 @@
 				
 				<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 						  width="100%" height="100%" gap="0" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6">
-					<s:SkinnableContainer width="100%" height="56" backgroundColor="#323232" >
+					<s:SkinnableContainer width="100%" height="56" backgroundColor="#323232" skinClass="com.complexless.skins.spark.TitleMainSkin">
 						<s:HGroup id="titleMain" width="100%" height="100%" gap="0" paddingLeft="5" paddingRight="5">
 							<s:Label width="265" height="100%" color="#DCD3D3" fontSize="24"
 									 text=" What's you buckscore?" verticalAlign="middle"

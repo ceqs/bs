@@ -15,6 +15,7 @@
 	<fx:Script>
 		<![CDATA[
 			
+			private var newImage:BitmapData;
 			
 			private function init():void {
 				imageCropper.outlineColor = 0xffffff;  	
@@ -32,20 +33,23 @@
 			}
 			
 			private function save():void {
-				var newImage:BitmapData = imageCropper.croppedBitmapData;
+				newImage = imageCropper.croppedBitmapData;
 				imageCropper.sourceImage = newImage;
 				imageCropper.width = newImage.width;
 				imageCropper.height = newImage.height;
-				imageCropper.enabled = false;
 			} 
 			
-			
+			private  function imageready():void
+			{
+				imageCropper.setCropRect();
+				imageCropper.enabled = false;
+			}
 			
 		]]>
 	</fx:Script>
 	<s:BorderContainer x="0" y="0" width="100%" height="100%" borderColor="0x000000" borderAlpha="1.0" borderWeight="1">
 	<s:VGroup width="100%" height="100%" gap="0">
-		<s:SkinnableContainer width="100%" height="25" >
+		<s:SkinnableContainer width="100%" height="25" skinClass="com.complexless.skins.spark.ToolbarSkin">
 			<s:HGroup width="100%" height="100%" gap="0" verticalAlign="middle">
 				<mx:LinkButton icon="@Embed('assets/images/select16x16.png')"/>
 				<mx:LinkButton icon="@Embed('assets/images/save16x16.png')" click="save()"/>
@@ -56,7 +60,7 @@
 				<mx:LinkButton icon="@Embed('assets/images/zoom_actualsize16x16.png')"/>
 			</s:HGroup>
 		</s:SkinnableContainer>
-		<s:SkinnableContainer width="100%" height="100%" >
+		<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
 			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" gap="20">
 				<c:ImageCropper id="imageCropper"
 								width="640"
@@ -64,7 +68,7 @@
 								sourceImage="large.jpg"
 								enabled="true"
 								cropConstraintDisabled="false"
-								sourceImageReady="trace('Image ready');"
+								sourceImageReady="imageready();"
 								sourceImageLoadError="trace('Error while loading image')"
 								cropRectChanged="trace('Crop Rect changed');"
 								cropConstraintChanged="trace('Crop constraint changed');"
