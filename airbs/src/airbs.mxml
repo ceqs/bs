@@ -17,6 +17,7 @@
 			import air.update.ApplicationUpdaterUI;
 			import air.update.events.UpdateEvent;
 			
+			import component.SQLbuckscore;
 			import component.albumbuckscore;
 			import component.albumitembuck;
 			
@@ -30,6 +31,7 @@
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
 			import mx.events.IndexChangedEvent;
+			import mx.events.MenuEvent;
 			import mx.managers.PopUpManager;
 			import mx.rpc.events.ResultEvent;
 			import mx.utils.ObjectUtil;
@@ -70,14 +72,16 @@
 			private var numbertypicalrigth:int=1;
 			private var numberabnormalleft:int=1;
 			private var numberabnormalright:int=1;
-			
+			private var sqlscore:SQLbuckscore;
 			 
 			
 			private var bandera:String;
 			public static var birdList:Array=new Array(); 
 			public static var textList:Array=new Array();
 			public function llenarTabla():void
-			{
+			{   
+				
+				
 				var itemalbumphoto:albumbuckscore = new albumbuckscore();
 				itemalbumphoto.albumname='henry';
 				itemalbumphoto.deername='venado 1';
@@ -152,6 +156,8 @@
 				appUpdater.addEventListener(UpdateEvent.INITIALIZED, onUpdate);
 				appUpdater.addEventListener(ErrorEvent.ERROR, onError);
 				appUpdater.initialize();
+				sqlscore=new SQLbuckscore();
+				sqlscore.start();
 				
 			}
 			
@@ -172,6 +178,34 @@
 				var ns:Namespace = appXML.namespace();
 				gVersion = appXML.ns::version;
 			}
+//////////////////////////////SQL lite database///////////////////////////////////////////////////////////
+			
+////////////////////////////////finish/////////////////////////////////////////////////////////////////////////			
+			
+			
+			
+////////////////////////menu bar control///////////////////////////////////////////
+			private function menuHandler(event:MenuEvent):void  {
+				// Don't open the Alert for a menu bar item that 
+				// opens a popup submenu.
+				if (event.item.@label == "Album") {
+					/*Alert.show("Label: " + event.item.@label + "\n" + 
+						"Data: " + event.item.@data, "Clicked menu item");*/
+					currentState='editAlbum';
+				}
+				else if(event.item.@label == "Deer"){
+					currentState='editphoto';
+				}else if(event.item.@label != "Deer" && event.item.@label != "Album"){
+					Alert.show("Menu: " + event.item.@label, "Buckscore menu item");
+				}
+			}
+/////////////////////////////////////finish/////////////////////////////////////////		
+
+			
+			
+			
+			
+			
 ////////////////////////////////datagrid filtrer/////////////////////////////////			
 			
 			
@@ -411,9 +445,13 @@
 			
 			protected function editAlbum_clickHandler(event:MouseEvent):void
 			{
+				
+				
 				var itemalbum:albumitembuck = new albumitembuck();
 				itemalbum.namealbum= txtalbumname.text;
 				itemalbum.description=txtdescriptionalbum.text;
+				
+				
 				createalbum.addItem(itemalbum);
 				combo.addItem(itemalbum.namealbum);
 				txtalbumname.text='';
@@ -989,13 +1027,24 @@
 					numberabnormalright=1;
 				}
 			}
+/////////////////////////////////Close General buckscore general//////////////
+			protected function closebutton_buckscore():void{
+				currentState='stateMain';
+			}
 			
 			
 			
-			protected function imagezoomscoring_clickHandler(event:MouseEvent):void
+			
+			protected function BackMeasureInsideSpread_clickHandler(event:MouseEvent):void
 			{
-				// TODO Auto-generated method stub
-				
+				var index:int=birdlist.selectedIndex;
+				trace("indez-->"+index);
+				if(index==0){currentState='RecordEarWidth';}
+				else if(index==1) 
+				{
+					if(lblEyetoEyewidth.text!="Eyeball Width") currentState='RecordEyetoEyeWidth';
+					else currentState='RecordEyeballWidthFeature';
+				}
 			}
 			
 		]]>
@@ -1087,7 +1136,7 @@
 					</s:SkinnableContainer>
 					
 					<s:HGroup width="100%" verticalAlign="middle" height="34">
-						<bs:MenuBar id="myMenuBar" labelField="@label" height="24" width="100%">
+						<bs:MenuBar id="myMenuBar" labelField="@label" height="24" width="100%"  itemClick="menuHandler(event)">
 							<fx:XMLList>
 								<menuitem label="New">
 									<menuitem label="Album"/>
@@ -1219,7 +1268,7 @@
 													 x="0" y="0" width="100%" color="#DCD3D3"
 													 fontSize="20" text=" Name"/>
 											<s:Button includeIn="editphoto,updatephotodata" label="Delete"/>
-											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,positionphoto,referenceFeature,scorephoto" label="Close"/>
+											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,positionphoto,referenceFeature,scorephoto" label="Close" click="closebutton_buckscore()"/>
 											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,positionphoto,referenceFeature,scorephoto"
 													  label="Delete"
 													  label.CompleteScoringfinal="Back"
@@ -1227,31 +1276,31 @@
 													  label.MeasureAnormalPoints="Back"
 													  click.MeasureAnormalPoints="currentState='referenceFeature'"
 													  label.MeasureInsideSpread="Back"
-													  click.MeasureInsideSpread="currentState='referenceFeature'"
+													  click.MeasureInsideSpread="BackMeasureInsideSpread_clickHandler(event)"
 													  label.MeasureLeftAnormalTine="Back"
 													  click.MeasureLeftAnormalTine="currentState='referenceFeature'"
 													  label.MeasureLeftCircunference="Back"
 													  click.MeasureLeftCircunference="currentState='referenceFeature'"
 													  label.MeasureLeftMainBeam="Back"
-													  click.MeasureLeftMainBeam="currentState='referenceFeature'"
+													  click.MeasureLeftMainBeam="currentState='NumberTypicalPoints'; numbertypicalleft=1;"
 													  label.MeasureLeftTine="Back"
-													  click.MeasureLeftTine="currentState='referenceFeature'"
+													  click.MeasureLeftTine="currentState='RecordRigthMainBeam'"
 													  label.MeasureRigthAnormalTine="Back"
 													  click.MeasureRigthAnormalTine="currentState='referenceFeature'"
 													  label.MeasureRigthCircumference="Back"
 													  click.MeasureRigthCircumference="currentState='referenceFeature'"
 													  label.MeasureRigthMainBeam="Back"
-													  click.MeasureRigthMainBeam="currentState='referenceFeature'"
+													  click.MeasureRigthMainBeam="currentState='RecordLeftMainBeamLine'"
 													  label.MeasureRigthTine="Back"
-													  click.MeasureRigthTine="currentState='referenceFeature'"
+													  click.MeasureRigthTine="currentState='RecordRigthMainBeam'; numbertypicalrigth=1;"
 													  label.NumberTypicalPoints="Back"
-													  click.NumberTypicalPoints="currentState='referenceFeature'"
+													  click.NumberTypicalPoints="currentState='RecorderInsideSpread'"
 													  label.positionphoto="Back"
 													  click.positionphoto="button3_backeditphoto(event)"
 													  label.RecordEarWidth="Back"
 													  click.RecordEarWidth="currentState='referenceFeature'"
 													  label.RecorderInsideSpread="Back"
-													  click.RecorderInsideSpread="currentState='referenceFeature'"
+													  click.RecorderInsideSpread="currentState='MeasureInsideSpread'"
 													  label.RecordEyeballWidthFeature="Back"
 													  click.RecordEyeballWidthFeature="currentState='referenceFeature'"
 													  label.RecordEyetoEyeWidth="Back"
@@ -1261,17 +1310,17 @@
 													  label.RecordLeftCircunference="Back"
 													  click.RecordLeftCircunference="currentState='referenceFeature'"
 													  label.RecordLeftMainBeamLine="Back"
-													  click.RecordLeftMainBeamLine="currentState='referenceFeature'"
+													  click.RecordLeftMainBeamLine="currentState='MeasureLeftMainBeam'"
 													  label.RecordLeftTineLine="Back"
-													  click.RecordLeftTineLine="currentState='referenceFeature'"
+													  click.RecordLeftTineLine="currentState='RecordRigthMainBeam'; numbertypicalleft=1;"
 													  label.RecordRigthAbnormalTine="Back"
 													  click.RecordRigthAbnormalTine="currentState='referenceFeature'"
 													  label.RecordRigthCircumference="Back"
 													  click.RecordRigthCircumference="currentState='referenceFeature'"
 													  label.RecordRigthMainBeam="Back"
-													  click.RecordRigthMainBeam="currentState='referenceFeature'"
+													  click.RecordRigthMainBeam="currentState='MeasureRigthMainBeam'"
 													  label.RecordRigthTineLine="Back"
-													  click.RecordRigthTineLine="currentState='referenceFeature'"
+													  click.RecordRigthTineLine="currentState='RecordRigthMainBeam'; numbertypicalrigth=1;"
 													  label.referenceFeature="Back"
 													  click.referenceFeature="button3_referenceFeature(event)"
 													  label.scorephoto="Back"
@@ -2422,8 +2471,8 @@
 													 source.MeasureInsideSpread="Image/INSSPR_0.jpg"
 													 x.RecordEarWidth="51" y.RecordEarWidth="232"
 													 source.RecordEarWidth="Image/REFFTR_001.png"
-													 x.RecorderInsideSpread="69"
-													 y.RecorderInsideSpread="252"
+													 x.RecorderInsideSpread="63"
+													 y.RecorderInsideSpread="246"
 													 source.RecorderInsideSpread="Image/INSSPR_0.jpg"
 													 x.RecordEyeballWidthFeature="57"
 													 y.RecordEyeballWidthFeature="247"
