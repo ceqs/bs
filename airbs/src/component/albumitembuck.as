@@ -5,6 +5,7 @@ package component
 		public function albumitembuck()
 		{
 		}
+		public var id:int;
 		public var namealbum:String;
 		public var description:String;
 	}

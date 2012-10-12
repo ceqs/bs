@@ -34,6 +34,8 @@
 			import mx.events.MenuEvent;
 			import mx.managers.PopUpManager;
 			import mx.rpc.events.ResultEvent;
+			import mx.utils.Base64Decoder;
+			import mx.utils.Base64Encoder;
 			import mx.utils.ObjectUtil;
 			import mx.utils.StringUtil;
 			
@@ -44,18 +46,20 @@
 			private var shadowFilter:DropShadowFilter;
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
 			
-			private var albumphoto:ArrayCollection = new ArrayCollection();
+			private var albumphoto:ArrayCollection= new ArrayCollection();
 			private var createalbum:ArrayCollection = new ArrayCollection();
 			private var fr:FileReference;
 			private var prefsXML:XML;
+			
+			private var sqlscore:SQLbuckscore = new SQLbuckscore();
 			[Bindable]
-			public var array:ArrayCollection;
+			public var array:ArrayCollection=new ArrayCollection;
 			
 			[Bindable]
-			public var array2:ArrayCollection;
+			public var array2:ArrayCollection=new ArrayCollection;
 			
 			[Bindable]
-			public var combo:ArrayCollection;
+			public var combo:ArrayCollection=new ArrayCollection();
 			
 			[Bindable]
 			private var competencyListData:XMLListCollection;
@@ -72,17 +76,19 @@
 			private var numbertypicalrigth:int=1;
 			private var numberabnormalleft:int=1;
 			private var numberabnormalright:int=1;
-			private var sqlscore:SQLbuckscore;
 			 
 			
 			private var bandera:String;
 			public static var birdList:Array=new Array(); 
 			public static var textList:Array=new Array();
+			
 			public function llenarTabla():void
 			{   
+				//sqlscore=new SQLbuckscore();
 				
 				
-				var itemalbumphoto:albumbuckscore = new albumbuckscore();
+				
+				/*var itemalbumphoto:albumbuckscore = new albumbuckscore();
 				itemalbumphoto.albumname='henry';
 				itemalbumphoto.deername='venado 1';
 				itemalbumphoto.posturename='center';
@@ -101,24 +107,59 @@
 				albumphoto.addItem(itemalbumphoto2);
 				array = new ArrayCollection();
 				array2= new ArrayCollection();
-				combo= new ArrayCollection();
+				combo= new ArrayCollection();*/
+				albumphoto=sqlscore.resault();
 				for(var i:int = 0;i<albumphoto.length;i++)
-				{
-					var name:String =(albumbuckscore)( albumphoto.getItemAt(i)).deername;
-					var images:String="c:/tmp/"+name+".jpg";
-					var albumname:String = (albumbuckscore)( albumphoto.getItemAt(i)).albumname;
+				{	
+					
+					var photoItem:Object = albumphoto[i];
 				
-					var score:String = (albumbuckscore)( albumphoto.getItemAt(i)).score;
-					trace('Subject'+i+name);
-					trace('From'+i+albumname);
-					array.addItem({name:name,type:albumname});
-					array2.addItem({image:images ,name:name,type:albumname,score:score});
+					var _deername:String= photoItem.deername as String;
+					var _albumname:String= photoItem.albumname as String;
+					var _images:String=photoItem.image as String;
+					var byteArray:ByteArray;
+					if(_images!=""){
+						var encodedBytes:String = _images;
+					
+						var baseDecoder:Base64Decoder = new Base64Decoder();
+						baseDecoder.decode(encodedBytes);
+						byteArray= baseDecoder.toByteArray();
+					}else{
+						byteArray=null;
+					}
+					
+					
+					var _score:String = photoItem.score as String;
+					trace('Subject'+i+_deername);
+					trace('From'+i+_albumname);
+					array.addItem({name:_deername,type:_albumname});
+					array2.addItem({image:byteArray ,name:_deername,type:_albumname,score:_score});
 					trace(array);
-					combo.addItem(albumname);
+					
+					
 				}
+				
+				trace("Iniciando grid...");
+				
+				createalbum=sqlscore.resaulta();
+				trace("hay algo");
+				for(var j:int = 0;j<createalbum.length;j++){
+					var albumItem:Object = createalbum[j];
+					var __albumname:String= albumItem.albumname as String;
+					trace("muestra:"+__albumname);
+					combo.addItem(__albumname);
+				}
+				
+				
 			}
 			
 			private function initApp():void {
+				trace("Iniciando aplicacion...");
+				
+				if (sqlscore.isExist())
+					sqlscore.opendb();
+				else
+					sqlscore.create();
 				/*
 				if(NativeWindow.supportsTransparency) {
 				shadowFilter = new DropShadowFilter();
@@ -156,8 +197,8 @@
 				appUpdater.addEventListener(UpdateEvent.INITIALIZED, onUpdate);
 				appUpdater.addEventListener(ErrorEvent.ERROR, onError);
 				appUpdater.initialize();
-				sqlscore=new SQLbuckscore();
-				sqlscore.start();
+				
+				llenarTabla();			
 				
 			}
 			
@@ -444,15 +485,15 @@
 			
 			
 			protected function editAlbum_clickHandler(event:MouseEvent):void
-			{
-				
+			{	
 				
 				var itemalbum:albumitembuck = new albumitembuck();
 				itemalbum.namealbum= txtalbumname.text;
 				itemalbum.description=txtdescriptionalbum.text;
 				
+				sqlscore.addItemalbum(itemalbum.namealbum,itemalbum.description);
+				//createalbum.addItem(itemalbum);
 				
-				createalbum.addItem(itemalbum);
 				combo.addItem(itemalbum.namealbum);
 				txtalbumname.text='';
 				txtdescriptionalbum.text="";
@@ -462,12 +503,22 @@
 			
 			protected function DeleteAlbum_clickHandler(event:MouseEvent):void
 			{
+				createalbum= sqlscore.resaulta();
 				var albumdelete:String=combodeletealbum.selectedItem;
-				for(var i:int=0;i<combo.length;i++){
-					if(albumdelete==combo[i].toString()){
+
+				for(var i:int=0;i<createalbum.length;i++){
+					var albumItem:Object = createalbum[i];
+					var __albumname:String= albumItem.albumname as String;
+					if(albumdelete==__albumname){
+						
 						combo.removeItemAt(i);
+						sqlscore.removea(__albumname);
 					}
 				}
+				txtalbumname.text='';
+				txtdescriptionalbum.text="";
+				combophoto.selectedIndex=0;
+				currentState='stateMain';
 				
 			}
 			
@@ -509,14 +560,28 @@
 			private  function savephotoedition():void
 			{
 				var itemalbumphoto:albumbuckscore = new albumbuckscore();
+				
 				itemalbumphoto.deername=txtdeernamesave.text;
 				itemalbumphoto.albumname=cmbalbumnameselection.selectedItem;
 				itemalbumphoto.tagnumber=txttagnumbersave.text;
 				itemalbumphoto.ranchname=txtranchnamesave.text;
 				itemalbumphoto.posturename=txtposturenamesave.text;
-				saveAs("c:/tmp",itemalbumphoto.deername+".jpg");
-				albumphoto.addItem(itemalbumphoto);
+				itemalbumphoto.score="0";
+				var encodedBytes:String="";
+				var byaarrayaux:ByteArray=null;
+				if(fileReference.data!=null){
+					var imageByteArray:ByteArray=fileReference.data;
+					byaarrayaux=imageByteArray;
+					var baseEncoder:Base64Encoder = new Base64Encoder();
+					baseEncoder.encodeBytes(imageByteArray);
+					encodedBytes= baseEncoder.toString();
+				}
+				
+				sqlscore.addItemphoto(itemalbumphoto.deername,itemalbumphoto.albumname,itemalbumphoto.tagnumber,itemalbumphoto.ranchname,itemalbumphoto.posturename,encodedBytes,itemalbumphoto.score);
+				//saveAs("c:/tmp",itemalbumphoto.deername+".jpg");
+				//albumphoto.addItem(itemalbumphoto);
 				array.addItem({name:itemalbumphoto.deername,type:itemalbumphoto.albumname});
+				array2.addItem({image:byaarrayaux ,name:itemalbumphoto.deername,type:itemalbumphoto.albumname,score:itemalbumphoto.score});
 				currentState='stateMain';
 				txtdeernamesave.text="";
 				txttagnumbersave.text="";
@@ -544,16 +609,39 @@
 			
 			protected function datagrid1_selectionChangeHandler(event:GridSelectionEvent):void
 			{
+				albumphoto=sqlscore.resault();
 				trace(datagridalbumname.selectedItem.name);
 				var croper:ManageCropper;
+				var byteArray:ByteArray;
+				for(var i:int;i<albumphoto.length;i++){
+					var photoItem:Object = albumphoto[i];
+					var __deername:String= photoItem.deername as String;
+					
+					if(datagridalbumname.selectedItem.name==__deername){
+						var images:String=photoItem.image as String;
+						trace("image code"+images);
+						if(images!=""){
+						var encodedBytes:String = images;
+						var baseDecoder:Base64Decoder = new Base64Decoder();
+						baseDecoder.decode(encodedBytes);
+						byteArray= baseDecoder.toByteArray();
+						}
+						else{
+							byteArray=null;
+						}
+					}
+					
+					
+				}
 				
-				imageforedition.source="c:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
+				
+				imageforedition.source=byteArray;
 				
 				
 				//manageCropper.initialize();
 				//var image:BitmapData = new Image(
 				manageCropper.imageCropper.enabled=true;
-				manageCropper.imageCropper.sourceImage ="c:/tmp/"+datagridalbumname.selectedItem.name+".jpg";
+				manageCropper.imageCropper.sourceImage =byteArray;
 				
 				
 				
@@ -579,16 +667,40 @@
 			
 			protected function btnupdatedeername_clickHandler(event:MouseEvent):void
 			{
+				
+				
 				currentState="updatephotodata";	
+				albumphoto=sqlscore.resault();
 				imgupload.visible=true;
 				txtdeernamesave.text=txtNamepaneltitle.text;
-				imgupload.source="c:/tmp/"+txtdeernamesave.text+".jpg";
+				
+				
 				for(var i:int =0;i<albumphoto.length;i++){
-					if((albumbuckscore)(albumphoto.getItemAt(i)).deername==txtdeernamesave.text){
-					 cmbalbumnameselection.selectedItem= (albumbuckscore)(albumphoto.getItemAt(i)).albumname;
-					 txttagnumbersave.text= (albumbuckscore)(albumphoto.getItemAt(i)).tagnumber;
-					 txtranchnamesave.text= (albumbuckscore)(albumphoto.getItemAt(i)).ranchname;
-					 txtposturenamesave.text=(albumbuckscore)(albumphoto.getItemAt(i)).posturename;
+					var photoItem:Object = albumphoto[i];
+					
+					var _deername:String= photoItem.deername as String;
+					
+					if(_deername==txtdeernamesave.text){
+						var _albumname:String= photoItem.albumname as String;
+						var _tagnumber:String= photoItem.tagnumber as String;
+						var _ranchname:String= photoItem.ranchname as String;
+						var _posturename:String= photoItem.posturename as String;
+						var _images:String=photoItem.image as String;
+						var byteArray:ByteArray;
+						if(_images!=""){
+							var encodedBytes:String = _images;
+							
+							var baseDecoder:Base64Decoder = new Base64Decoder();
+							baseDecoder.decode(encodedBytes);
+							byteArray= baseDecoder.toByteArray();
+						}else{
+							byteArray=null;
+						}
+					 imgupload.source=byteArray;
+					 cmbalbumnameselection.selectedItem= _albumname;
+					 txttagnumbersave.text= _tagnumber;
+					 txtranchnamesave.text=_ranchname;
+					 txtposturenamesave.text=_posturename;
 					}
 				}
 				
@@ -598,23 +710,47 @@
 			protected function updatesavephotoedition():void
 			{
 				
-				//saveAs("c:/tmp",itemalbumphoto.deername+".jpg");
-				
+				var albumphotoaux:ArrayCollection=new ArrayCollection();
+				albumphoto=sqlscore.resault();
 				
 				for(var i:int=0;i<albumphoto.length;i++){
-					if((albumbuckscore)(albumphoto.getItemAt(i)).deername==txtNamepaneltitle.text){
+					var photoItem:Object = albumphoto[i];
+					
+					var _deername:String= photoItem.deername as String;
+					
+					if(_deername==txtNamepaneltitle.text){
+						var _albumname:String= photoItem.albumname as String;
+						var _images:String=photoItem.image as String;
 						
-							(albumbuckscore)(albumphoto.getItemAt(i)).deername=txtdeernamesave.text;
-							(albumbuckscore)(albumphoto.getItemAt(i)).albumname=cmbalbumnameselection.selectedItem;
-							(albumbuckscore)(albumphoto.getItemAt(i)).tagnumber=txttagnumbersave.text;
-							(albumbuckscore)(albumphoto.getItemAt(i)).ranchname=txtranchnamesave.text;
-							(albumbuckscore)(albumphoto.getItemAt(i)).posturename=txtposturenamesave.text;
-							if(bandera=="1")
-							saveAs("c:/tmp",txtdeernamesave.text+".jpg");
+						
+						
+							var __score:String = photoItem.score as String;	
+							var __deername:String=txtdeernamesave.text;
+							var __albumname:String=cmbalbumnameselection.selectedItem;
+							var __tagnumber:String=txttagnumbersave.text;
+							var __ranchname:String=txtranchnamesave.text;
+							var __posturename:String=txtposturenamesave.text;
+							var encodedBytes:String="";
+							if(bandera=="1"){
+								
+								if(fileReference.data!=null){
+									var imageByteArray:ByteArray=fileReference.data;
+									var baseEncoder:Base64Encoder = new Base64Encoder();
+									baseEncoder.encodeBytes(imageByteArray);
+									encodedBytes= baseEncoder.toString();
+								}
 							//array.addItem({name:txtdeernamesave.text,type:cmbalbumnameselection.selectedItem});
+							}
+							
+							if(encodedBytes!="") _images=encodedBytes; 
+							
+							sqlscore.updatephoto(_deername, __albumname,__tagnumber,__ranchname,__posturename,_images,__score);
 							array.removeItemAt(i);
-							array.addItemAt({name:txtdeernamesave.text,type:cmbalbumnameselection.selectedItem},i);
+							array.addItemAt({name:__deername,type:__albumname},i);
+							array2.removeItemAt(i);
+							array2.addItemAt({image:fileReference.data ,name:_deername,type:_albumname,score:__score},i);
 						}
+					
 						
 				}
 				
@@ -2643,7 +2779,6 @@
 												 text="Filter"/>
 										<s:DataGrid id="datagridalbumname" includeIn="stateMain"
 													x="10" y="56" width="290" height="102"
-													creationComplete="llenarTabla()"
 													dataProvider="{array}"
 													selectionChange="datagrid1_selectionChangeHandler(event)">
 											<s:columns>
