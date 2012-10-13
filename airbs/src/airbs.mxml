@@ -29,10 +29,13 @@
 			import mx.collections.ArrayCollection;
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
+			import mx.controls.Image;
 			import mx.events.FlexEvent;
 			import mx.events.IndexChangedEvent;
 			import mx.events.MenuEvent;
 			import mx.managers.PopUpManager;
+			import mx.printing.FlexPrintJob;
+			import mx.printing.FlexPrintJobScaleType;
 			import mx.rpc.events.ResultEvent;
 			import mx.utils.Base64Decoder;
 			import mx.utils.Base64Encoder;
@@ -124,6 +127,7 @@
 						var baseDecoder:Base64Decoder = new Base64Decoder();
 						baseDecoder.decode(encodedBytes);
 						byteArray= baseDecoder.toByteArray();
+						trace("entre jiji");
 					}else{
 						byteArray=null;
 					}
@@ -1183,6 +1187,50 @@
 				}
 			}
 			
+//////////////////////////////////////////////////////////DELELTE PHOTO/////////////////////////////////////////////////////////
+			
+			protected function deletephoto_clickHandler(event:MouseEvent):void
+			{
+				var deletename:String=txtNamepaneltitle.text;
+				if(deletename.toLowerCase()==""){
+					Alert.show("Selection DeerName");
+					trace("no entro");
+					
+				}else{
+					sqlscore.remove(deletename);
+					var deletephotocolecction:ArrayCollection=new ArrayCollection();
+					for(var i:int=0;i<array.length;i++){
+						var photoItem:Object = array[i];
+						trace("photo"+photoItem.name);
+						if(photoItem.name==txtNamepaneltitle.text){
+							array.removeItemAt(i);
+							array2.removeItemAt(i);
+							
+							trace("entro o no");
+						}
+					}
+					
+					trace("entro");
+				}
+				
+			}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			
+			protected function printingscore_clickHandler(event:MouseEvent):void
+			{
+				// Create an instance of the FlexPrintJob class.
+				var printJob:FlexPrintJob = new FlexPrintJob();
+				
+				// Start the print job.
+				if (printJob.start() != true) return;
+				
+				// Add the object to print. Do not scale it.
+				printJob.addObject(skinablesocreprinting, FlexPrintJobScaleType.NONE);
+				
+				// Send the job to the printer.
+				printJob.send();
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -1320,13 +1368,23 @@
 								<mx:VBox width="100%">
 									
 									
-									<mx:DataGrid id="myGridExpand" y="43" width="100%" height="338"
-												 dataProvider="{array2}" rowHeight="60" >
+									<mx:DataGrid id="myGridExpand" width="100%" height="338"
+												 borderColor="#898585" color="#FBFAFA"
+												 contentBackgroundColor="#787474"
+												 dataProvider="{array2}" rowHeight="60">
 										<mx:columns>
-											<mx:DataGridColumn  headerText="Image" dataField="image"  itemRenderer="mx.controls.Image" paddingLeft="0" />
-											<mx:DataGridColumn headerText="Deer Name" dataField="name" />
-											<mx:DataGridColumn headerText="Album Name" dataField="type" />											
-											<mx:DataGridColumn headerText="Score#" dataField="score" />
+											<mx:DataGridColumn backgroundColor="#9E9898"
+															   dataField="image" headerText="Image"
+															   itemRenderer="mx.controls.Image"
+															   paddingLeft="0"/>
+											<mx:DataGridColumn backgroundColor="#9E9898"
+															   dataField="name"
+															   headerText="Deer Name"/>
+											<mx:DataGridColumn backgroundColor="#9E9898"
+															   dataField="type"
+															   headerText="Album Name"/>											
+											<mx:DataGridColumn backgroundColor="#9E9898"
+															   dataField="score" headerText="Score#"/>
 										</mx:columns>
 									</mx:DataGrid>
 								</mx:VBox>								
@@ -1402,11 +1460,40 @@
 											<s:Label id="txtNamepaneltitle"
 													 includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 													 x="0" y="0" width="100%" color="#DCD3D3"
-													 fontSize="20" text=" Name"/>
-											<s:Button includeIn="editphoto,updatephotodata" label="Delete"/>
+													 fontSize="20"
+													 text.CompleteScoringfinal=" Name"
+													 text.editAlbum=" Name"
+													 text.editphoto=" Name"
+													 text.MeasureAnormalPoints=" Name"
+													 text.MeasureInsideSpread=" Name"
+													 text.MeasureLeftAnormalTine=" Name"
+													 text.MeasureLeftCircunference=" Name"
+													 text.MeasureLeftMainBeam=" Name"
+													 text.MeasureLeftTine=" Name"
+													 text.MeasureRigthAnormalTine=" Name"
+													 text.MeasureRigthCircumference=" Name"
+													 text.MeasureRigthMainBeam=" Name"
+													 text.MeasureRigthTine=" Name"
+													 text.NumberTypicalPoints=" Name"
+													 text.positionphoto=" Name"
+													 text.RecordEarWidth=" Name"
+													 text.RecorderInsideSpread=" Name"
+													 text.RecordEyeballWidthFeature=" Name"
+													 text.RecordEyetoEyeWidth=" Name"
+													 text.RecordLefAbnormalTine=" Name"
+													 text.RecordLeftCircunference=" Name"
+													 text.RecordLeftMainBeamLine=" Name"
+													 text.RecordLeftTineLine=" Name"
+													 text.RecordRigthAbnormalTine=" Name"
+													 text.RecordRigthCircumference=" Name"
+													 text.RecordRigthMainBeam=" Name"
+													 text.RecordRigthTineLine=" Name"
+													 text.referenceFeature=" Name"
+													 text.scorephoto=" Name"
+													 text.ScoringFinalBuck=" "
+													 text.updatephotodata=" Name"/>
 											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,positionphoto,referenceFeature,scorephoto" label="Close" click="closebutton_buckscore()"/>
-											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,positionphoto,referenceFeature,scorephoto"
-													  label="Delete"
+											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,positionphoto,referenceFeature,scorephoto"
 													  label.CompleteScoringfinal="Back"
 													  click.CompleteScoringfinal="currentState='referenceFeature'"
 													  label.MeasureAnormalPoints="Back"
@@ -1464,7 +1551,7 @@
 											<s:Label includeIn="ExpandDeerName" width="209"
 													 color="#FCF9F9" fontSize="20" fontWeight="bold"
 													 text="Deer Statistic"/>
-											<s:Button includeIn="stateMain" label="Delete"/>
+											<s:Button includeIn="stateMain" label="Delete" click="deletephoto_clickHandler(event)"/>
 											<s:HGroup includeIn="ScoringFinalBuck" y="10" width="470"
 													  height="26">
 												<s:Button label="Facebook" alpha="8"
@@ -1476,7 +1563,7 @@
 												<s:Button label="Save" alpha="8"
 														  chromeColor="#323232" cornerRadius="6"/>
 												<s:Button label="Print" alpha="8"
-														  chromeColor="#323232" cornerRadius="6"/>
+														  chromeColor="#323232" cornerRadius="6" click="printingscore_clickHandler(event)"/>
 												<s:Button label="Finish" alpha="8"
 														  chromeColor="#323232" cornerRadius="6"
 														  click="currentState='stateMain'"/>
@@ -2801,8 +2888,9 @@
 									
 										
 									
-									<s:SkinnableContainer includeIn="ScoringFinalBuck" width="100%"
-														  height="100%" >
+									<s:SkinnableContainer id="skinablesocreprinting"
+														  includeIn="ScoringFinalBuck" width="100%"
+														  height="100%">
 										<s:VGroup width="100%" height="100%" >
 											<s:HGroup width="100%" height="95" accentColor="#3F8AF0">
 												<s:SkinnableContainer width="698" backgroundColor="#FEFAFA">
