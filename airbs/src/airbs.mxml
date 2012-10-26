@@ -18,20 +18,24 @@
 			import air.update.events.UpdateEvent;
 			
 			import component.SQLbuckscore;
+			import component.ScoreUtils;
 			import component.albumbuckscore;
 			import component.albumitembuck;
 			
 			import flash.filters.DropShadowFilter;
 			import flash.sampler.NewObjectSample;
 			
+			import flashx.textLayout.formats.Float;
 			import flashx.textLayout.tlf_internal;
 			
 			import mx.collections.ArrayCollection;
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
 			import mx.controls.Image;
+			import mx.events.CloseEvent;
 			import mx.events.FlexEvent;
 			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
 			import mx.events.MenuEvent;
 			import mx.managers.PopUpManager;
 			import mx.printing.FlexPrintJob;
@@ -79,51 +83,40 @@
 			private var numbertypicalrigth:int=1;
 			private var numberabnormalleft:int=1;
 			private var numberabnormalright:int=1;
-			 
+			
 			
 			private var bandera:String;
 			public static var birdList:Array=new Array(); 
 			public static var textList:Array=new Array();
+			public var arraybyte:ByteArray=new ByteArray();
+			public var scoreutils:ScoreUtils=new ScoreUtils();
+			
+//////////////////////////////SCORE VARIABLE//////////////////////////////////////////////////////
+			
+			public var scoredeerage:String;
+			public var scorestate:String;
+			public var referencetype:String;
+			public var inchvalue:Number;
+			public var myangleoptions:XMLList;
+			
+///////////////////////////////////////////////////////////////////////////////////////////////			
+			
 			
 			public function llenarTabla():void
 			{   
-				//sqlscore=new SQLbuckscore();
-				
-				
-				
-				/*var itemalbumphoto:albumbuckscore = new albumbuckscore();
-				itemalbumphoto.albumname='henry';
-				itemalbumphoto.deername='venado 1';
-				itemalbumphoto.posturename='center';
-				itemalbumphoto.ranchname='123';
-				itemalbumphoto.tagnumber='12';
-				itemalbumphoto.posturename='left';
-				itemalbumphoto.score='135.2';
-				albumphoto.addItem(itemalbumphoto);
-				var itemalbumphoto2:albumbuckscore = new albumbuckscore();
-				itemalbumphoto2.albumname='henry2';
-				itemalbumphoto2.deername='venado 2';
-				itemalbumphoto2.posturename='rigth';
-				itemalbumphoto2.ranchname='123';
-				itemalbumphoto2.tagnumber='15';
-				itemalbumphoto2.score='147.25';
-				albumphoto.addItem(itemalbumphoto2);
-				array = new ArrayCollection();
-				array2= new ArrayCollection();
-				combo= new ArrayCollection();*/
 				albumphoto=sqlscore.resault();
 				for(var i:int = 0;i<albumphoto.length;i++)
 				{	
 					
 					var photoItem:Object = albumphoto[i];
-				
+					
 					var _deername:String= photoItem.deername as String;
 					var _albumname:String= photoItem.albumname as String;
 					var _images:String=photoItem.image as String;
 					var byteArray:ByteArray;
 					if(_images!=""){
 						var encodedBytes:String = _images;
-					
+						
 						var baseDecoder:Base64Decoder = new Base64Decoder();
 						baseDecoder.decode(encodedBytes);
 						byteArray= baseDecoder.toByteArray();
@@ -138,6 +131,7 @@
 					trace('From'+i+_albumname);
 					array.addItem({name:_deername,type:_albumname});
 					array2.addItem({image:byteArray ,name:_deername,type:_albumname,score:_score});
+					
 					trace(array);
 					
 					
@@ -202,7 +196,7 @@
 				appUpdater.addEventListener(ErrorEvent.ERROR, onError);
 				appUpdater.initialize();
 				
-				llenarTabla();			
+				llenarTabla();	
 				
 			}
 			
@@ -223,19 +217,19 @@
 				var ns:Namespace = appXML.namespace();
 				gVersion = appXML.ns::version;
 			}
-//////////////////////////////SQL lite database///////////////////////////////////////////////////////////
+			//////////////////////////////SQL lite database///////////////////////////////////////////////////////////
 			
-////////////////////////////////finish/////////////////////////////////////////////////////////////////////////			
+			////////////////////////////////finish/////////////////////////////////////////////////////////////////////////	
 			
 			
 			
-////////////////////////menu bar control///////////////////////////////////////////
+			////////////////////////menu bar control///////////////////////////////////////////
 			private function menuHandler(event:MenuEvent):void  {
 				// Don't open the Alert for a menu bar item that 
 				// opens a popup submenu.
 				if (event.item.@label == "Album") {
 					/*Alert.show("Label: " + event.item.@label + "\n" + 
-						"Data: " + event.item.@data, "Clicked menu item");*/
+					"Data: " + event.item.@data, "Clicked menu item");*/
 					currentState='editAlbum';
 				}
 				else if(event.item.@label == "Deer"){
@@ -244,14 +238,14 @@
 					Alert.show("Menu: " + event.item.@label, "Buckscore menu item");
 				}
 			}
-/////////////////////////////////////finish/////////////////////////////////////////		
-
+			/////////////////////////////////////finish/////////////////////////////////////////	
 			
 			
 			
 			
 			
-////////////////////////////////datagrid filtrer/////////////////////////////////			
+			
+			////////////////////////////////datagrid filtrer/////////////////////////////////	
 			
 			
 			private var firstTime:Boolean = true;
@@ -302,7 +296,10 @@
 			
 			
 			
-/////////////////////////////////finish//////////////////////////////////////////			
+			
+			
+			
+			/////////////////////////////////finish//////////////////////////////////////////	
 			protected function combophoto_uploadphoto(event:MouseEvent):void
 			{	
 				
@@ -484,7 +481,7 @@
 			}
 			
 			
-			/////////////////////position foto////////////////////////////////////////
+			/////////////////////////////////position foto////////////////////////////////////////
 			
 			
 			
@@ -509,7 +506,7 @@
 			{
 				createalbum= sqlscore.resaulta();
 				var albumdelete:String=combodeletealbum.selectedItem;
-
+				
 				for(var i:int=0;i<createalbum.length;i++){
 					var albumItem:Object = createalbum[i];
 					var __albumname:String= albumItem.albumname as String;
@@ -526,11 +523,11 @@
 				
 			}
 			
-////////////////////////////////edition photo//////////////////////////////////////////////// 
+			////////////////////////////////finish edition photo//////////////////////////////////////////////// 
 			
 			
-
-////////////////////////////////////////////////////upload photo file explorer///////////			
+			
+			////////////////////////////////////////////////////upload photo file explorer///////////	
 			protected function uploadfile():void{
 				var arr:Array = [];
 				arr.push(new FileFilter("Images Buckscore", ".gif;*.jpeg;*.jpg;*.png"));
@@ -555,12 +552,12 @@
 				imgupload.source = fileReference.data;
 				imgupload.visible=true;
 				if(bandera=="0")
-				btnbrowsetoadd.visible=false;
+					btnbrowsetoadd.visible=false;
 				
 				//Alert.show(ObjectUtil.toString(fileReference));
 			}
 			
-		
+			
 			private  function savephotoedition():void
 			{
 				var itemalbumphoto:albumbuckscore = new albumbuckscore();
@@ -606,10 +603,10 @@
 				
 			}
 			
-///////////////////////////finish edition photo////////////////////////////////////////////
-
+			///////////////////////////finish edition photo////////////////////////////////////////////
 			
-////////////////////////////////datagrid edition filter///////////////////////////////			
+			
+			////////////////////////////////datagrid edition filter///////////////////////////////	
 			
 			protected function datagrid1_selectionChangeHandler(event:GridSelectionEvent):void
 			{
@@ -617,18 +614,19 @@
 				trace(datagridalbumname.selectedItem.name);
 				var croper:ManageCropper;
 				var byteArray:ByteArray;
+				var images:String;
 				for(var i:int;i<albumphoto.length;i++){
 					var photoItem:Object = albumphoto[i];
 					var __deername:String= photoItem.deername as String;
 					
 					if(datagridalbumname.selectedItem.name==__deername){
-						var images:String=photoItem.image as String;
+						images=photoItem.image as String;
 						trace("image code"+images);
 						if(images!=""){
-						var encodedBytes:String = images;
-						var baseDecoder:Base64Decoder = new Base64Decoder();
-						baseDecoder.decode(encodedBytes);
-						byteArray= baseDecoder.toByteArray();
+							var encodedBytes:String = images;
+							var baseDecoder:Base64Decoder = new Base64Decoder();
+							baseDecoder.decode(encodedBytes);
+							byteArray= baseDecoder.toByteArray();
 						}
 						else{
 							byteArray=null;
@@ -640,21 +638,97 @@
 				
 				
 				imageforedition.source=byteArray;
+				arraybyte=byteArray;
+				//imageforedition0.source=byteArray;
 				
 				
-				//manageCropper.initialize();
+				
+				var loader:Loader = new Loader;
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_COMPLETE);
+				loader.loadBytes(byteArray);
+				
+				
+				
 				//var image:BitmapData = new Image(
-				manageCropper.imageCropper.enabled=true;
-				manageCropper.imageCropper.sourceImage =byteArray;
 				
 				
 				
+				btndeerscoresheet.enabled=true;
 				
 				lbldeernastate.text=datagridalbumname.selectedItem.name;
 				lbldeeralbumstate.text=datagridalbumname.selectedItem.type;
 				txtNamepaneltitle.text=datagridalbumname.selectedItem.name;
 			}
-			////////////////////////////////datagrid edition filter finish///////////////////////////////			
+			
+			
+			private function loader_COMPLETE(event:Event):void
+			{
+				var bitmap:Bitmap = event.target.content;
+				var bitmapData:BitmapData = bitmap.bitmapData;
+				manageCropper.imageCropper.enabled=true;
+				manageCropper.imageCropper.sourceImage =bitmapData;
+			}
+			
+			
+			protected function mygridexpand_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				lblAlbumnameexpand.text=myGridExpand.selectedItem.type;
+				lbldeernameexpand.text=myGridExpand.selectedItem.name;
+				img_ExpandDeerName.source=myGridExpand.selectedItem.image;
+				
+			}
+			
+			
+			protected function stateMain_clickHandler(event:MouseEvent):void
+			{
+				currentState='ExpandDeerName';
+				var scoregraff:ArrayCollection= sqlscore.resault();
+				var scoreprinting:ArrayCollection=new ArrayCollection();
+				var counterscoremin:int;
+				var counterscoremed:int;
+				var counterscoremax:int;
+				var scoremin:ArrayCollection= new ArrayCollection();
+				
+				var scoremedium:ArrayCollection= new ArrayCollection();
+				var scoremax:ArrayCollection= new ArrayCollection();
+				for(var i:int = 0;i<scoregraff.length;i++)
+				{	
+					
+					var photoItem:Object = scoregraff[i];
+					
+					var _deername:String= photoItem.deername as String;
+					var _albumname:String= photoItem.albumname as String;
+					var _images:String=photoItem.image as String;
+					var _score:String=photoItem.score as String;
+					if(parseFloat(_score)<=100){
+						counterscoremin++;
+						scoremin.addItem({deername:_deername+"-"+_albumname});
+					}else if(parseFloat(_score)>100 && parseFloat(_score)<=200){
+						counterscoremed++;
+						scoremedium.addItem({deername:_deername+"-"+_albumname});
+						
+					}else if(parseFloat(_score)>200){
+						counterscoremax++;
+						scoremax.addItem({deername:_deername+"-"+_albumname});
+						
+					}
+					
+					//if()
+					
+				}
+				listscoremin.dataProvider=scoremin;
+				listscoremedium.dataProvider=scoremedium;
+				listscoremax.dataProvider=scoremax;
+				scoreprinting.addItem({Score:counterscoremin,score:"0-100"});
+				scoreprinting.addItem({Score:counterscoremed,score:"100-200"});
+				scoreprinting.addItem({Score:counterscoremax,score:"200+"});
+				scoreChart.dataProvider=scoreprinting;
+				
+			}
+			
+			
+			
+			////////////////////////////////datagrid edition filter finish///////////////////////////////	
 			
 			///////////////////////////////refence feature/////////////////////////
 			protected function image1_clickHandler(event:MouseEvent):void
@@ -667,7 +741,7 @@
 			
 			
 			
-/////////////////////////////////////////////update data statemain/////////////////////////////////////////////////
+			/////////////////////////////////////////////update data statemain/////////////////////////////////////////////////
 			
 			protected function btnupdatedeername_clickHandler(event:MouseEvent):void
 			{
@@ -700,11 +774,11 @@
 						}else{
 							byteArray=null;
 						}
-					 imgupload.source=byteArray;
-					 cmbalbumnameselection.selectedItem= _albumname;
-					 txttagnumbersave.text= _tagnumber;
-					 txtranchnamesave.text=_ranchname;
-					 txtposturenamesave.text=_posturename;
+						imgupload.source=byteArray;
+						cmbalbumnameselection.selectedItem= _albumname;
+						txttagnumbersave.text= _tagnumber;
+						txtranchnamesave.text=_ranchname;
+						txtposturenamesave.text=_posturename;
 					}
 				}
 				
@@ -728,43 +802,43 @@
 						
 						
 						
-							var __score:String = photoItem.score as String;	
-							var __deername:String=txtdeernamesave.text;
-							var __albumname:String=cmbalbumnameselection.selectedItem;
-							var __tagnumber:String=txttagnumbersave.text;
-							var __ranchname:String=txtranchnamesave.text;
-							var __posturename:String=txtposturenamesave.text;
-							var encodedBytes:String="";
-							if(bandera=="1"){
-								
-								if(fileReference.data!=null){
-									var imageByteArray:ByteArray=fileReference.data;
-									var baseEncoder:Base64Encoder = new Base64Encoder();
-									baseEncoder.encodeBytes(imageByteArray);
-									encodedBytes= baseEncoder.toString();
-								}
-							//array.addItem({name:txtdeernamesave.text,type:cmbalbumnameselection.selectedItem});
+						var __score:String = photoItem.score as String;	
+						var __deername:String=txtdeernamesave.text;
+						var __albumname:String=cmbalbumnameselection.selectedItem;
+						var __tagnumber:String=txttagnumbersave.text;
+						var __ranchname:String=txtranchnamesave.text;
+						var __posturename:String=txtposturenamesave.text;
+						var encodedBytes:String="";
+						if(bandera=="1"){
+							
+							if(fileReference.data!=null){
+								var imageByteArray:ByteArray=fileReference.data;
+								var baseEncoder:Base64Encoder = new Base64Encoder();
+								baseEncoder.encodeBytes(imageByteArray);
+								encodedBytes= baseEncoder.toString();
 							}
-							
-							if(encodedBytes!="") _images=encodedBytes; 
-							
-							sqlscore.updatephoto(_deername, __albumname,__tagnumber,__ranchname,__posturename,_images,__score);
-							array.removeItemAt(i);
-							array.addItemAt({name:__deername,type:__albumname},i);
-							array2.removeItemAt(i);
-							array2.addItemAt({image:fileReference.data ,name:_deername,type:_albumname,score:__score},i);
+							//array.addItem({name:txtdeernamesave.text,type:cmbalbumnameselection.selectedItem});
 						}
-					
 						
+						if(encodedBytes!="") _images=encodedBytes; 
+						
+						sqlscore.updatephoto(_deername, __albumname,__tagnumber,__ranchname,__posturename,_images,__score);
+						array.removeItemAt(i);
+						array.addItemAt({name:__deername,type:__albumname},i);
+						array2.removeItemAt(i);
+						array2.addItemAt({image:fileReference.data ,name:_deername,type:_albumname,score:__score},i);
+					}
+					
+					
 				}
 				
-			
+				
 				txtdeernamesave.text="";
 				txttagnumbersave.text="";
 				txtranchnamesave.text="";
 				txtposturenamesave.text="";
 				imgupload.visible=false;
-					 
+				
 				txtNamepaneltitle.text=txtdeernamesave.text;
 				currentState="stateMain";
 				bandera="0";
@@ -774,25 +848,78 @@
 			protected function selectiontypefeature_clickHandler(event:MouseEvent):void
 			{
 				var index:int=birdlist.selectedIndex;
-				if(index==0){currentState='RecordEarWidth';}
+				if(index==0){currentState='RecordEarWidth'; referencetype='001';   }
 				else if(index==1) 
 				{
-					if(lblEyetoEyewidth.text!="Eyeball Width") currentState='RecordEyetoEyeWidth';
-					else currentState='RecordEyeballWidthFeature';
+					if(lblEyetoEyewidth.text!="Eyeball Width"){ currentState='RecordEyetoEyeWidth'; referencetype='002';}
+					else{ currentState='RecordEyeballWidthFeature'; referencetype='005';};
 				}
-				
+				trace("reference feature:"+referencetype);
 			}
 			
 			protected function toggle_EarWidthHandler(event:MouseEvent):void
 			{
+				var distance:Number=12;
+				
 				if(!tglearwidth.selected){
-					currentState='MeasureInsideSpread';
-				}
+					
+					if(grade=="90"){
+						currentState='RecorderInsideSpreadEstimate';
+						var  stateReferenceRule:String=(parseInt(scoredeerage)<2 && referencetype=='005' ? "Rule1":
+							parseInt(scoredeerage)<2 && referencetype=='004' ? "Rule2":
+							parseInt(scoredeerage)<2 && referencetype=='003' ? "Rule3":
+							parseInt(scoredeerage)<2 && referencetype=='001' ? "Rule4":
+							parseInt(scoredeerage)<2 && referencetype=='002' ? "Rule5":
+							parseInt(scoredeerage)>=2 && referencetype=='005' ? "Rule6":
+							parseInt(scoredeerage)>=2 && referencetype=='004' ? "Rule7":
+							parseInt(scoredeerage)>=2 && referencetype=='003' ? "Rule8":
+							parseInt(scoredeerage)>=2 && referencetype=='001' ? "Rule9":
+							parseInt(scoredeerage)>=2 && referencetype=='002' ? "Rule10":"");
+						
+						
+						var mylistposition:XMLList = prefsXML.child("States").child("State");
+						for(var i:int=0;i<mylistposition.length();i++){
+							if(mylistposition[i].attribute("Description")==scorestate){
+								var rule:Number=Number(mylistposition[i].attribute(stateReferenceRule));
+								inchvalue=distance/rule;
+								trace("valueinch:"+inchvalue);
+							}
+								
+							}
+						}
+						trace(mylistposition[0].attribute("Code"));
+						
+					}	
+					else{
+						currentState='MeasureInsideSpread';
+						var  stateReferenceRule2:String=(parseInt(scoredeerage)<2 && referencetype=='005' ? "Rule1":
+							parseInt(scoredeerage)<2 && referencetype=='004' ? "Rule2":
+							parseInt(scoredeerage)<2 && referencetype=='003' ? "Rule3":
+							parseInt(scoredeerage)<2 && referencetype=='001' ? "Rule4":
+							parseInt(scoredeerage)<2 && referencetype=='002' ? "Rule5":
+							parseInt(scoredeerage)>=2 && referencetype=='005' ? "Rule6":
+							parseInt(scoredeerage)>=2 && referencetype=='004' ? "Rule7":
+							parseInt(scoredeerage)>=2 && referencetype=='003' ? "Rule8":
+							parseInt(scoredeerage)>=2 && referencetype=='001' ? "Rule9":
+							parseInt(scoredeerage)>=2 && referencetype=='002' ? "Rule10":"");
+						
+						
+						mylistposition = prefsXML.child("States").child("State");
+						for( i=0;i<mylistposition.length();i++){
+							if(mylistposition[i].attribute("Description")==scorestate){
+								var rule2:Number=Number(mylistposition[i].attribute(stateReferenceRule2));
+								inchvalue=distance/rule2;
+								trace("valueinch:"+inchvalue);
+							}
+							
+						}
+					}
+				
 			}
 			
 			
 			
-			
+			public var grade:String="";
 			protected function button4_positionphoto(event:MouseEvent):void
 			{
 				var mylistposition:XMLList = prefsXML.child("ModifiedImageOrientations").child("Orientation");
@@ -800,7 +927,8 @@
 				var position:String =lblpositionphoto.text; 
 				var key1:String="";
 				var key2:String="";
-			    //trace(position.toString());				
+				
+				//trace(position.toString());	
 				//birdList
 				
 				for(var i:int=0; i<mylistposition.length();i++){
@@ -819,8 +947,8 @@
 						key1=mylistcode1[0].attribute("key");
 						key2=mylistcode1[1].attribute("key");
 						trace(key1+"."+key2);
-						
-						
+						grade=mylistposition[i].attribute("Code");
+						trace("grado:"+grade);
 					}
 				}
 				
@@ -843,8 +971,8 @@
 						
 					}else if(mylistcodeImage[i].attribute("Code")==key2.toString()) {
 						
-							image2=mylistcodeImage[i].attribute("ImagePath");
-							birdList[1]=image2;
+						image2=mylistcodeImage[i].attribute("ImagePath");
+						birdList[1]=image2;
 						trace(mylistcodeImage[i].attribute("Description")+"--"+birdList[1]);
 						textList[1]=mylistcodeImage[i].attribute("Description");
 					}
@@ -852,16 +980,34 @@
 					
 				}
 				
-				
+				if(grade!="0"){
+					Alert.show("The view you have chosen is not an exact match to the Buscksocre requirements. Your result may vary."+"Do yo wish to continue", "Irregular Image Orientation COnfirmation",
+						Alert.OK | Alert.CANCEL, this,
+						alertListener, null, Alert.OK);
+				}else{
+					currentState='referenceFeature';
+					birdlist.dataProvider.refresh();
+					lblEarWidth.text=textList[0];
+					lblEyetoEyewidth.text=textList[1];
+				}
 				//birdlist=new Array[image1),StringUtil.trim(image2)];
 				
-				currentState='referenceFeature';
-				birdlist.dataProvider.refresh();
-				lblEarWidth.text=textList[0];
-				lblEyetoEyewidth.text=textList[1];
+				
+				
 				
 				//initCatalog(birdList);
 			}
+			
+			private function alertListener(eventObj:CloseEvent):void {
+				// Check to see if the OK button was pressed.
+				if (eventObj.detail==Alert.OK) {
+					currentState='referenceFeature';
+					birdlist.dataProvider.refresh();
+					lblEarWidth.text=textList[0];
+					lblEyetoEyewidth.text=textList[1];
+				}
+			}
+			
 			
 			//private static var birdList:Array ; 
 			
@@ -885,25 +1031,111 @@
 				
 			}
 			
-			protected function toggle_RecorderInsideSpread(event:MouseEvent):void
-			{
-				if(!tglearwidth.selected){
-					currentState='NumberTypicalPoints';
-				}
-				
-			}
+			
 			
 			
 			
 			protected function ScoringDeer_btn(event:MouseEvent):void
 			{
 				currentState='ScoringFinalBuck';
+				imageforedition0.source=arraybyte;
+				
+				insidespread.text=scoreutils.insidespread;
+				mainbeamleftgrid.text=scoreutils.mainbeamleft;
+				mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
+				t1l.text=scoreutils.Typicalpointleft1;
+				t1r.text=scoreutils.Typicalpointrigth1;
+				t1d.text=(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1)).toString();
+				t2l.text=scoreutils.Typicalpointleft2;
+				t2r.text=scoreutils.Typicalpointrigth2;
+				t2d.text=(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2)).toString();
+				t3l.text=scoreutils.Typicalpointleft3;
+				t3r.text=scoreutils.Typicalpointrigth3;
+				t3d.text=(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3)).toString();
+				t4l.text=scoreutils.Typicalpointleft4;
+				t4r.text=scoreutils.Typicalpointrigth4;
+				t4d.text=(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4)).toString();
+				t5l.text=scoreutils.Typicalpointleft5;
+				t5r.text=scoreutils.Typicalpointrigth5;
+				t5d.text=(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5)).toString();
+				t6l.text=scoreutils.Typicalpointleft6;
+				t6r.text=scoreutils.Typicalpointrigth6;
+				t6d.text=(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6)).toString();
+				t7l.text=scoreutils.Typicalpointleft7;
+				t7r.text=scoreutils.Typicalpointrigth7;
+				t7d.text=(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7)).toString();
+				t8l.text=scoreutils.Typicalpointleft8;
+				t8r.text=scoreutils.Typicalpointrigth8;
+				t8d.text=(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8)).toString();
+				t9l.text=scoreutils.Typicalpointleft9;
+				t9r.text=scoreutils.Typicalpointrigth9;
+				t9d.text=(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9)).toString();
+				t10l.text=scoreutils.Typicalpointleft10;
+				t10r.text=scoreutils.Typicalpointrigth10;
+				t10d.text=(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10)).toString();
+				
+				c1l.text=scoreutils.Circumferenceleft1;
+				c1r.text=scoreutils.Circumferencerigth1;
+				c1d.text=(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1)).toString();
+				c2l.text=scoreutils.Circumferenceleft2;
+				c2r.text=scoreutils.Circumferencerigth2;
+				c2d.text=(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2)).toString();
+				c3l.text=scoreutils.Circumferenceleft3;
+				c3r.text=scoreutils.Circumferencerigth3;
+				c3d.text=(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3)).toString();
+				c4l.text=scoreutils.Circumferenceleft4;
+				c4r.text=scoreutils.Circumferencerigth4;
+				c4d.text=(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4)).toString();
+				a1.text=scoreutils.Abnormalpointleft1;
+				ar1.text=scoreutils.Abnormalpointrigth1;
+				a2.text=scoreutils.Abnormalpointleft2;
+				ar2.text=scoreutils.Abnormalpointrigth2;
+				a3.text=scoreutils.Abnormalpointleft3;
+				ar3.text=scoreutils.Abnormalpointrigth3;
+				a4.text=scoreutils.Abnormalpointleft4;
+				ar4.text=scoreutils.Abnormalpointrigth4;
+				a5.text=scoreutils.Abnormalpointleft5;
+				ar5.text=scoreutils.Abnormalpointrigth5;
+				a6.text=scoreutils.Abnormalpointleft6;
+				ar6.text=scoreutils.Abnormalpointrigth6;
+				a7.text=scoreutils.Abnormalpointleft7;
+				ar7.text=scoreutils.Abnormalpointrigth7;
+				a8.text=scoreutils.Abnormalpointleft8;
+				ar8.text=scoreutils.Abnormalpointrigth8;
+				a9.text=scoreutils.Abnormalpointleft9;
+				ar9.text=scoreutils.Abnormalpointrigth9;
+				a10.text=scoreutils.Abnormalpointleft10;
+				ar10.text=scoreutils.Abnormalpointrigth10;
+				a11.text=scoreutils.Abnormalpointleft11;
+				ar11.text=scoreutils.Abnormalpointrigth11;
+				a12.text=scoreutils.Abnormalpointleft12;
+				ar12.text=scoreutils.Abnormalpointrigth12;
+				a13.text=scoreutils.Abnormalpointleft13;
+				ar13.text=scoreutils.Abnormalpointrigth13;
+				a14.text=scoreutils.Abnormalpointleft14;
+				ar14.text=scoreutils.Abnormalpointrigth14;
+				a15.text=scoreutils.Abnormalpointleft15;
+				ar15.text=scoreutils.Abnormalpointrigth15;
+				a16.text=scoreutils.Abnormalpointleft16;
+				ar16.text=scoreutils.Abnormalpointrigth16;
+				a17.text=scoreutils.Abnormalpointleft17;
+				ar17.text=scoreutils.Abnormalpointrigth17;
+				a18.text=scoreutils.Abnormalpointleft18;
+				ar18.text=scoreutils.Abnormalpointrigth18;
+				a19.text=scoreutils.Abnormalpointleft19;
+				ar19.text=scoreutils.Abnormalpointrigth19;
+				a20.text=scoreutils.Abnormalpointleft20;
+				ar20.text=scoreutils.Abnormalpointrigth20;
+
+				
 				
 			}
 			
 			protected function btn_scoringreview(event:MouseEvent):void
 			{
 				currentState='ScoringFinalBuck';
+				if(arraybyte!=null){
+				imageforedition0.source=arraybyte;}
 				
 			}
 			
@@ -926,17 +1158,17 @@
 					// If this is a ROLL_OVER event, play the effect forwards.
 					zoomProduct.play([event.target], event.type == MouseEvent.ROLL_OUT ? true : false);
 					trace("hola play");
-								}
+				}
 				
 			}
 			
 			private function launchPopUp(e:MouseEvent):void {
 				
-					var win : Window = new Window();
-					win.sourceImage = imagezoomscoring.source.toString();
-					win.title =  "Buckscore";
-					PopUpManager.addPopUp(win,this,true);
-					PopUpManager.centerPopUp(win);
+				var win : Window = new Window();
+				win.sourceImage = imagezoomscoring.source.toString();
+				win.title =  "Buckscore";
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
 				
 			}
 			private function launchPopUp2(e:MouseEvent):void {
@@ -971,14 +1203,7 @@
 				
 			}
 			
-			protected function RecordLeftMainBeamLine_clickHandler(event:MouseEvent):void
-			{
-				currentState='MeasureRigthMainBeam';
-				txtTypicalLeftPonitsRigthMain.text=cmbletftypical.selectedItem;
-				txtTypicalRigthPonitsRigthMain.text=cmbrigthtypical.selectedItem;
-					
-				
-			}
+			
 			
 			protected function MeasureRigthMainBeam_clickHandler(event:MouseEvent):void
 			{
@@ -989,117 +1214,13 @@
 			}
 			
 			
-			/////////////typical points lef//////////////////
-			protected function MeasureLeftTine_clickHandler(event:MouseEvent):void
-			{
-				currentState='RecordLeftTineLine';
-				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
-				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
-				btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
-				
-			}
-			
-			protected function RecordLeftTineLine_clickHandler(event:MouseEvent):void
-			{
-				
-				if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)){
-					
-					currentState='MeasureLeftTine';
-					numbertypicalleft++;
-					btnRecordLeftTine.label="Measure Left Tine "+numbertypicalleft;
-					
-					
-					
-				}else{
-					currentState='MeasureRigthTine';
-					numbertypicalleft=1;
-				}
-			}
 			
 			
 			
-			/////////////typical points Rigth//////////////////
-			
-			protected function MeasureRigthTine_clickHandler(event:MouseEvent):void
-			{
-				currentState='RecordRigthTineLine';
-				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
-				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
-				btnRecordLeftTine.label="Record Rigth Tine "+numbertypicalrigth;
-				
-			}
-			protected function RecordRigthTineLine_clickHandler(event:MouseEvent):void
-			{
-				if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)){
-					
-					currentState='MeasureRigthTine';
-					numbertypicalrigth++;
-					btnRecordLeftTine.label="Measure Rigth Tine "+numbertypicalrigth;
-					
-				}else{
-					currentState='MeasureLeftCircunference';
-					numbertypicalrigth=1;
-				}
-				
-			}
 			
 			
-			/////////////Circumference points lef//////////////////
-			private var numbercincumferenceleft:int=1;
-			
-			protected function MeasureLeftCircunference_clickHandler(event:MouseEvent):void
-			{
-				currentState='RecordLeftCircunference';
-				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
-				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
-				btnRecordLeftTine.label="Record Letf Circumference "+numbercincumferenceleft;
-				
-			}
 			
 			
-			protected function RecordLeftCircunference_clickHandler(event:MouseEvent):void
-			{
-				
-				if(numbercincumferenceleft<4){
-					
-					currentState='MeasureLeftCircunference';
-					numbercincumferenceleft++;
-					btnRecordLeftTine.label="Measure Letf Circumference "+numbercincumferenceleft;
-					
-				}else{
-					currentState='MeasureRigthCircumference'
-					numbercincumferenceleft=1;
-				}
-					
-			}
-			/////////////Circumference  points Rigth//////////////////
-			private var numbercincumferencerigth:int=1;
-			
-			protected function MeasureRigthCircumference_clickHandler(event:MouseEvent):void
-			{
-				currentState='RecordRigthCircumference';
-				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
-				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
-				btnRecordLeftTine.label="Record Rigth Circumference "+numbercincumferencerigth;
-				
-			}
-			
-			
-			protected function RecordRigthCircumference_clickHandler(event:MouseEvent):void
-			{
-				
-				if(numbercincumferencerigth<4){
-					
-					currentState='MeasureRigthCircumference';
-					numbercincumferencerigth++;
-					btnRecordLeftTine.label="Measure Rigth Circumference "+numbercincumferencerigth;
-					
-				}else{
-					currentState='MeasureAnormalPoints'
-					numbercincumferencerigth=1;
-				}
-				
-			}
 			
 			
 			/////////////////////abnormal points ////////////////////////////////////
@@ -1120,54 +1241,13 @@
 				}
 				
 				txtleftanormalpoints.text=cmbabnormalpointsleft.selectedItem;
-				txtrigthanormalpoints.text=cmbabnormalpointsrigth.selectedItem;				
-			}
-			
-			protected function MeasureLeftAnormalTine_clickHandler(event:MouseEvent):void
-			{
-				currentState='RecordLefAbnormalTine';
-				
-				btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
-				
+				txtrigthanormalpoints.text=cmbabnormalpointsrigth.selectedItem;	
 			}
 			
 			
-			protected function RecordLefAbnormalTine_clickHandler(event:MouseEvent):void
-			{
-				if(numberabnormalleft<parseInt(cmbabnormalpointsleft.selectedItem)){
-					
-					currentState='MeasureLeftAnormalTine';
-					numberabnormalleft++;
-					btnRecordLeftTine.label="Measure Left Anormal Tine "+numberabnormalleft;
-					
-				}else{
-					currentState='MeasureRigthAnormalTine'
-					numberabnormalleft=1;
-				}
-			}
 			
-			protected function MeasureRigthAnormalTine_clickHandler(event:MouseEvent):void
-			{
-				currentState='RecordRigthAbnormalTine';
-				
-				btnRecordLeftTine.label="Record Rigth Abnormal Tine "+numberabnormalright;
-				
-			}
 			
-			protected function RecordRigthAbnormalTine_clickHandler(event:MouseEvent):void
-			{
-				if(numberabnormalright<parseInt(cmbabnormalpointsrigth.selectedItem)){
-					
-					currentState='MeasureRigthAnormalTine';
-					numberabnormalright++;
-					btnRecordLeftTine.label="Measure Rigth Anormal Tine "+numberabnormalright;
-					
-				}else{
-					currentState='CompleteScoringfinal'
-					numberabnormalright=1;
-				}
-			}
-/////////////////////////////////Close General buckscore general//////////////
+			/////////////////////////////////Close General buckscore general//////////////
 			protected function closebutton_buckscore():void{
 				currentState='stateMain';
 			}
@@ -1187,7 +1267,7 @@
 				}
 			}
 			
-//////////////////////////////////////////////////////////DELELTE PHOTO/////////////////////////////////////////////////////////
+			//////////////////////////////////////////////////////////DELELTE PHOTO/////////////////////////////////////////////////////////
 			
 			protected function deletephoto_clickHandler(event:MouseEvent):void
 			{
@@ -1214,7 +1294,7 @@
 				}
 				
 			}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			
 			protected function printingscore_clickHandler(event:MouseEvent):void
 			{
@@ -1230,6 +1310,746 @@
 				// Send the job to the printer.
 				printJob.send();
 			}
+			
+			protected function mygridexpand_changeHandler(event:ListEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			/////////////////////////change of list in state Expand////////////////////////////////////////////	
+			
+			protected function listscoremin_changeHandler(event:Event):void
+			{
+				var filter:Object=listscoremin.selectedItem;
+				trace(filter.deername);
+				var filtername:String=filter.deername;	
+				
+				if(filter!=null){
+					trace(filtername.length);
+					for(var i:int=0;i<filtername.length;i++){
+						trace(filtername.charAt(i).toString());
+						if(filtername.charAt(i)=="-"){
+							
+							txtexpandfilter.text=filtername.substring(0,i);
+							filter2();
+							
+							break;
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+			protected function listscoremedium_changeHandler(event:IndexChangeEvent):void
+			{
+				var filter:Object=listscoremedium.selectedItem;
+				trace(filter.deername);
+				var filtername:String=filter.deername;	
+				
+				if(filter!=null){
+					trace(filtername.length);
+					for(var i:int=0;i<filtername.length;i++){
+						trace(filtername.charAt(i).toString());
+						if(filtername.charAt(i)=="-"){
+							
+							txtexpandfilter.text=filtername.substring(0,i);
+							filter2();
+							
+							break;
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+			protected function listscoremax_changeHandler(event:IndexChangeEvent):void
+			{
+				var filter:Object=listscoremax.selectedItem;
+				trace(filter.deername);
+				var filtername:String=filter.deername;	
+				
+				if(filter!=null){
+					trace(filtername.length);
+					for(var i:int=0;i<filtername.length;i++){
+						trace(filtername.charAt(i).toString());
+						if(filtername.charAt(i)=="-"){
+							
+							txtexpandfilter.text=filtername.substring(0,i);
+							filter2();
+							
+							break;
+						}
+						
+					}
+					
+				}
+				
+			}
+			/////////////////////////////////////FINISH//////////////////////////////////////7	
+///////////////////////////////////////library SCORE EVALUATION////////////////////////////////			
+			protected function scorephoto_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				currentState='positionphoto'
+				scoredeerage=cmbage.selectedItem;
+				scorestate=cmbstate.selectedItem;
+				trace("age:"+scoredeerage+" state:"+scorestate);
+			}
+			
+			protected function toggle_RecorderInsideSpread(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var options:XMLList;
+				if(tglearwidth.selected){
+					options=prefsXML.child("Equations").child("Equation");
+					
+					var j:int=0;
+					for(var i:int=0;options.length();i++){
+						if(options[i].attribute("ImageOrientation")==grade){
+							myangleoptions=options[i].child("Entity");
+							j=i;
+							trace(j);
+							trace(myangleoptions.toString());
+							break;
+						}
+					}
+					
+					trace(myangleoptions.toString());
+					
+					var ldistance:Number=(distance)/(inchvalue);
+					
+					
+					var ISP:Number=Number(myangleoptions[0].attribute("A"))*ldistance+
+					Number(myangleoptions[0].attribute("B"));
+					scoreutils.insidespread=ISP.toString();
+					
+					
+					
+					currentState='NumberTypicalPoints';
+					lbllasmeasurement.text="Inside Spread:"+scoreutils.insidespread.toString();
+				}
+				
+			}
+			
+			protected function RecorderInsideSpreadEstimate_clickHandler(event:MouseEvent):void
+			{
+				
+				currentState='NumberTypicalPoints';
+				lbllasmeasurement.text="Inside Spread: To Be Determined";
+				
+			}
+			
+			protected function RecordLeftMainBeamLine_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(distance)/(inchvalue);
+				if(grade=='0'){
+					ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
+						Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
+					
+				}else{
+					ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
+						Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
+				}
+				scoreutils.mainbeamleft=ISP.toString();
+				
+				
+				currentState='MeasureRigthMainBeam';
+				txtTypicalLeftPonitsRigthMain.text=cmbletftypical.selectedItem;
+				txtTypicalRigthPonitsRigthMain.text=cmbrigthtypical.selectedItem;
+				lbllasmeasurement.text="LeftMainBeam="+scoreutils.mainbeamleft.toString();
+				
+				
+			}
+			
+			
+			protected function RecordRigthMainBeam_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(distance)/(inchvalue);
+				if(grade=='0'){
+					ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
+						Number(myangleoptions[1].attribute("C"))*Number(cmbrigthtypical.selectedItem);
+					
+				}else{
+					ISP=Number(myangleoptions[2].attribute("A"))*ldistance+Number(myangleoptions[2].attribute("B"))+
+						Number(myangleoptions[2].attribute("C"))*Number(cmbrigthtypical.selectedItem);
+				}
+				scoreutils.mainbeamrigth=ISP.toString();
+				
+				currentState='MeasureLeftTine';
+				
+				lbllasmeasurement.text="Rigth Main Beam="+scoreutils.mainbeamrigth.toString();
+				
+			}
+			
+			/////////////typical points lef//////////////////
+			protected function MeasureLeftTine_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordLeftTineLine';
+				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+				
+			}
+			public var cont:int=0;
+			protected function RecordLeftTineLine_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(distance)/(inchvalue);
+				if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)){
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<5) cont++;
+						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[3+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[3+(2*cont)].attribute("B"));
+					}
+					if(numbertypicalleft==1)
+						scoreutils.Typicalpointleft1=ISP.toString();
+					if(numbertypicalleft==2)
+						scoreutils.Typicalpointleft2=ISP.toString();
+					if(numbertypicalleft==3)
+						scoreutils.Typicalpointleft3=ISP.toString();
+					if(numbertypicalleft==4)
+						scoreutils.Typicalpointleft4=ISP.toString();
+					if(numbertypicalleft==5)
+						scoreutils.Typicalpointleft5=ISP.toString();
+					if(numbertypicalleft==6)
+						scoreutils.Typicalpointleft6=ISP.toString();
+					if(numbertypicalleft==7)
+						scoreutils.Typicalpointleft7=ISP.toString();
+					if(numbertypicalleft==8)
+						scoreutils.Typicalpointleft8=ISP.toString();
+					if(numbertypicalleft==9)
+						scoreutils.Typicalpointleft9=ISP.toString();
+					if(numbertypicalleft==10)
+						scoreutils.Typicalpointleft10=ISP.toString();
+					
+					currentState='MeasureLeftTine';
+					
+					
+					lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"="+ISP.toString();
+					numbertypicalleft++;
+					btnRecordLeftTine.label="Measure Left Tine "+numbertypicalleft;
+				}else{
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<5) cont++;
+							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+					}else{
+							ISP=Number(myangleoptions[3+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[3+(2*cont)].attribute("B"));
+					}
+					if(numbertypicalleft==1)
+						scoreutils.Typicalpointleft1=ISP.toString();
+					if(numbertypicalleft==2)
+						scoreutils.Typicalpointleft2=ISP.toString();
+					if(numbertypicalleft==3)
+						scoreutils.Typicalpointleft3=ISP.toString();
+					if(numbertypicalleft==4)
+						scoreutils.Typicalpointleft4=ISP.toString();
+					if(numbertypicalleft==5)
+						scoreutils.Typicalpointleft5=ISP.toString();
+					if(numbertypicalleft==6)
+						scoreutils.Typicalpointleft6=ISP.toString();
+					if(numbertypicalleft==7)
+						scoreutils.Typicalpointleft7=ISP.toString();
+					if(numbertypicalleft==8)
+						scoreutils.Typicalpointleft8=ISP.toString();
+					if(numbertypicalleft==9)
+						scoreutils.Typicalpointleft9=ISP.toString();
+					if(numbertypicalleft==10)
+						scoreutils.Typicalpointleft10=ISP.toString();
+					currentState='MeasureRigthTine';
+					lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"="+ISP.toString();
+					numbertypicalleft=1;
+					cont=0;
+				}
+			}
+			
+			/////////////typical points Rigth//////////////////
+			
+			protected function MeasureRigthTine_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordRigthTineLine';
+				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Record Rigth Tine "+numbertypicalrigth;
+				
+			}
+			protected function RecordRigthTineLine_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(distance)/(inchvalue);
+				if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)){
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<5) cont++;
+						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[4+2*cont].attribute("A"))*ldistance+Number(myangleoptions[4+(2*cont)].attribute("B"));
+					}
+					if(numbertypicalrigth==1)
+						scoreutils.Typicalpointrigth1=ISP.toString();
+					if(numbertypicalrigth==2)
+						scoreutils.Typicalpointrigth2=ISP.toString();
+					if(numbertypicalrigth==3)
+						scoreutils.Typicalpointrigth3=ISP.toString();
+					if(numbertypicalrigth==4)
+						scoreutils.Typicalpointrigth4=ISP.toString();
+					if(numbertypicalrigth==5)
+						scoreutils.Typicalpointrigth5=ISP.toString();
+					if(numbertypicalrigth==6)
+						scoreutils.Typicalpointrigth6=ISP.toString();
+					if(numbertypicalrigth==7)
+						scoreutils.Typicalpointrigth7=ISP.toString();
+					if(numbertypicalrigth==8)
+						scoreutils.Typicalpointrigth8=ISP.toString();
+					if(numbertypicalrigth==9)
+						scoreutils.Typicalpointrigth9=ISP.toString();
+					if(numbertypicalrigth==10)
+						scoreutils.Typicalpointrigth10=ISP.toString();
+					currentState='MeasureRigthTine';
+					lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"="+ISP.toString();
+					numbertypicalrigth++;
+					btnRecordLeftTine.label="Measure Rigth Tine "+numbertypicalrigth;
+					
+				}else{
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<5) cont++;
+						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[4+2*(cont)].attribute("A"))*ldistance+Number(myangleoptions[4+(2*cont)].attribute("B"));
+					}
+					if(numbertypicalrigth==1)
+						scoreutils.Typicalpointrigth1=ISP.toString();
+					if(numbertypicalrigth==2)
+						scoreutils.Typicalpointrigth2=ISP.toString();
+					if(numbertypicalrigth==3)
+						scoreutils.Typicalpointrigth3=ISP.toString();
+					if(numbertypicalrigth==4)
+						scoreutils.Typicalpointrigth4=ISP.toString();
+					if(numbertypicalrigth==5)
+						scoreutils.Typicalpointrigth5=ISP.toString();
+					if(numbertypicalrigth==6)
+						scoreutils.Typicalpointrigth6=ISP.toString();
+					if(numbertypicalrigth==7)
+						scoreutils.Typicalpointrigth7=ISP.toString();
+					if(numbertypicalrigth==8)
+						scoreutils.Typicalpointrigth8=ISP.toString();
+					if(numbertypicalrigth==9)
+						scoreutils.Typicalpointrigth9=ISP.toString();
+					if(numbertypicalrigth==10)
+						scoreutils.Typicalpointrigth10=ISP.toString();
+					currentState='MeasureLeftCircunference';
+					lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"="+ISP.toString();
+					numbertypicalrigth=1;
+					cont=0;
+				}
+				
+			}
+			
+			
+			/////////////Circumference points lef//////////////////
+			private var numbercincumferenceleft:int=1;
+			
+			protected function MeasureLeftCircunference_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordLeftCircunference';
+				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Record Letf Circumference "+numbercincumferenceleft;
+				
+			}
+			
+			
+			protected function RecordLeftCircunference_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(3.14)*(distance)/(inchvalue);
+				if(numbercincumferenceleft<4){
+					
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<4) cont++;
+						ISP=Number(myangleoptions[7+2*cont].attribute("A"))*ldistance+Number(myangleoptions[7+(2*cont)].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
+					}
+					if(numbercincumferenceleft==1)
+						scoreutils.Circumferenceleft1=ISP.toString();
+					if(numbercincumferenceleft==2)
+						scoreutils.Circumferenceleft2=ISP.toString();
+					if(numbercincumferenceleft==3)
+						scoreutils.Circumferenceleft3=ISP.toString();
+					if(numbercincumferenceleft==4)
+						scoreutils.Circumferenceleft4=ISP.toString();
+					
+					
+					
+					
+					currentState='MeasureLeftCircunference';
+					lbllasmeasurement.text="Letf Circumference "+numbercincumferenceleft+"="+ISP.toString();
+					numbercincumferenceleft++;
+					btnRecordLeftTine.label="Measure Letf Circumference "+numbercincumferenceleft;
+					
+				}else{
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<4) cont++;
+						ISP=Number(myangleoptions[7+2*cont].attribute("A"))*ldistance+Number(myangleoptions[7+(2*cont)].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
+					}
+					if(numbercincumferenceleft==1)
+						scoreutils.Circumferenceleft1=ISP.toString();
+					if(numbercincumferenceleft==2)
+						scoreutils.Circumferenceleft2=ISP.toString();
+					if(numbercincumferenceleft==3)
+						scoreutils.Circumferenceleft3=ISP.toString();
+					if(numbercincumferenceleft==4)
+						scoreutils.Circumferenceleft4=ISP.toString();
+					
+					
+					
+					currentState='MeasureRigthCircumference'
+					lbllasmeasurement.text="Letf Circumference "+numbercincumferenceleft+"="+ISP.toString();
+					numbercincumferenceleft=1;
+					cont=0;
+				}
+				
+			}
+			
+			
+			/////////////Circumference  points Rigth//////////////////
+			private var numbercincumferencerigth:int=1;
+			
+			protected function MeasureRigthCircumference_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordRigthCircumference';
+				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
+				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Record Rigth Circumference "+numbercincumferencerigth;
+				
+			}
+			
+			
+			protected function RecordRigthCircumference_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(3.14)*(distance)/(inchvalue);
+				
+				if(numbercincumferencerigth<4){
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<4) cont++;
+						ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
+					}
+					if(numbercincumferencerigth==1)
+						scoreutils.Circumferencerigth1=ISP.toString();
+					if(numbercincumferencerigth==2)
+						scoreutils.Circumferencerigth2=ISP.toString();
+					if(numbercincumferencerigth==3)
+						scoreutils.Circumferencerigth3=ISP.toString();
+					if(numbercincumferencerigth==4)
+						scoreutils.Circumferencerigth4=ISP.toString();
+					
+					currentState='MeasureRigthCircumference';
+					lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"="+ISP.toString();
+					numbercincumferencerigth++;
+					btnRecordLeftTine.label="Measure Rigth Circumference "+numbercincumferencerigth;
+					
+				}else{
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<4) cont++;
+						ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
+					}
+					if(numbercincumferencerigth==1)
+						scoreutils.Circumferencerigth1=ISP.toString();
+					if(numbercincumferencerigth==2)
+						scoreutils.Circumferencerigth2=ISP.toString();
+					if(numbercincumferencerigth==3)
+						scoreutils.Circumferencerigth3=ISP.toString();
+					if(numbercincumferencerigth==4)
+						scoreutils.Circumferencerigth4=ISP.toString();
+					currentState='MeasureAnormalPoints'
+					lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"="+ISP.toString();
+					numbercincumferencerigth=1;
+					cont=0;
+				}
+				
+			}
+			
+			////abnormal point
+			protected function MeasureLeftAnormalTine_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordLefAbnormalTine';
+				
+				btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
+				
+			}
+			
+			
+			protected function RecordLefAbnormalTine_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(distance)/(inchvalue);
+				if(numberabnormalleft<parseInt(cmbabnormalpointsleft.selectedItem)){
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<5) cont++;
+						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[21+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[21+(2*cont)].attribute("B"));
+					}
+					if(numberabnormalleft==1)
+						scoreutils.Abnormalpointleft1=ISP.toString();
+					if(numberabnormalleft==2)
+						scoreutils.Abnormalpointleft2=ISP.toString();
+					if(numberabnormalleft==3)
+						scoreutils.Abnormalpointleft3=ISP.toString();
+					if(numberabnormalleft==4)
+						scoreutils.Abnormalpointleft4=ISP.toString();
+					if(numberabnormalleft==5)
+						scoreutils.Abnormalpointleft5=ISP.toString();
+					if(numberabnormalleft==6)
+						scoreutils.Abnormalpointleft6=ISP.toString();
+					if(numberabnormalleft==7)
+						scoreutils.Abnormalpointleft7=ISP.toString();
+					if(numberabnormalleft==8)
+						scoreutils.Abnormalpointleft8=ISP.toString();
+					if(numberabnormalleft==9)
+						scoreutils.Abnormalpointleft9=ISP.toString();
+					if(numberabnormalleft==10)
+						scoreutils.Abnormalpointleft10=ISP.toString();
+					if(numberabnormalleft==11)
+						scoreutils.Abnormalpointleft11=ISP.toString();
+					if(numberabnormalleft==12)
+						scoreutils.Abnormalpointleft12=ISP.toString();
+					if(numberabnormalleft==13)
+						scoreutils.Abnormalpointleft13=ISP.toString();
+					if(numberabnormalleft==14)
+						scoreutils.Abnormalpointleft14=ISP.toString();
+					if(numberabnormalleft==15)
+						scoreutils.Abnormalpointleft15=ISP.toString();
+					if(numberabnormalleft==16)
+						scoreutils.Abnormalpointleft16=ISP.toString();
+					if(numberabnormalleft==17)
+						scoreutils.Abnormalpointleft17=ISP.toString();
+					if(numberabnormalleft==18)
+						scoreutils.Abnormalpointleft18=ISP.toString();
+					if(numberabnormalleft==19)
+						scoreutils.Abnormalpointleft19=ISP.toString();
+					if(numberabnormalleft==20)
+						scoreutils.Abnormalpointleft20=ISP.toString();
+					
+					currentState='MeasureLeftAnormalTine';
+					lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
+					numberabnormalleft++;
+					btnRecordLeftTine.label="Measure Left Anormal Tine "+numberabnormalleft;
+					
+				}else{
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<5) cont++;
+						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[21+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[21+(2*cont)].attribute("B"));
+					}
+					if(numberabnormalleft==1)
+						scoreutils.Abnormalpointleft1=ISP.toString();
+					if(numberabnormalleft==2)
+						scoreutils.Abnormalpointleft2=ISP.toString();
+					if(numberabnormalleft==3)
+						scoreutils.Abnormalpointleft3=ISP.toString();
+					if(numberabnormalleft==4)
+						scoreutils.Abnormalpointleft4=ISP.toString();
+					if(numberabnormalleft==5)
+						scoreutils.Abnormalpointleft5=ISP.toString();
+					if(numberabnormalleft==6)
+						scoreutils.Abnormalpointleft6=ISP.toString();
+					if(numberabnormalleft==7)
+						scoreutils.Abnormalpointleft7=ISP.toString();
+					if(numberabnormalleft==8)
+						scoreutils.Abnormalpointleft8=ISP.toString();
+					if(numberabnormalleft==9)
+						scoreutils.Abnormalpointleft9=ISP.toString();
+					if(numberabnormalleft==10)
+						scoreutils.Abnormalpointleft10=ISP.toString();
+					if(numberabnormalleft==11)
+						scoreutils.Abnormalpointleft11=ISP.toString();
+					if(numberabnormalleft==12)
+						scoreutils.Abnormalpointleft12=ISP.toString();
+					if(numberabnormalleft==13)
+						scoreutils.Abnormalpointleft13=ISP.toString();
+					if(numberabnormalleft==14)
+						scoreutils.Abnormalpointleft14=ISP.toString();
+					if(numberabnormalleft==15)
+						scoreutils.Abnormalpointleft15=ISP.toString();
+					if(numberabnormalleft==16)
+						scoreutils.Abnormalpointleft16=ISP.toString();
+					if(numberabnormalleft==17)
+						scoreutils.Abnormalpointleft17=ISP.toString();
+					if(numberabnormalleft==18)
+						scoreutils.Abnormalpointleft18=ISP.toString();
+					if(numberabnormalleft==19)
+						scoreutils.Abnormalpointleft19=ISP.toString();
+					if(numberabnormalleft==20)
+						scoreutils.Abnormalpointleft20=ISP.toString();
+					
+					currentState='MeasureRigthAnormalTine'
+					
+					lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
+					numberabnormalleft=1;
+					cont=0;
+				}
+			}
+			
+			
+			protected function MeasureRigthAnormalTine_clickHandler(event:MouseEvent):void
+			{
+				currentState='RecordRigthAbnormalTine';
+				
+				btnRecordLeftTine.label="Record Rigth Abnormal Tine "+numberabnormalright;
+				
+			}
+			
+			protected function RecordRigthAbnormalTine_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(distance)/(inchvalue);
+				if(numberabnormalright<parseInt(cmbabnormalpointsrigth.selectedItem)){
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<5) cont++;
+						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[22+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[22+(2*cont)].attribute("B"));
+					}
+					if(numberabnormalright==1)
+						scoreutils.Abnormalpointrigth1=ISP.toString();
+					if(numberabnormalright==2)
+						scoreutils.Abnormalpointrigth2=ISP.toString();
+					if(numberabnormalright==3)
+						scoreutils.Abnormalpointrigth3=ISP.toString();
+					if(numberabnormalright==4)
+						scoreutils.Abnormalpointrigth4=ISP.toString();
+					if(numberabnormalright==5)
+						scoreutils.Abnormalpointrigth5=ISP.toString();
+					if(numberabnormalright==6)
+						scoreutils.Abnormalpointrigth6=ISP.toString();
+					if(numberabnormalright==7)
+						scoreutils.Abnormalpointrigth7=ISP.toString();
+					if(numberabnormalright==8)
+						scoreutils.Abnormalpointrigth8=ISP.toString();
+					if(numberabnormalright==9)
+						scoreutils.Abnormalpointrigth9=ISP.toString();
+					if(numberabnormalright==10)
+						scoreutils.Abnormalpointrigth10=ISP.toString();
+					if(numberabnormalright==11)
+						scoreutils.Abnormalpointrigth11=ISP.toString();
+					if(numberabnormalright==12)
+						scoreutils.Abnormalpointrigth12=ISP.toString();
+					if(numberabnormalright==13)
+						scoreutils.Abnormalpointrigth13=ISP.toString();
+					if(numberabnormalright==14)
+						scoreutils.Abnormalpointrigth14=ISP.toString();
+					if(numberabnormalright==15)
+						scoreutils.Abnormalpointrigth15=ISP.toString();
+					if(numberabnormalright==16)
+						scoreutils.Abnormalpointrigth16=ISP.toString();
+					if(numberabnormalright==17)
+						scoreutils.Abnormalpointrigth17=ISP.toString();
+					if(numberabnormalright==18)
+						scoreutils.Abnormalpointrigth18=ISP.toString();
+					if(numberabnormalright==19)
+						scoreutils.Abnormalpointrigth19=ISP.toString();
+					if(numberabnormalright==20)
+						scoreutils.Abnormalpointrigth20=ISP.toString();
+					
+					currentState='MeasureRigthAnormalTine';
+					lbllasmeasurement.text="Abnormal Rigth Tine "+numberabnormalright+"="+ISP.toString();
+					numberabnormalright++;
+					btnRecordLeftTine.label="Measure Rigth Anormal Tine "+numberabnormalright;
+					
+				}else{
+					if(grade=='0')
+					{
+						if(cont!=0 && cont<5) cont++;
+						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+					}else{
+						ISP=Number(myangleoptions[22+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[22+(2*cont)].attribute("B"));
+					}
+					if(numberabnormalright==1)
+						scoreutils.Abnormalpointrigth1=ISP.toString();
+					if(numberabnormalright==2)
+						scoreutils.Abnormalpointrigth2=ISP.toString();
+					if(numberabnormalright==3)
+						scoreutils.Abnormalpointrigth3=ISP.toString();
+					if(numberabnormalright==4)
+						scoreutils.Abnormalpointrigth4=ISP.toString();
+					if(numberabnormalright==5)
+						scoreutils.Abnormalpointrigth5=ISP.toString();
+					if(numberabnormalright==6)
+						scoreutils.Abnormalpointrigth6=ISP.toString();
+					if(numberabnormalright==7)
+						scoreutils.Abnormalpointrigth7=ISP.toString();
+					if(numberabnormalright==8)
+						scoreutils.Abnormalpointrigth8=ISP.toString();
+					if(numberabnormalright==9)
+						scoreutils.Abnormalpointrigth9=ISP.toString();
+					if(numberabnormalright==10)
+						scoreutils.Abnormalpointrigth10=ISP.toString();
+					if(numberabnormalright==11)
+						scoreutils.Abnormalpointrigth11=ISP.toString();
+					if(numberabnormalright==12)
+						scoreutils.Abnormalpointrigth12=ISP.toString();
+					if(numberabnormalright==13)
+						scoreutils.Abnormalpointrigth13=ISP.toString();
+					if(numberabnormalright==14)
+						scoreutils.Abnormalpointrigth14=ISP.toString();
+					if(numberabnormalright==15)
+						scoreutils.Abnormalpointrigth15=ISP.toString();
+					if(numberabnormalright==16)
+						scoreutils.Abnormalpointrigth16=ISP.toString();
+					if(numberabnormalright==17)
+						scoreutils.Abnormalpointrigth17=ISP.toString();
+					if(numberabnormalright==18)
+						scoreutils.Abnormalpointrigth18=ISP.toString();
+					if(numberabnormalright==19)
+						scoreutils.Abnormalpointrigth19=ISP.toString();
+					if(numberabnormalright==20)
+						scoreutils.Abnormalpointrigth20=ISP.toString();
+					currentState='CompleteScoringfinal'
+					lbllasmeasurement.text="Abnormal Rigth Line "+numberabnormalright+"="+ISP.toString();	
+					numberabnormalright=1;
+					cont=0;
+				}
+			}
+////////////////////////////////////////////////////////////////////////////////////			
+			
+			
+			
 			
 		]]>
 	</fx:Script>
@@ -1271,6 +2091,7 @@
 		<s:State name="CompleteScoringfinal"/>
 		<s:State name="ScoringFinalBuck"/>
 		<s:State name="ExpandDeerName"/>
+		<s:State name="RecorderInsideSpreadEstimate"/>
 	</s:states>
 	
 	<s:transitions>
@@ -1302,10 +2123,29 @@
 			<s:HGroup id="borderTop" height="15" width="100%"/>
 			<s:SkinnableContainer id="mainBox" width="100%" height="100%">
 				<s:VGroup includeIn="stateLogin" width="100%" height="100%">
+					<s:Form width="719" height="501">
+						<s:Label fontSize="18" fontWeight="bold" text="LOGIN"/>
+						<s:FormItem width="248" label="URL">
+							<s:TextInput width="144" text="http://www.buckscore.com"/>
+							
+						</s:FormItem>
+						<s:FormItem label="UserName">
+							<s:TextInput width="142"/>
+							
+						</s:FormItem>
+						<s:FormItem width="248" label="Paswoord">
+							<s:TextInput width="143"/>
+							
+						</s:FormItem>
+						<s:FormItem width="248">
+							<s:Button label="Validate"/>
+						</s:FormItem>
+						
+					</s:Form>
 					
 				</s:VGroup>
 				
-				<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+				<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 						  width="100%" height="100%" gap="0" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6">
 					<s:SkinnableContainer width="100%" height="56" backgroundColor="#323232" skinClass="com.complexless.skins.spark.TitleMainSkin">
 						<s:HGroup id="titleMain" width="100%" height="100%" gap="0" paddingLeft="5" paddingRight="5">
@@ -1348,13 +2188,13 @@
 								  click="currentState='stateMain'" color="#F5F5F9"/>
 					</s:HGroup>
 					<mx:HDividedBox id="mainPanel" width="100%" height="100%" hasFocusableChildren="true" focusEnabled="true">
-						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+						<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 								  width="100%" height="100%">
 							<s:SkinnableContainer width="100%" height="100%"
 												  backgroundColor="#848484"
 												  height.ExpandDeerName="43">
 								<ns1:ManageCropper id="manageCropper"
-												   includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+												   includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 												   width="100%" height="100%"/>
 								<s:Label includeIn="ExpandDeerName" x="14" y="15" fontSize="18"
 										 text="Filter"/>
@@ -1368,26 +2208,39 @@
 								<mx:VBox width="100%">
 									
 									
-									<mx:DataGrid id="myGridExpand" width="100%" height="338"
-												 borderColor="#898585" color="#FBFAFA"
-												 contentBackgroundColor="#787474"
-												 dataProvider="{array2}" rowHeight="60">
-										<mx:columns>
-											<mx:DataGridColumn backgroundColor="#9E9898"
-															   dataField="image" headerText="Image"
-															   itemRenderer="mx.controls.Image"
-															   paddingLeft="0"/>
-											<mx:DataGridColumn backgroundColor="#9E9898"
-															   dataField="name"
-															   headerText="Deer Name"/>
-											<mx:DataGridColumn backgroundColor="#9E9898"
-															   dataField="type"
-															   headerText="Album Name"/>											
-											<mx:DataGridColumn backgroundColor="#9E9898"
-															   dataField="score" headerText="Score#"/>
-										</mx:columns>
-									</mx:DataGrid>
-								</mx:VBox>								
+									
+									
+								</mx:VBox>	
+								<s:DataGrid id="myGridExpand" width="100%" height="338"
+											borderColor="#898585"  color="#FBFAFA"
+											contentBackgroundColor="#787474"
+											dataProvider="{array2}"  rowHeight="60"
+											variableRowHeight="true"
+											selectionChange="mygridexpand_selectionChangeHandler(event)" >
+									
+									<s:columns>
+										<s:ArrayList>
+											<s:GridColumn    headerText="Image">
+												<s:itemRenderer>
+													<fx:Component>
+														<s:GridItemRenderer>
+															<s:Image source="{data.image}"
+																	 width="75" height="100"/>
+														</s:GridItemRenderer>
+													</fx:Component>
+												</s:itemRenderer>	   
+											</s:GridColumn>
+											<s:GridColumn 
+												dataField="name"
+												headerText="Deer Name"/>
+											<s:GridColumn 
+												dataField="type"
+												headerText="Album Name"/>	 	
+											<s:GridColumn 
+												dataField="score" headerText="Score#"/>
+										</s:ArrayList>
+									</s:columns>
+								</s:DataGrid>
 							</s:Group>
 						</s:VGroup>
 						<s:VGroup width="308" height="100%"
@@ -1396,6 +2249,7 @@
 												  backgroundColor.CompleteScoringfinal="#3F8AF0"
 												  backgroundColor.editAlbum="#3F8AF0"
 												  backgroundColor.editphoto="#3F8AF0"
+												  height.ExpandDeerName="100%"
 												  backgroundColor.ExpandDeerName="#040404"
 												  backgroundColor.MeasureAnormalPoints="#3F8AF0"
 												  backgroundColor.MeasureInsideSpread="#3F8AF0"
@@ -1411,6 +2265,7 @@
 												  backgroundColor.positionphoto="#3F8AF0"
 												  backgroundColor.RecordEarWidth="#3F8AF0"
 												  backgroundColor.RecorderInsideSpread="#3F8AF0"
+												  backgroundColor.RecorderInsideSpreadEstimate="#3F8AF0"
 												  backgroundColor.RecordEyeballWidthFeature="#3F8AF0"
 												  backgroundColor.RecordEyetoEyeWidth="#3F8AF0"
 												  backgroundColor.RecordLefAbnormalTine="#3F8AF0"
@@ -1441,6 +2296,7 @@
 										  height.NumberTypicalPoints="422"
 										  height.RecordEarWidth="354"
 										  height.RecorderInsideSpread="354"
+										  height.RecorderInsideSpreadEstimate="354"
 										  height.RecordEyeballWidthFeature="354"
 										  height.RecordEyetoEyeWidth="354"
 										  height.RecordLefAbnormalTine="422"
@@ -1458,7 +2314,7 @@
 										<s:HGroup x="0" y="0" width="100%" height="100%"
 												  verticalAlign="middle">
 											<s:Label id="txtNamepaneltitle"
-													 includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+													 includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 													 x="0" y="0" width="100%" color="#DCD3D3"
 													 fontSize="20"
 													 text.CompleteScoringfinal=" Name"
@@ -1478,6 +2334,7 @@
 													 text.positionphoto=" Name"
 													 text.RecordEarWidth=" Name"
 													 text.RecorderInsideSpread=" Name"
+													 text.RecorderInsideSpreadEstimate=" Name"
 													 text.RecordEyeballWidthFeature=" Name"
 													 text.RecordEyetoEyeWidth=" Name"
 													 text.RecordLefAbnormalTine=" Name"
@@ -1492,8 +2349,8 @@
 													 text.scorephoto=" Name"
 													 text.ScoringFinalBuck=" "
 													 text.updatephotodata=" Name"/>
-											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,positionphoto,referenceFeature,scorephoto" label="Close" click="closebutton_buckscore()"/>
-											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,positionphoto,referenceFeature,scorephoto"
+											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,positionphoto,referenceFeature,scorephoto" label="Close" click="closebutton_buckscore()"/>
+											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,positionphoto,referenceFeature,scorephoto"
 													  label.CompleteScoringfinal="Back"
 													  click.CompleteScoringfinal="currentState='referenceFeature'"
 													  label.MeasureAnormalPoints="Back"
@@ -1517,13 +2374,15 @@
 													  label.MeasureRigthTine="Back"
 													  click.MeasureRigthTine="currentState='RecordRigthMainBeam'; numbertypicalrigth=1;"
 													  label.NumberTypicalPoints="Back"
-													  click.NumberTypicalPoints="currentState='RecorderInsideSpread'"
+													  click.NumberTypicalPoints="if(grade!='90')currentState='RecorderInsideSpread'else currentState='RecorderInsideSpreadEstimate'"
 													  label.positionphoto="Back"
 													  click.positionphoto="button3_backeditphoto(event)"
 													  label.RecordEarWidth="Back"
 													  click.RecordEarWidth="currentState='referenceFeature'"
 													  label.RecorderInsideSpread="Back"
 													  click.RecorderInsideSpread="currentState='MeasureInsideSpread'"
+													  label.RecorderInsideSpreadEstimate="Back"
+													  click.RecorderInsideSpreadEstimate="BackMeasureInsideSpread_clickHandler(event)"
 													  label.RecordEyeballWidthFeature="Back"
 													  click.RecordEyeballWidthFeature="currentState='referenceFeature'"
 													  label.RecordEyetoEyeWidth="Back"
@@ -1570,7 +2429,7 @@
 											</s:HGroup>
 										</s:HGroup>
 									</s:SkinnableContainer>
-									<s:HGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+									<s:HGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 											  x="0" y="0" width="100%"
 											  height.CompleteScoringfinal="374"
 											  height.editAlbum="314"
@@ -1591,6 +2450,7 @@
 											  height.positionphoto="314"
 											  height.RecordEarWidth="314"
 											  height.RecorderInsideSpread="314"
+											  height.RecorderInsideSpreadEstimate="314"
 											  height.RecordEyeballWidthFeature="314"
 											  height.RecordEyetoEyeWidth="314"
 											  height.RecordLefAbnormalTine="374"
@@ -1629,29 +2489,34 @@
 																 color="#F7F5F5" fontStyle="normal"
 																 fontWeight="bold" text="Deer Name"/>
 														<s:Label x="0" y="49" color="#F7F5F5"
+																 id="lblAlbumnameexpand"
 																 fontStyle="normal"
 																 text="Album Name"
 																 x.ExpandDeerName="0"
 																 y.ExpandDeerName="18"
 																 fontSize.ExpandDeerName="18"
 																 fontWeight.ExpandDeerName="normal"/>
-														<s:Label id="lbldeeralbumstate" x="0" y="67"
+														<s:Label id="lbldeeralbumstate"
+																 includeIn="stateMain" x="0" y="67"
 																 color="#F7F5F5" fontStyle="normal"
-																 fontWeight="bold" text="Album Name"
-																 x.ExpandDeerName="0"
-																 y.ExpandDeerName="50"
-																 fontSize.ExpandDeerName="18"
-																 text.ExpandDeerName="Henry"/>
+																 fontWeight="bold" text="Album Name"/>
 														<s:HGroup includeIn="stateMain" width="482"
 																  height="13">
 														</s:HGroup>
+														<s:Image includeIn="ExpandDeerName" id="img_ExpandDeerName" x="200"
+																 y="0" width="100%" height="78"/>
+														<s:Label id="lbldeernameexpand"
+																 includeIn="ExpandDeerName" x="3"
+																 y="57" fontSize="14"
+																 fontStyle="normal"
+																 fontWeight="bold" text="HENRY"/>
 													</s:Group>
 												</s:VGroup>
 											</s:HGroup>
-										</s:SkinnableContainer>			
+										</s:SkinnableContainer>	
 										
 										
-										<s:SkinnableContainer includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,updatephotodata"
+										<s:SkinnableContainer includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,updatephotodata"
 															  width="100%"
 															  height.CompleteScoringfinal="371"
 															  backgroundColor.CompleteScoringfinal="#3F8AF0"
@@ -1701,6 +2566,9 @@
 															  height.RecorderInsideSpread="375"
 															  backgroundColor.RecorderInsideSpread="#3F8AF0"
 															  chromeColor.RecorderInsideSpread="#03F8AF"
+															  height.RecorderInsideSpreadEstimate="375"
+															  backgroundColor.RecorderInsideSpreadEstimate="#3F8AF0"
+															  chromeColor.RecorderInsideSpreadEstimate="#03F8AF"
 															  height.RecordEyeballWidthFeature="375"
 															  backgroundColor.RecordEyeballWidthFeature="#3F8AF0"
 															  chromeColor.RecordEyeballWidthFeature="#03F8AF"
@@ -1801,6 +2669,9 @@
 													 x.RecorderInsideSpread="20"
 													 y.RecorderInsideSpread="13"
 													 text.RecorderInsideSpread="Score Deer"
+													 x.RecorderInsideSpreadEstimate="20"
+													 y.RecorderInsideSpreadEstimate="13"
+													 text.RecorderInsideSpreadEstimate="Score Deer"
 													 x.RecordEyeballWidthFeature="20"
 													 y.RecordEyeballWidthFeature="13"
 													 text.RecordEyeballWidthFeature="Score Deer"
@@ -1879,7 +2750,7 @@
 															  x.editAlbum="130" y.editAlbum="-10"
 															  x.scorephoto="97" y.scorephoto="1"
 															  label.scorephoto="Next"
-															  click.scorephoto="currentState='positionphoto'"
+															  click.scorephoto="scorephoto_clickHandler(event)"
 															  click.editAlbum="editAlbum_clickHandler(event)"/>
 												</s:Group>
 												<s:HGroup includeIn="editphoto,updatephotodata">
@@ -1930,7 +2801,7 @@
 											<s:Label includeIn="editAlbum" x="20" y="28" text="Add Album"/>
 											<s:Label includeIn="positionphoto,referenceFeature" x="108" y="46"
 													 text="Image Orientation"/>
-											<s:Group includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,positionphoto,referenceFeature"
+											<s:Group includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,positionphoto,referenceFeature"
 													 x="20" y="65" width="267" height="238"
 													 x.CompleteScoringfinal="20"
 													 y.CompleteScoringfinal="43"
@@ -1980,6 +2851,8 @@
 													 chromeColor.RecordEarWidth="#3AB7EB"
 													 height.RecorderInsideSpread="117"
 													 chromeColor.RecorderInsideSpread="#3AB7EB"
+													 height.RecorderInsideSpreadEstimate="64"
+													 chromeColor.RecorderInsideSpreadEstimate="#3AB7EB"
 													 height.RecordEyeballWidthFeature="117"
 													 chromeColor.RecordEyeballWidthFeature="#3AB7EB"
 													 height.RecordEyetoEyeWidth="117"
@@ -2040,8 +2913,8 @@
 															 source="Image/0_RL.png"/>
 												</s:Group>
 												
-													
-											
+												
+												
 												<s:BorderContainer includeIn="referenceFeature"
 																   id="bordercontanierreferencefeature"
 																   x="31" y="10" width="206"
@@ -2054,21 +2927,21 @@
 																   mouseFocusEnabled="true"
 																   rollOverColor="#F7C7C7"
 																   >
-												<mx:List id="birdlist" x="5" y="7" width="170"
-														 height="208"
-														 contentBackgroundColor="#3F8AF0"
-														 creationComplete="birdlist_complete(event)"
-														 itemRenderer="mx.controls.Image"
-														 rowCount="2" rowHeight="100"
-														 selectedIndex="0">
+													<mx:List id="birdlist" x="5" y="7" width="170"
+															 height="208"
+															 contentBackgroundColor="#3F8AF0"
+															 creationComplete="birdlist_complete(event)"
+															 itemRenderer="mx.controls.Image"
+															 rowCount="2" rowHeight="100"
+															 selectedIndex="0">
 														
-												
-								
-													
-												</mx:List>	
+														
+														
+														
+													</mx:List>	
 													<s:Label x="194" y="26" rotation="90"
 															 text="Ear Width" id="lblEarWidth"/>
-												
+													
 													
 													<s:Label x="196" y="120" rotation="90"
 															 text="Eye to Eye width" id="lblEyetoEyewidth"/>
@@ -2076,7 +2949,7 @@
 												<s:Label includeIn="positionphoto" x="228" y="30"
 														 rotation="90" text="Zero Degrees" id="lblpositionphoto"/>
 												<s:ToggleButton id="tglearwidth"
-																includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+																includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,RecorderInsideSpreadEstimate"
 																x="28" y="12" width="208"
 																height="33"
 																label="Record Ear Width Feature"
@@ -2092,6 +2965,10 @@
 																alpha.RecorderInsideSpread="10"
 																chromeColor.RecorderInsideSpread="#323232"
 																click.RecorderInsideSpread="toggle_RecorderInsideSpread(event)"
+																label.RecorderInsideSpreadEstimate="Estimate Inside Spread"
+																alpha.RecorderInsideSpreadEstimate="10"
+																chromeColor.RecorderInsideSpreadEstimate="#323232"
+																click.RecorderInsideSpreadEstimate="RecorderInsideSpreadEstimate_clickHandler(event)"
 																label.RecordEyeballWidthFeature="Record Eyeball Width Feature"
 																alpha.RecordEyeballWidthFeature="10"
 																chromeColor.RecordEyeballWidthFeature="#323232"
@@ -2295,7 +3172,7 @@
 																<fx:String>20</fx:String>
 															</mx:ArrayList>
 														</s:dataProvider>
-													 </s:ComboBox>	
+													</s:ComboBox>	
 													<s:TextInput id="txtrigthanormalpoints"
 																 includeIn="MeasureLeftAnormalTine,RecordLefAbnormalTine,MeasureRigthAnormalTine,RecordRigthAbnormalTine,CompleteScoringfinal"/>
 												</s:VGroup>
@@ -2399,7 +3276,7 @@
 														  y.RecordRigthMainBeam="101"
 														  label.RecordRigthMainBeam="Record Right Main Beam"
 														  chromeColor.RecordRigthMainBeam="#323232"
-														  click.RecordRigthMainBeam="currentState='MeasureLeftTine'"
+														  click.RecordRigthMainBeam="RecordRigthMainBeam_clickHandler(event)"
 														  x.RecordRigthTineLine="59"
 														  y.RecordRigthTineLine="97"
 														  label.RecordRigthTineLine="Record Rigth Tine 1"
@@ -2549,7 +3426,8 @@
 														  x.CompleteScoringfinal="36"
 														  y.CompleteScoringfinal="181">
 													<s:Label text="Last Measurement&#xd;"/>
-													<s:Label text="Inside Spread=10.9605"
+													<s:Label id="lbllasmeasurement"
+															 text="Inside Spread=10.9605"
 															 text.CompleteScoringfinal="Rigth MainBeam=10.9605"
 															 text.MeasureAnormalPoints="Rigth MainBeam=10.9605"
 															 text.MeasureLeftCircunference="Rigth MainBeam=10.9605"
@@ -2682,13 +3560,13 @@
 																chromeColor.RecordLefAbnormalTine="#323232"
 																chromeColor.RecordRigthAbnormalTine="#323232"/>
 											</s:Group>
-											<s:Image includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
-													 x="50" y="247" width="196" height="117"
-													 id="imagebusckscorezoom"
-													 rollOut="doZoomProduct(event)"
-													 rollOver="doZoomProduct(event)"
+											<s:Image id="imagebusckscorezoom"
+													 includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+													 width="196" height="117"
 													 click="launchPopUp2(event)"
-													 scaleX="1" scaleY="1"
+													 rollOut="doZoomProduct(event)"
+													 rollOver="doZoomProduct(event)" scaleX="1"
+													 scaleY="1"
 													 x.MeasureInsideSpread="58"
 													 y.MeasureInsideSpread="215"
 													 source.MeasureInsideSpread="Image/INSSPR_0.jpg"
@@ -2703,7 +3581,7 @@
 													 x.RecordEyetoEyeWidth="58"
 													 y.RecordEyetoEyeWidth="247"
 													 source.RecordEyetoEyeWidth="Image/REFFTR_002.png"/>
-											<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,editAlbum,positionphoto,referenceFeature,scorephoto"
+											<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,editAlbum,positionphoto,referenceFeature,scorephoto"
 													  x="21" y="43" width="200"
 													  x.CompleteScoringfinal="18"
 													  y.CompleteScoringfinal="26"
@@ -2762,6 +3640,10 @@
 													  y.RecorderInsideSpread="33"
 													  width.RecorderInsideSpread="267"
 													  height.RecorderInsideSpread="5"
+													  x.RecorderInsideSpreadEstimate="20"
+													  y.RecorderInsideSpreadEstimate="33"
+													  width.RecorderInsideSpreadEstimate="267"
+													  height.RecorderInsideSpreadEstimate="5"
 													  x.RecordEyeballWidthFeature="20"
 													  y.RecordEyeballWidthFeature="33"
 													  width.RecordEyeballWidthFeature="267"
@@ -2816,9 +3698,9 @@
 												  label="Deer Info" alpha="4"
 												  click="btnupdatedeername_clickHandler(event)"
 												  color="#FEFEFE"/>
-										<s:Button includeIn="stateMain" x="187" y="3"
+										<s:Button includeIn="stateMain" id="btndeerscoresheet" x="187" y="3"
 												  label="Score Sheet" alpha="4"
-												  click="btn_scoringreview(event)" color="#FCF9F9"/>
+												  click="btn_scoringreview(event)" color="#FCF9F9" enabled="false"/>
 										<s:Button includeIn="stateMain" x="86" y="31" width="126"
 												  height="28" label="SCORE" alpha="4"
 												  click="button2_callscore(event)" color="#FEFDFD"/>
@@ -2835,29 +3717,40 @@
 													<fx:String>Photo</fx:String>
 													<fx:String>Map</fx:String>
 												</mx:ArrayList>
-											</s:dataProvider>			 
+											</s:dataProvider>	 
 											
 										</s:ComboBox>
-										<s:Label x="7" y="66" text="Create Item"/>
+										<s:Label includeIn="stateMain" x="7" y="66"
+												 text="Create Item"/>
 										<s:Label includeIn="ExpandDeerName" x="10" y="10"
 												 color="#FEFCFC" text="Score Distributions"/>
-										<s:Group includeIn="ExpandDeerName" x="35" y="29" width="240"
+										<s:Group includeIn="ExpandDeerName" x="10" y="29" width="230"
 												 height="161">
-											<mx:ColumnChart id="scoreChart" x="12" y="4" width="218"
-															height="147">
+											<mx:ColumnChart id="scoreChart" x="6" y="4" width="218"
+															height="147" chromeColor="#FBFAFA"
+															color="#FEFEFE" showDataTips="true"
+															>
+												
+												<mx:horizontalAxis>
+													<mx:CategoryAxis categoryField="score"/>
+												</mx:horizontalAxis>
 												<mx:series>
-													<mx:ColumnSeries displayName="score" yField=""/>
+													<mx:ColumnSeries displayName="Score" yField="Score" xField="score"/>
 												</mx:series>
 											</mx:ColumnChart>
+											<mx:Legend x="235" y="5" width="58" height="113"
+													   color="#FEFDFD" dataProvider="{scoreChart}"
+													   fontWeight="bold"/>
 										</s:Group>
 									</s:SkinnableContainer>
 									<s:SkinnableContainer includeIn="ExpandDeerName,stateMain"
 														  width="304" height="175"
-														  height.ExpandDeerName="64">
+														  height.ExpandDeerName="100%">
 										<s:Label includeIn="stateMain" x="10" y="10" color="#F9F9F9"
 												 text="Choose Deer To Star Scoring (number)"/>
 										<s:Button includeIn="stateMain" x="235" y="4" label="Expand"
-												  click="currentState='ExpandDeerName'"/>
+												  
+												  click="stateMain_clickHandler(event)"/>
 										<s:TextInput id="txtfilterdatagrid" includeIn="stateMain"
 													 x="45" y="29" width="184"
 													 change="filter()" 
@@ -2879,14 +3772,22 @@
 											
 										</s:DataGrid>
 										<s:BorderContainer includeIn="ExpandDeerName" x="10" y="4"
-														   width="284" height="36"
+														   width="284" height="100%"
 														   backgroundColor="#A3AEB0">
-											<s:Label x="19" y="3" text="0-50"/>
-											<s:Label x="19" y="19" text="venado 1"/>
+											<s:Label x="24" y="3" color="#040404" text="0-100"/>
+											<s:Label x="118" y="3" color="#030303" text="100-200"/>
+											<s:Label x="220" y="2" color="#070707" text="200 +"/>
+											<s:List id="listscoremedium" x="102" y="16" width="80" labelField="deername" change="listscoremedium_changeHandler(event)">
+											</s:List>
+											<s:List id="listscoremin" x="10" y="16" width="79" labelField="deername"
+													change="listscoremin_changeHandler(event)">
+											</s:List>
+											<s:List id="listscoremax" x="193" y="16" width="82" labelField="deername" change="listscoremax_changeHandler(event)">
+											</s:List>
 										</s:BorderContainer>
 									</s:SkinnableContainer>
 									
-										
+									
 									
 									<s:SkinnableContainer id="skinablesocreprinting"
 														  includeIn="ScoringFinalBuck" width="100%"
@@ -2933,7 +3834,7 @@
 															</s:Group>
 														</s:VGroup>
 													</s:HGroup>
-												</s:SkinnableContainer>			
+												</s:SkinnableContainer>	
 											</s:HGroup>
 											<s:Scroller y="81" width="100%" height="100%">
 												<s:VGroup width="100%" height="100%">
@@ -2957,10 +3858,10 @@
 																			 horizontalAlign="center"
 																			 verticalAlign="bottom">
 																	
-																															
+																	
 																	<s:Label paddingTop="3"
 																			 text="ABNORMAL POINTS"
-																			 verticalAlign="middle"/>														
+																			 verticalAlign="middle"/>	
 																</mx:GridItem>
 															</mx:GridRow>
 															
@@ -2995,20 +3896,28 @@
 															<!-- Define Row 2. -->
 															<mx:GridRow id="row2" width="100%">
 																<!-- Define a single cell to span three columns of Row 2. -->
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="1"
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="a1" paddingTop="3"
+																			 text="1"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="11"
+																	<s:Label id="a11" paddingTop="3"
+																			 text="11"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="1"
+																	<s:Label id="ar1" paddingTop="3"
+																			 text="1"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="11"
+																	<s:Label id="ar11" paddingTop="3"
+																			 text="11"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
@@ -3016,530 +3925,603 @@
 															<!-- Define Row 3. -->
 															<mx:GridRow id="row3" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="2"
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="a2" paddingTop="3"
+																			 text="2"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="12"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a12" paddingTop="3"
+																			 text="12"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="2"
+																	<s:Label id="ar2" paddingTop="3"
+																			 text="2"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="12"
+																	<s:Label id="ar12" paddingTop="3"
+																			 text="12"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															<mx:GridRow id="row4" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="3"
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="a3" paddingTop="3"
+																			 text="3"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="13"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a13" paddingTop="3"
+																			 text="13"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="3"
+																	<s:Label id="ar3" paddingTop="3"
+																			 text="3"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="13"
+																	<s:Label id="ar13" paddingTop="3"
+																			 text="13"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															<mx:GridRow id="row5" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="4"
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="a4" paddingTop="3"
+																			 text="4"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="14"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a14" paddingTop="3"
+																			 text="14"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="4"
+																	<s:Label id="ar4" paddingTop="3"
+																			 text="4"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="14"
+																	<s:Label id="ar14" paddingTop="3"
+																			 text="14"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															<mx:GridRow id="row6" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="5"
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="a5" paddingTop="3"
+																			 text="5"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="15"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a15" paddingTop="3"
+																			 text="15"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="5"
+																	<s:Label id="ar5" paddingTop="3"
+																			 text="5"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="15"
+																	<s:Label id="ar15" paddingTop="3"
+																			 text="15"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															<mx:GridRow id="row7" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="6"
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="a6" paddingTop="3"
+																			 text="6"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="16"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a16" paddingTop="3"
+																			 text="16"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="6"
+																	<s:Label id="ar6" paddingTop="3"
+																			 text="6"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="16"
+																	<s:Label id="ar16" paddingTop="3"
+																			 text="16"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															<mx:GridRow id="row8" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="7"
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="a7" paddingTop="3"
+																			 text="7"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="17"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a17" paddingTop="3"
+																			 text="17"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="7"
+																	<s:Label id="ar7" paddingTop="3"
+																			 text="7"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="17"
+																	<s:Label id="ar17" paddingTop="3"
+																			 text="17"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															<mx:GridRow id="row9" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="8"
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="a8" paddingTop="3"
+																			 text="8"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="18"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a18" paddingTop="3"
+																			 text="18"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="8"
+																	<s:Label id="ar8" paddingTop="3"
+																			 text="8"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="18"
+																	<s:Label id="ar18" paddingTop="3"
+																			 text="18"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															<mx:GridRow id="row10" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="9"
+																	<s:Label id="a9" paddingTop="3"
+																			 text="9"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="19"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a19" paddingTop="3"
+																			 text="19"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="9"
+																	<s:Label id="ar9" paddingTop="3"
+																			 text="9"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="19"
+																	<s:Label id="ar19" paddingTop="3"
+																			 text="19"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															<mx:GridRow id="row11" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="10"
+																	<s:Label id="a10" paddingTop="3"
+																			 text="10"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3" text="20"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="a20" paddingTop="3"
+																			 text="20"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="10"
+																	<s:Label id="ar10" paddingTop="3"
+																			 text="10"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3" text="20"
+																	<s:Label id="ar20" paddingTop="3"
+																			 text="20"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															
 														</mx:Grid>
 														
+														
+														
+														
+														
+														
+														
+														
 														<mx:Grid id="myGridResult" x="7" y="250"
 																 width="100%" height="100%"
 																 borderAlpha="5"
 																 color="#323232">
-														<mx:GridRow id="Rrow0" width="100%">
-															<!-- Define the first cell of Row 1. -->
-															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+															<mx:GridRow id="Rrow0" width="100%">
+																<!-- Define the first cell of Row 1. -->
+																<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+																	
+																	
+																	<s:Label paddingTop="3"
+																			 text="NO. POINTS LEFT"
+																			 verticalAlign="middle"/>	
+																</mx:GridItem>
+																<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+																	
+																	
+																	<s:Label id="numberleftponitsgrid" paddingTop="3" text="3"
+																			 verticalAlign="middle"/>	
+																</mx:GridItem>
+																<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+																	
+																	
+																	<s:Label paddingTop="3"
+																			 text="NO. POINTS RIGHT"
+																			 verticalAlign="middle"/>	
+																</mx:GridItem>
+																<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+																	
+																	
+																	<s:Label id="numberrigthponitsgrid" paddingTop="3" text="5"
+																			 verticalAlign="middle"/>	
+																</mx:GridItem>
+																<mx:GridItem width="100%" colSpan="3"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	
+																	
+																	<s:Label paddingTop="3" text=""
+																			 verticalAlign="middle"/>	
+																</mx:GridItem>
 																
-																
-																<s:Label paddingTop="3"
-																		 text="NO. POINTS LEFT"
-																		 verticalAlign="middle"/>														
-															</mx:GridItem>
-															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
-																
-																
-																<s:Label paddingTop="3" text="3"
-																		 verticalAlign="middle"/>														
-															</mx:GridItem>
-															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
-																
-																
-																<s:Label paddingTop="3"
-																		 text="NO. POINTS RIGHT"
-																		 verticalAlign="middle"/>														
-															</mx:GridItem>
-															<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
-																
-																
-																<s:Label paddingTop="3" text="5"
-																		 verticalAlign="middle"/>														
-															</mx:GridItem>
-															<mx:GridItem width="100%" colSpan="3"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																
-																
-																<s:Label paddingTop="3" text=""
-																		 verticalAlign="middle"/>														
-															</mx:GridItem>
+															</mx:GridRow>
 															
-														</mx:GridRow>
-														
-														<!-- Define Row 1. -->
-														<mx:GridRow id="Rrow1" width="100%">
-															<!-- Define the first cell of Row 1. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="ANTLER CHARACTERISTICS"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<!-- Define the second cell of Row 1. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="1"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3" text="LEFT"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<!-- Define the third cell of Row 1. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="1"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3" text="RIGTH"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="1"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="DIFFERENCE"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
+															<!-- Define Row 1. -->
+															<mx:GridRow id="Rrow1" width="100%">
+																<!-- Define the first cell of Row 1. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="ANTLER CHARACTERISTICS"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<!-- Define the second cell of Row 1. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="1"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3" text="LEFT"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<!-- Define the third cell of Row 1. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="1"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3" text="RIGTH"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="1"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="DIFFERENCE"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																
+															</mx:GridRow>
 															
-														</mx:GridRow>
-														
-														<!-- Define Row 2. -->
-														<mx:GridRow id="Rrow2" width="100%">
-															<!-- Define a single cell to span three columns of Row 2. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="3"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="INSIDE SPREAD"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="1"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="13.8192"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
+															<!-- Define Row 2. -->
+															<mx:GridRow id="Rrow2" width="100%">
+																<!-- Define a single cell to span three columns of Row 2. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="3"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="INSIDE SPREAD"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="1"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label id="insidespread"
+																				paddingTop="3"
+																			 text="13.8192"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="3"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3" text=""
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
 															
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="3"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3" text=""
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														
-														<!-- Define Row 3. -->
-														<mx:GridRow id="Rrow3" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="MAIN BEAM LENGTH"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3"
-																		 text="18.1636"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3"
-																		 text="25.0055"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.84"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														<mx:GridRow id="Rrow4" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="TYPICAL POINT 1"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3" text="5.6967"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.4259"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="0.73"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														<mx:GridRow id="Rrow5" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="TYPICAL POINT 2"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3" text="5.6967"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.4259"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="0.73"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														<mx:GridRow id="Rrow6" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="TYPICAL POINT 3"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3" text="5.6967"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.4259"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="0.73"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														<mx:GridRow id="Rrow7" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="TYPICAL POINT 4"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3" text="5.6967"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.4259"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="0.73"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														<mx:GridRow id="Rrow8" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="TYPICAL POINT 5"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3" text="5.6967"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.4259"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="0.73"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														<mx:GridRow id="Rrow9" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="TYPICAL POINT 6"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3" text="5.6967"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.4259"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="0.73"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														<mx:GridRow id="Rrow10" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="TYPICAL POINT 7"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3" text="5.6967"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.4259"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="0.73"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
-														<mx:GridRow id="Rrow11" width="100%">
-															<!-- Define an empty first cell of Row 3. -->
-															<mx:GridItem width="100%"
-																		 borderColor="#0B0A0A"
-																		 borderStyle="solid"
-																		 colSpan="4"
-																		 horizontalAlign="center"
-																		 verticalAlign="bottom">
-																<s:Label paddingTop="3"
-																		 text="TYPICAL POINT 8"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																<s:Label paddingTop="3" text="5.6967"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="6.4259"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-															<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																<s:Label paddingTop="3" text="0.73"
-																		 verticalAlign="middle"/>
-															</mx:GridItem>
-														</mx:GridRow>
+															<!-- Define Row 3. -->
+															<mx:GridRow id="Rrow3" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="MAIN BEAM LENGTH"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="mainbeamleftgrid"
+																				paddingTop="3"
+																			 text="18.1636"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label  id="mainbeamrigthgrid"  paddingTop="3"
+																			 text="25.0055"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label   id="mainbeamdiferene"  paddingTop="3" text="6.84"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow4" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 1"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t1l" paddingTop="3" text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t1r" paddingTop="3" text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t1d" paddingTop="3" text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow5" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 2"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t2l" paddingTop="3" text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t2r" paddingTop="3" text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t2d" paddingTop="3" text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow6" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 3"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t3l" paddingTop="3" text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t3r" paddingTop="3" text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t3d" paddingTop="3" text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow7" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 4"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t4l" paddingTop="3" text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t4r" paddingTop="3" text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t4d" paddingTop="3" text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow8" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 5"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t5l" paddingTop="3" text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t5r" paddingTop="3" text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t5d" paddingTop="3" text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow9" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 6"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t6l" paddingTop="3" text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t6r" paddingTop="3" text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t6d" paddingTop="3" text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow10" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 7"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t7l" paddingTop="3" text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t7r" paddingTop="3" text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t7d" paddingTop="3" text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
+															<mx:GridRow id="Rrow11" width="100%">
+																<!-- Define an empty first cell of Row 3. -->
+																<mx:GridItem width="100%"
+																			 borderColor="#0B0A0A"
+																			 borderStyle="solid"
+																			 colSpan="4"
+																			 horizontalAlign="center"
+																			 verticalAlign="bottom">
+																	<s:Label paddingTop="3"
+																			 text="TYPICAL POINT 8"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t8l" paddingTop="3" text="5.6967"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t8r" paddingTop="3" text="6.4259"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+																	<s:Label id="t8d" paddingTop="3" text="0.73"
+																			 verticalAlign="middle"/>
+																</mx:GridItem>
+															</mx:GridRow>
 															
 															<mx:GridRow id="Rrow12" width="100%">
 																<!-- Define an empty first cell of Row 3. -->
@@ -3553,18 +4535,18 @@
 																			 text="TYPICAL POINT 9"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t9l" paddingTop="3"
 																			 text="5.6967"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="t9r" paddingTop="3"
 																			 text="6.4259"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="t9d" paddingTop="3"
 																			 text="0.73"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3581,18 +4563,18 @@
 																			 text="TYPICAL POINT 10"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="t10l" paddingTop="3"
 																			 text="5.6967"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="t10r" paddingTop="3"
 																			 text="6.4259"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="t10d" paddingTop="3"
 																			 text="0.73"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3609,18 +4591,18 @@
 																			 text="CIRCUMFERENCE 1"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="c1l" paddingTop="3"
 																			 text="5.6967"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="c1r" paddingTop="3"
 																			 text="6.4259"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="c1d" paddingTop="3"
 																			 text="0.73"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3638,18 +4620,18 @@
 																			 text="CIRCUMFERENCE 2"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="c2l" paddingTop="3"
 																			 text="5.6967"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="c2r" paddingTop="3"
 																			 text="6.4259"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="c2d" paddingTop="3"
 																			 text="0.73"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3666,18 +4648,18 @@
 																			 text="CIRCUMFERENCE 3"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="c3l" paddingTop="3"
 																			 text="5.6967"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="c3r" paddingTop="3"
 																			 text="6.4259"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="c3d" paddingTop="3"
 																			 text="0.73"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3695,18 +4677,18 @@
 																			 text="CIRCUMFERENCE 4"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="c4l" paddingTop="3"
 																			 text="5.6967"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="c4r" paddingTop="3"
 																			 text="6.4259"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="c4d" paddingTop="3"
 																			 text="0.73"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3723,18 +4705,18 @@
 																			 text="TOTALS"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
-																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">																
-																	<s:Label paddingTop="3"
+																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+																	<s:Label id="tleft" paddingTop="3"
 																			 text="5.6967"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="trigth" paddingTop="3"
 																			 text="6.4259"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 																<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
-																	<s:Label paddingTop="3"
+																	<s:Label id="tdiference" paddingTop="3"
 																			 text="0.73"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3758,7 +4740,7 @@
 																			 borderStyle="solid"
 																			 colSpan="3"
 																			 horizontalAlign="left"
-																			 verticalAlign="bottom">																
+																			 verticalAlign="bottom">	
 																	<s:Label paddingTop="3" text=""
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3782,8 +4764,8 @@
 																			 borderStyle="solid"
 																			 colSpan="3"
 																			 horizontalAlign="left"
-																			 verticalAlign="bottom">																
-																	<s:Label paddingTop="3"
+																			 verticalAlign="bottom">	
+																	<s:Label id="grossscore" paddingTop="3"
 																			 text="156.73"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3806,8 +4788,8 @@
 																			 borderStyle="solid"
 																			 colSpan="3"
 																			 horizontalAlign="left"
-																			 verticalAlign="bottom">																
-																	<s:Label paddingTop="3"
+																			 verticalAlign="bottom">	
+																	<s:Label id="totaldiference" paddingTop="3"
 																			 text="31.91"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
@@ -3829,14 +4811,14 @@
 																			 borderStyle="solid"
 																			 colSpan="3"
 																			 horizontalAlign="left"
-																			 verticalAlign="bottom">																
+																			 verticalAlign="bottom">	
 																	<s:Label paddingTop="3" text=""
 																			 verticalAlign="middle"/>
 																</mx:GridItem>
 															</mx:GridRow>
 															
 															
-														
+															
 														</mx:Grid>
 														
 														
@@ -3849,9 +4831,9 @@
 											</s:Scroller>
 										</s:VGroup>
 									</s:SkinnableContainer>
-								
+									
 								</s:VGroup>
-					
+								
 								<s:Group includeIn="referenceFeature" x="20" y="357" width="267"
 										 height="55">
 									<s:Button x="81" y="10" width="100" height="31" label="Start"
@@ -3863,7 +4845,7 @@
 								</s:VGroup>
 								
 							</s:SkinnableContainer>
-					
+							
 						</s:VGroup>
 					</mx:HDividedBox>
 				</s:VGroup>

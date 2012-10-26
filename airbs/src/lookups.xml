@@ -186,12 +186,12 @@
       <Entity Code="TB4" Description="Typical Beams 4" A="1.02058" B="0.02518"/>
       <Entity Code="TB5" Description="Typical Beams 5" A="1.01058" B="-0.0017"/>
       <Entity Code="CR1" Description="CircumReference 1" A="0.72033"  B="1.06386" />
-      <Entity Code="CR2" Description="CircumReference 2" A="0.8506" B="0.77541" />
-      <Entity Code="CR3" Description="CircumReference 3" A="0.73002" B="0.93973" />
-      <Entity Code="CR4" Description="CircumReference 4" A="0.67962" B="0.93137" />
       <Entity Code="CR1" Description="CircumReference 1" A="0.72033" B="1.06386"/>
+      <Entity Code="CR2" Description="CircumReference 2" A="0.8506" B="0.77541" />
       <Entity Code="CR2" Description="CircumReference 2" A="0.8506" B="0.77541"/>
+      <Entity Code="CR3" Description="CircumReference 3" A="0.73002" B="0.93973" />
       <Entity Code="CR3" Description="CircumReference 3" A="0.73002" B="0.93973"/>
+      <Entity Code="CR4" Description="CircumReference 4" A="0.67962" B="0.93137" />
       <Entity Code="CR4" Description="CircumReference 4" A="0.67962" B="0.93137"/>
       <Entity Code="AB1" Description="Abnormal Beams 1" A="1.15572" B="0.02825"/>
       <Entity Code="AB2" Description="Abnormal Beams 2" A="1.4951" B="0.00385"/>
