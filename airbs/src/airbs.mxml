@@ -8,11 +8,12 @@
 					   xmlns:component="component.*"
 					   xmlns:ns1="*"
 					   width="750" height="550" backgroundAlpha="0" creationComplete="initApp()"
-					   currentState="stateMain" showStatusBar="false" styleName="main">
+					   currentState="stateLogin" showStatusBar="false" styleName="main">
 	
 	<fx:Style source="assets/css/airbs.css"/>
 	
 	<fx:Script>
+		
 		<![CDATA[
 			import air.update.ApplicationUpdaterUI;
 			import air.update.events.UpdateEvent;
@@ -654,7 +655,7 @@
 				
 				
 				btndeerscoresheet.enabled=true;
-				
+				btnScoreProccess.enabled=true;
 				lbldeernastate.text=datagridalbumname.selectedItem.name;
 				lbldeeralbumstate.text=datagridalbumname.selectedItem.type;
 				txtNamepaneltitle.text=datagridalbumname.selectedItem.name;
@@ -887,7 +888,7 @@
 								
 							}
 						}
-						trace(mylistposition[0].attribute("Code"));
+						//trace(mylistposition[0].attribute("Code"));
 						
 					}	
 					else{
@@ -1040,52 +1041,55 @@
 				currentState='ScoringFinalBuck';
 				imageforedition0.source=arraybyte;
 				
+				numberleftponitsgrid.text=cmbletftypical.selectedItem;
+				numberrigthponitsgrid.text=cmbrigthtypical.selectedItem;
 				insidespread.text=scoreutils.insidespread;
 				mainbeamleftgrid.text=scoreutils.mainbeamleft;
 				mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
+				mainbeamdiferene.text=(Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))).toString();
 				t1l.text=scoreutils.Typicalpointleft1;
 				t1r.text=scoreutils.Typicalpointrigth1;
-				t1d.text=(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1)).toString();
+				t1d.text=(Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))).toString();
 				t2l.text=scoreutils.Typicalpointleft2;
 				t2r.text=scoreutils.Typicalpointrigth2;
-				t2d.text=(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2)).toString();
+				t2d.text=(Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))).toString();
 				t3l.text=scoreutils.Typicalpointleft3;
 				t3r.text=scoreutils.Typicalpointrigth3;
-				t3d.text=(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3)).toString();
+				t3d.text=(Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))).toString();
 				t4l.text=scoreutils.Typicalpointleft4;
 				t4r.text=scoreutils.Typicalpointrigth4;
-				t4d.text=(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4)).toString();
+				t4d.text=(Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))).toString();
 				t5l.text=scoreutils.Typicalpointleft5;
 				t5r.text=scoreutils.Typicalpointrigth5;
-				t5d.text=(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5)).toString();
+				t5d.text=(Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))).toString();
 				t6l.text=scoreutils.Typicalpointleft6;
 				t6r.text=scoreutils.Typicalpointrigth6;
-				t6d.text=(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6)).toString();
+				t6d.text=(Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))).toString();
 				t7l.text=scoreutils.Typicalpointleft7;
 				t7r.text=scoreutils.Typicalpointrigth7;
-				t7d.text=(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7)).toString();
+				t7d.text=(Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))).toString();
 				t8l.text=scoreutils.Typicalpointleft8;
 				t8r.text=scoreutils.Typicalpointrigth8;
-				t8d.text=(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8)).toString();
+				t8d.text=(Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))).toString();
 				t9l.text=scoreutils.Typicalpointleft9;
 				t9r.text=scoreutils.Typicalpointrigth9;
-				t9d.text=(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9)).toString();
+				t9d.text=(Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))).toString();
 				t10l.text=scoreutils.Typicalpointleft10;
 				t10r.text=scoreutils.Typicalpointrigth10;
-				t10d.text=(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10)).toString();
+				t10d.text=(Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))).toString();
 				
 				c1l.text=scoreutils.Circumferenceleft1;
 				c1r.text=scoreutils.Circumferencerigth1;
-				c1d.text=(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1)).toString();
+				c1d.text=(Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))).toString();
 				c2l.text=scoreutils.Circumferenceleft2;
 				c2r.text=scoreutils.Circumferencerigth2;
-				c2d.text=(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2)).toString();
+				c2d.text=(Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))).toString();
 				c3l.text=scoreutils.Circumferenceleft3;
 				c3r.text=scoreutils.Circumferencerigth3;
-				c3d.text=(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3)).toString();
+				c3d.text=(Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))).toString();
 				c4l.text=scoreutils.Circumferenceleft4;
 				c4r.text=scoreutils.Circumferencerigth4;
-				c4d.text=(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4)).toString();
+				c4d.text=(Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))).toString();
 				a1.text=scoreutils.Abnormalpointleft1;
 				ar1.text=scoreutils.Abnormalpointrigth1;
 				a2.text=scoreutils.Abnormalpointleft2;
@@ -1126,9 +1130,16 @@
 				ar19.text=scoreutils.Abnormalpointrigth19;
 				a20.text=scoreutils.Abnormalpointleft20;
 				ar20.text=scoreutils.Abnormalpointrigth20;
-
+				var totalleft:Number=scoreutils.calculateleft();
+				var totalrigth:Number=scoreutils.calculaterigth();
+				var totalabnormal:Number=scoreutils.calculateabnormal();
+				var totaldiference:Number=Math.abs(totalleft-totalrigth);
+				tleft.text=totalleft.toString();
+				trigth.text=totalrigth.toString();
+				tdiference.text=totaldiference.toString();
 				
-				
+				grossscore.text=(totalleft+ totalrigth+ totalabnormal ).toString();
+				totaldiferencefinal.text=totaldiference.toString();
 			}
 			
 			protected function btn_scoringreview(event:MouseEvent):void
@@ -1512,28 +1523,50 @@
 						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
 					}else{
+						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[3+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[3+(2*cont)].attribute("B"));
 					}
-					if(numbertypicalleft==1)
+					cont++;
+					if(numbertypicalleft==1){
 						scoreutils.Typicalpointleft1=ISP.toString();
-					if(numbertypicalleft==2)
+						if(scoreutils.Typicalpointrigth1=="1") scoreutils.Typicalpointrigth1=scoreutils.Typicalpointleft1;
+					}	
+					if(numbertypicalleft==2){
 						scoreutils.Typicalpointleft2=ISP.toString();
-					if(numbertypicalleft==3)
+						if(scoreutils.Typicalpointrigth2=="1") scoreutils.Typicalpointrigth2=scoreutils.Typicalpointleft2;
+					}	
+					if(numbertypicalleft==3){
 						scoreutils.Typicalpointleft3=ISP.toString();
-					if(numbertypicalleft==4)
+						if(scoreutils.Typicalpointrigth3=="1") scoreutils.Typicalpointrigth3=scoreutils.Typicalpointleft3;
+					}	
+					if(numbertypicalleft==4){
 						scoreutils.Typicalpointleft4=ISP.toString();
-					if(numbertypicalleft==5)
+						if(scoreutils.Typicalpointrigth4=="1") scoreutils.Typicalpointrigth4=scoreutils.Typicalpointleft4;
+					}	
+					if(numbertypicalleft==5){
 						scoreutils.Typicalpointleft5=ISP.toString();
-					if(numbertypicalleft==6)
+						if(scoreutils.Typicalpointrigth5=="1") scoreutils.Typicalpointrigth5=scoreutils.Typicalpointleft5;
+					}	
+					if(numbertypicalleft==6){
 						scoreutils.Typicalpointleft6=ISP.toString();
-					if(numbertypicalleft==7)
+						if(scoreutils.Typicalpointrigth6=="1") scoreutils.Typicalpointrigth6=scoreutils.Typicalpointleft6;
+					}	
+					if(numbertypicalleft==7){
 						scoreutils.Typicalpointleft7=ISP.toString();
-					if(numbertypicalleft==8)
+						if(scoreutils.Typicalpointrigth7=="1") scoreutils.Typicalpointrigth7=scoreutils.Typicalpointleft7;
+					}	
+					if(numbertypicalleft==8){
 						scoreutils.Typicalpointleft8=ISP.toString();
-					if(numbertypicalleft==9)
+						if(scoreutils.Typicalpointrigth8=="1") scoreutils.Typicalpointrigth8=scoreutils.Typicalpointleft8;
+					}	
+					if(numbertypicalleft==9){
 						scoreutils.Typicalpointleft9=ISP.toString();
-					if(numbertypicalleft==10)
+						if(scoreutils.Typicalpointrigth9=="1") scoreutils.Typicalpointrigth9=scoreutils.Typicalpointleft9;
+					}	
+					if(numbertypicalleft==10){
 						scoreutils.Typicalpointleft10=ISP.toString();
+						if(scoreutils.Typicalpointrigth10=="1") scoreutils.Typicalpointrigth10=scoreutils.Typicalpointleft10;
+					}	
 					
 					currentState='MeasureLeftTine';
 					
@@ -1547,28 +1580,50 @@
 						if(cont!=0 && cont<5) cont++;
 							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
 					}else{
+						if(cont!=0 && cont<5) cont++;
 							ISP=Number(myangleoptions[3+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[3+(2*cont)].attribute("B"));
 					}
-					if(numbertypicalleft==1)
+					cont++;
+					if(numbertypicalleft==1){
 						scoreutils.Typicalpointleft1=ISP.toString();
-					if(numbertypicalleft==2)
+						if(scoreutils.Typicalpointrigth1=="1") scoreutils.Typicalpointrigth1=scoreutils.Typicalpointleft1;
+					}	
+					if(numbertypicalleft==2){
 						scoreutils.Typicalpointleft2=ISP.toString();
-					if(numbertypicalleft==3)
+						if(scoreutils.Typicalpointrigth2=="1") scoreutils.Typicalpointrigth2=scoreutils.Typicalpointleft2;
+					}	
+					if(numbertypicalleft==3){
 						scoreutils.Typicalpointleft3=ISP.toString();
-					if(numbertypicalleft==4)
+						if(scoreutils.Typicalpointrigth3=="1") scoreutils.Typicalpointrigth3=scoreutils.Typicalpointleft3;
+					}	
+					if(numbertypicalleft==4){
 						scoreutils.Typicalpointleft4=ISP.toString();
-					if(numbertypicalleft==5)
+						if(scoreutils.Typicalpointrigth4=="1") scoreutils.Typicalpointrigth4=scoreutils.Typicalpointleft4;
+					}	
+					if(numbertypicalleft==5){
 						scoreutils.Typicalpointleft5=ISP.toString();
-					if(numbertypicalleft==6)
+						if(scoreutils.Typicalpointrigth5=="1") scoreutils.Typicalpointrigth5=scoreutils.Typicalpointleft5;
+					}	
+					if(numbertypicalleft==6){
 						scoreutils.Typicalpointleft6=ISP.toString();
-					if(numbertypicalleft==7)
+						if(scoreutils.Typicalpointrigth6=="1") scoreutils.Typicalpointrigth6=scoreutils.Typicalpointleft6;
+					}	
+					if(numbertypicalleft==7){
 						scoreutils.Typicalpointleft7=ISP.toString();
-					if(numbertypicalleft==8)
+						if(scoreutils.Typicalpointrigth7=="1") scoreutils.Typicalpointrigth7=scoreutils.Typicalpointleft7;
+					}	
+					if(numbertypicalleft==8){
 						scoreutils.Typicalpointleft8=ISP.toString();
-					if(numbertypicalleft==9)
+						if(scoreutils.Typicalpointrigth8=="1") scoreutils.Typicalpointrigth8=scoreutils.Typicalpointleft8;
+					}	
+					if(numbertypicalleft==9){
 						scoreutils.Typicalpointleft9=ISP.toString();
-					if(numbertypicalleft==10)
+						if(scoreutils.Typicalpointrigth9=="1") scoreutils.Typicalpointrigth9=scoreutils.Typicalpointleft9;
+					}	
+					if(numbertypicalleft==10){
 						scoreutils.Typicalpointleft10=ISP.toString();
+						if(scoreutils.Typicalpointrigth10=="1") scoreutils.Typicalpointrigth10=scoreutils.Typicalpointleft10;
+					}	
 					currentState='MeasureRigthTine';
 					lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"="+ISP.toString();
 					numbertypicalleft=1;
@@ -1597,28 +1652,50 @@
 						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
 					}else{
+						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[4+2*cont].attribute("A"))*ldistance+Number(myangleoptions[4+(2*cont)].attribute("B"));
 					}
-					if(numbertypicalrigth==1)
+					cont++;
+					if(numbertypicalrigth==1){
 						scoreutils.Typicalpointrigth1=ISP.toString();
-					if(numbertypicalrigth==2)
+						if(scoreutils.Typicalpointleft1=="1") scoreutils.Typicalpointleft1=scoreutils.Typicalpointrigth1;
+					}	
+					if(numbertypicalrigth==2){
 						scoreutils.Typicalpointrigth2=ISP.toString();
-					if(numbertypicalrigth==3)
+						if(scoreutils.Typicalpointleft2=="1") scoreutils.Typicalpointleft2=scoreutils.Typicalpointrigth2;
+					}	
+					if(numbertypicalrigth==3){
 						scoreutils.Typicalpointrigth3=ISP.toString();
-					if(numbertypicalrigth==4)
+						if(scoreutils.Typicalpointleft3=="1") scoreutils.Typicalpointleft3=scoreutils.Typicalpointrigth3;
+					}	
+					if(numbertypicalrigth==4){
 						scoreutils.Typicalpointrigth4=ISP.toString();
-					if(numbertypicalrigth==5)
+						if(scoreutils.Typicalpointleft4=="1") scoreutils.Typicalpointleft4=scoreutils.Typicalpointrigth4;
+					}	
+					if(numbertypicalrigth==5){
 						scoreutils.Typicalpointrigth5=ISP.toString();
-					if(numbertypicalrigth==6)
+						if(scoreutils.Typicalpointleft5=="1") scoreutils.Typicalpointleft5=scoreutils.Typicalpointrigth5;
+					}	
+					if(numbertypicalrigth==6){
 						scoreutils.Typicalpointrigth6=ISP.toString();
-					if(numbertypicalrigth==7)
+						if(scoreutils.Typicalpointleft6=="1") scoreutils.Typicalpointleft6=scoreutils.Typicalpointrigth6;
+					}	
+					if(numbertypicalrigth==7){
 						scoreutils.Typicalpointrigth7=ISP.toString();
-					if(numbertypicalrigth==8)
+						if(scoreutils.Typicalpointleft7=="1") scoreutils.Typicalpointleft7=scoreutils.Typicalpointrigth7;
+					}	
+					if(numbertypicalrigth==8){
 						scoreutils.Typicalpointrigth8=ISP.toString();
-					if(numbertypicalrigth==9)
+						if(scoreutils.Typicalpointleft8=="1") scoreutils.Typicalpointleft8=scoreutils.Typicalpointrigth8;
+					}	
+					if(numbertypicalrigth==9){
 						scoreutils.Typicalpointrigth9=ISP.toString();
-					if(numbertypicalrigth==10)
+						if(scoreutils.Typicalpointleft9=="1") scoreutils.Typicalpointleft9=scoreutils.Typicalpointrigth9;
+					}	
+					if(numbertypicalrigth==10){
 						scoreutils.Typicalpointrigth10=ISP.toString();
+						if(scoreutils.Typicalpointleft10=="1") scoreutils.Typicalpointleft10=scoreutils.Typicalpointrigth10;
+					}	
 					currentState='MeasureRigthTine';
 					lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"="+ISP.toString();
 					numbertypicalrigth++;
@@ -1630,28 +1707,50 @@
 						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
 					}else{
+						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[4+2*(cont)].attribute("A"))*ldistance+Number(myangleoptions[4+(2*cont)].attribute("B"));
 					}
-					if(numbertypicalrigth==1)
+					cont++;
+					if(numbertypicalrigth==1){
 						scoreutils.Typicalpointrigth1=ISP.toString();
-					if(numbertypicalrigth==2)
+						if(scoreutils.Typicalpointleft1=="1") scoreutils.Typicalpointleft1=scoreutils.Typicalpointrigth1;
+					}	
+					if(numbertypicalrigth==2){
 						scoreutils.Typicalpointrigth2=ISP.toString();
-					if(numbertypicalrigth==3)
+						if(scoreutils.Typicalpointleft2=="1") scoreutils.Typicalpointleft2=scoreutils.Typicalpointrigth2;
+					}	
+					if(numbertypicalrigth==3){
 						scoreutils.Typicalpointrigth3=ISP.toString();
-					if(numbertypicalrigth==4)
+						if(scoreutils.Typicalpointleft3=="1") scoreutils.Typicalpointleft3=scoreutils.Typicalpointrigth3;
+					}	
+					if(numbertypicalrigth==4){
 						scoreutils.Typicalpointrigth4=ISP.toString();
-					if(numbertypicalrigth==5)
+						if(scoreutils.Typicalpointleft4=="1") scoreutils.Typicalpointleft4=scoreutils.Typicalpointrigth4;
+					}	
+					if(numbertypicalrigth==5){
 						scoreutils.Typicalpointrigth5=ISP.toString();
-					if(numbertypicalrigth==6)
+						if(scoreutils.Typicalpointleft5=="1") scoreutils.Typicalpointleft5=scoreutils.Typicalpointrigth5;
+					}	
+					if(numbertypicalrigth==6){
 						scoreutils.Typicalpointrigth6=ISP.toString();
-					if(numbertypicalrigth==7)
+						if(scoreutils.Typicalpointleft6=="1") scoreutils.Typicalpointleft6=scoreutils.Typicalpointrigth6;
+					}	
+					if(numbertypicalrigth==7){
 						scoreutils.Typicalpointrigth7=ISP.toString();
-					if(numbertypicalrigth==8)
+						if(scoreutils.Typicalpointleft7=="1") scoreutils.Typicalpointleft7=scoreutils.Typicalpointrigth7;
+					}	
+					if(numbertypicalrigth==8){
 						scoreutils.Typicalpointrigth8=ISP.toString();
-					if(numbertypicalrigth==9)
+						if(scoreutils.Typicalpointleft8=="1") scoreutils.Typicalpointleft8=scoreutils.Typicalpointrigth8;
+					}	
+					if(numbertypicalrigth==9){
 						scoreutils.Typicalpointrigth9=ISP.toString();
-					if(numbertypicalrigth==10)
+						if(scoreutils.Typicalpointleft9=="1") scoreutils.Typicalpointleft9=scoreutils.Typicalpointrigth9;
+					}	
+					if(numbertypicalrigth==10){
 						scoreutils.Typicalpointrigth10=ISP.toString();
+						if(scoreutils.Typicalpointleft10=="1") scoreutils.Typicalpointleft10=scoreutils.Typicalpointrigth10;
+					}	
 					currentState='MeasureLeftCircunference';
 					lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"="+ISP.toString();
 					numbertypicalrigth=1;
@@ -1686,8 +1785,10 @@
 						if(cont!=0 && cont<4) cont++;
 						ISP=Number(myangleoptions[7+2*cont].attribute("A"))*ldistance+Number(myangleoptions[7+(2*cont)].attribute("B"));
 					}else{
+						if(cont!=0 && cont<4) cont++;
 						ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
 					}
+					cont++;
 					if(numbercincumferenceleft==1)
 						scoreutils.Circumferenceleft1=ISP.toString();
 					if(numbercincumferenceleft==2)
@@ -1711,8 +1812,10 @@
 						if(cont!=0 && cont<4) cont++;
 						ISP=Number(myangleoptions[7+2*cont].attribute("A"))*ldistance+Number(myangleoptions[7+(2*cont)].attribute("B"));
 					}else{
+						if(cont!=0 && cont<4) cont++;
 						ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
 					}
+					cont++;
 					if(numbercincumferenceleft==1)
 						scoreutils.Circumferenceleft1=ISP.toString();
 					if(numbercincumferenceleft==2)
@@ -1758,16 +1861,26 @@
 						if(cont!=0 && cont<4) cont++;
 						ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
 					}else{
+						if(cont!=0 && cont<4) cont++;
 						ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
 					}
-					if(numbercincumferencerigth==1)
+					cont++;
+					if(numbercincumferencerigth==1){
 						scoreutils.Circumferencerigth1=ISP.toString();
-					if(numbercincumferencerigth==2)
+						if(scoreutils.Circumferenceleft1=="1") scoreutils.Circumferenceleft1=scoreutils.Circumferencerigth1;
+					}	
+					if(numbercincumferencerigth==2){
 						scoreutils.Circumferencerigth2=ISP.toString();
-					if(numbercincumferencerigth==3)
+						if(scoreutils.Circumferenceleft2=="1") scoreutils.Circumferenceleft2=scoreutils.Circumferencerigth2;
+					}	
+					if(numbercincumferencerigth==3){
 						scoreutils.Circumferencerigth3=ISP.toString();
-					if(numbercincumferencerigth==4)
+						if(scoreutils.Circumferenceleft3=="1") scoreutils.Circumferenceleft3=scoreutils.Circumferencerigth3;
+					}	
+					if(numbercincumferencerigth==4){
 						scoreutils.Circumferencerigth4=ISP.toString();
+						if(scoreutils.Circumferenceleft4=="1") scoreutils.Circumferenceleft4=scoreutils.Circumferencerigth4;
+					}	
 					
 					currentState='MeasureRigthCircumference';
 					lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"="+ISP.toString();
@@ -1780,16 +1893,26 @@
 						if(cont!=0 && cont<4) cont++;
 						ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
 					}else{
+						if(cont!=0 && cont<4) cont++;
 						ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
 					}
-					if(numbercincumferencerigth==1)
+					cont++;
+					if(numbercincumferencerigth==1){
 						scoreutils.Circumferencerigth1=ISP.toString();
-					if(numbercincumferencerigth==2)
+						if(scoreutils.Circumferenceleft1=="1") scoreutils.Circumferenceleft1=scoreutils.Circumferencerigth1;
+					}	
+					if(numbercincumferencerigth==2){
 						scoreutils.Circumferencerigth2=ISP.toString();
-					if(numbercincumferencerigth==3)
+						if(scoreutils.Circumferenceleft2=="1") scoreutils.Circumferenceleft2=scoreutils.Circumferencerigth2;
+					}	
+					if(numbercincumferencerigth==3){
 						scoreutils.Circumferencerigth3=ISP.toString();
-					if(numbercincumferencerigth==4)
+						if(scoreutils.Circumferenceleft3=="1") scoreutils.Circumferenceleft3=scoreutils.Circumferencerigth3;
+					}	
+					if(numbercincumferencerigth==4){
 						scoreutils.Circumferencerigth4=ISP.toString();
+						if(scoreutils.Circumferenceleft4=="1") scoreutils.Circumferenceleft4=scoreutils.Circumferencerigth4;
+					}	
 					currentState='MeasureAnormalPoints'
 					lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"="+ISP.toString();
 					numbercincumferencerigth=1;
@@ -1819,8 +1942,10 @@
 						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
 					}else{
+						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[21+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[21+(2*cont)].attribute("B"));
 					}
+					cont++;
 					if(numberabnormalleft==1)
 						scoreutils.Abnormalpointleft1=ISP.toString();
 					if(numberabnormalleft==2)
@@ -1873,8 +1998,10 @@
 						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
 					}else{
+						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[21+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[21+(2*cont)].attribute("B"));
 					}
+					cont++;
 					if(numberabnormalleft==1)
 						scoreutils.Abnormalpointleft1=ISP.toString();
 					if(numberabnormalleft==2)
@@ -1944,8 +2071,10 @@
 						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
 					}else{
+						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[22+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[22+(2*cont)].attribute("B"));
 					}
+					cont++;
 					if(numberabnormalright==1)
 						scoreutils.Abnormalpointrigth1=ISP.toString();
 					if(numberabnormalright==2)
@@ -1998,8 +2127,10 @@
 						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
 					}else{
+						if(cont!=0 && cont<5) cont++;
 						ISP=Number(myangleoptions[22+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[22+(2*cont)].attribute("B"));
 					}
+					cont++;
 					if(numberabnormalright==1)
 						scoreutils.Abnormalpointrigth1=ISP.toString();
 					if(numberabnormalright==2)
@@ -2046,10 +2177,409 @@
 					cont=0;
 				}
 			}
-////////////////////////////////////////////////////////////////////////////////////			
+			
+			
+//////////////////////////////////////////////////////////			
 			
 			
 			
+			
+			
+			
+			
+			protected function RecordLeftTineLineMirror_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				var ldistance:Number=(distance)/(inchvalue);
+				if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)){
+					cont++;
+					if(numbertypicalleft==1)
+						scoreutils.Typicalpointleft1="1";
+					if(numbertypicalleft==2)
+						scoreutils.Typicalpointleft2="1";
+					if(numbertypicalleft==3)
+						scoreutils.Typicalpointleft3="1";
+					if(numbertypicalleft==4)
+						scoreutils.Typicalpointleft4="1";
+					if(numbertypicalleft==5)
+						scoreutils.Typicalpointleft5="1";
+					if(numbertypicalleft==6)
+						scoreutils.Typicalpointleft6="1";
+					if(numbertypicalleft==7)
+						scoreutils.Typicalpointleft7="1";
+					if(numbertypicalleft==8)
+						scoreutils.Typicalpointleft8="1";
+					if(numbertypicalleft==9)
+						scoreutils.Typicalpointleft9="1";
+					if(numbertypicalleft==10)
+						scoreutils.Typicalpointleft10="1";
+					
+					currentState='MeasureLeftTine';
+					lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"= To be Determinated";
+					numbertypicalleft++;
+					btnRecordLeftTine.label="Measure Left Tine "+numbertypicalleft;
+				}else{
+					if(numbertypicalleft==1)
+						scoreutils.Typicalpointleft1="1";
+					if(numbertypicalleft==2)
+						scoreutils.Typicalpointleft2="1";
+					if(numbertypicalleft==3)
+						scoreutils.Typicalpointleft3="1";
+					if(numbertypicalleft==4)
+						scoreutils.Typicalpointleft4="1";
+					if(numbertypicalleft==5)
+						scoreutils.Typicalpointleft5="1";
+					if(numbertypicalleft==6)
+						scoreutils.Typicalpointleft6="1";
+					if(numbertypicalleft==7)
+						scoreutils.Typicalpointleft7="1";
+					if(numbertypicalleft==8)
+						scoreutils.Typicalpointleft8="1";
+					if(numbertypicalleft==9)
+						scoreutils.Typicalpointleft9="1";
+					if(numbertypicalleft==10)
+						scoreutils.Typicalpointleft10="1";
+					cont++;
+					currentState='MeasureRigthTine';
+					lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"= To be Determinated";
+					numbertypicalleft=1;
+					cont=0;
+				}
+				
+			}
+			
+			
+			protected function RecordRigthTineLineMirror_clickHandler(event:MouseEvent):void
+			{
+				
+				if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)){
+					cont++;
+					if(numbertypicalrigth==1){
+					   scoreutils.Typicalpointrigth1="0";
+					   if(scoreutils.Typicalpointleft1!="1"){
+						   scoreutils.Typicalpointrigth1=scoreutils.Typicalpointleft1;
+					   }else{
+						   scoreutils.Typicalpointleft1='0';
+					   }
+					   
+					}	
+					if(numbertypicalrigth==2){
+						scoreutils.Typicalpointrigth2="0";
+						if(scoreutils.Typicalpointleft2!="1"){
+							scoreutils.Typicalpointrigth2=scoreutils.Typicalpointleft2;
+						}else{
+							scoreutils.Typicalpointleft2='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==3){
+						scoreutils.Typicalpointrigth3="0";
+						if(scoreutils.Typicalpointleft3!="1"){
+							scoreutils.Typicalpointrigth3=scoreutils.Typicalpointleft3;
+						}else{
+							scoreutils.Typicalpointleft3='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==4){
+						scoreutils.Typicalpointrigth4="0";
+						if(scoreutils.Typicalpointleft4!="1"){
+							scoreutils.Typicalpointrigth4=scoreutils.Typicalpointleft4;
+						}else{
+							scoreutils.Typicalpointleft4='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==5){
+						scoreutils.Typicalpointrigth5="0";
+						if(scoreutils.Typicalpointleft5!="1"){
+							scoreutils.Typicalpointrigth5=scoreutils.Typicalpointleft5;
+						}else{
+							scoreutils.Typicalpointleft5='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==6){
+						scoreutils.Typicalpointrigth6="0";
+						if(scoreutils.Typicalpointleft6!="1"){
+							scoreutils.Typicalpointrigth6=scoreutils.Typicalpointleft6;
+						}else{
+							scoreutils.Typicalpointleft6='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==7){
+						scoreutils.Typicalpointrigth7="0";
+						if(scoreutils.Typicalpointleft7!="1"){
+							scoreutils.Typicalpointrigth7=scoreutils.Typicalpointleft7;
+						}else{
+							scoreutils.Typicalpointleft7='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==8){
+						scoreutils.Typicalpointrigth8="0";
+						if(scoreutils.Typicalpointleft8!="1"){
+							scoreutils.Typicalpointrigth8=scoreutils.Typicalpointleft8;
+						}else{
+							scoreutils.Typicalpointleft8='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==9){
+						scoreutils.Typicalpointrigth9="0";
+						if(scoreutils.Typicalpointleft9!="1"){
+							scoreutils.Typicalpointrigth9=scoreutils.Typicalpointleft9;
+						}else{
+							scoreutils.Typicalpointleft9='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==10){
+						scoreutils.Typicalpointrigth10="0";
+						if(scoreutils.Typicalpointleft10!="1"){
+							scoreutils.Typicalpointrigth10=scoreutils.Typicalpointleft10;
+						}else{
+							scoreutils.Typicalpointleft10='0';
+						}
+						
+					}	
+					currentState='MeasureRigthTine';
+					lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"=To be Determinated";
+					numbertypicalrigth++;
+					btnRecordLeftTine.label="Measure Rigth Tine "+numbertypicalrigth;
+					
+				}else{
+					
+					cont++;
+					if(numbertypicalrigth==1){
+						scoreutils.Typicalpointrigth1="0";
+						if(scoreutils.Typicalpointleft1!="1"){
+							scoreutils.Typicalpointrigth1=scoreutils.Typicalpointleft1;
+						}else{
+							scoreutils.Typicalpointleft1='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==2){
+						scoreutils.Typicalpointrigth2="0";
+						if(scoreutils.Typicalpointleft2!="1"){
+							scoreutils.Typicalpointrigth2=scoreutils.Typicalpointleft2;
+						}else{
+							scoreutils.Typicalpointleft2='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==3){
+						scoreutils.Typicalpointrigth3="0";
+						if(scoreutils.Typicalpointleft3!="1"){
+							scoreutils.Typicalpointrigth3=scoreutils.Typicalpointleft3;
+						}else{
+							scoreutils.Typicalpointleft3='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==4){
+						scoreutils.Typicalpointrigth4="0";
+						if(scoreutils.Typicalpointleft4!="1"){
+							scoreutils.Typicalpointrigth4=scoreutils.Typicalpointleft4;
+						}else{
+							scoreutils.Typicalpointleft4='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==5){
+						scoreutils.Typicalpointrigth5="0";
+						if(scoreutils.Typicalpointleft5!="1"){
+							scoreutils.Typicalpointrigth5=scoreutils.Typicalpointleft5;
+						}else{
+							scoreutils.Typicalpointleft5='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==6){
+						scoreutils.Typicalpointrigth6="0";
+						if(scoreutils.Typicalpointleft6!="1"){
+							scoreutils.Typicalpointrigth6=scoreutils.Typicalpointleft6;
+						}else{
+							scoreutils.Typicalpointleft6='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==7){
+						scoreutils.Typicalpointrigth7="0";
+						if(scoreutils.Typicalpointleft7!="1"){
+							scoreutils.Typicalpointrigth7=scoreutils.Typicalpointleft7;
+						}else{
+							scoreutils.Typicalpointleft7='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==8){
+						scoreutils.Typicalpointrigth8="0";
+						if(scoreutils.Typicalpointleft8!="1"){
+							scoreutils.Typicalpointrigth8=scoreutils.Typicalpointleft8;
+						}else{
+							scoreutils.Typicalpointleft8='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==9){
+						scoreutils.Typicalpointrigth9="0";
+						if(scoreutils.Typicalpointleft9!="1"){
+							scoreutils.Typicalpointrigth9=scoreutils.Typicalpointleft9;
+						}else{
+							scoreutils.Typicalpointleft9='0';
+						}
+						
+					}	
+					if(numbertypicalrigth==10){
+						scoreutils.Typicalpointrigth10="0";
+						if(scoreutils.Typicalpointleft10!="1"){
+							scoreutils.Typicalpointrigth10=scoreutils.Typicalpointleft10;
+						}else{
+							scoreutils.Typicalpointleft10='0';
+						}
+						
+					}	
+					currentState='MeasureLeftCircunference';
+					lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"=To be Determinated";
+					numbertypicalrigth=1;
+					cont=0;
+				}
+				
+			}
+			
+			
+			
+						
+			
+			protected function RecordLeftCircunferenceMirror_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				var ISP:Number;
+				
+				if(numbercincumferenceleft<4){
+					cont++;
+					if(numbercincumferenceleft==1)
+						scoreutils.Circumferenceleft1="1";
+					if(numbercincumferenceleft==2)
+						scoreutils.Circumferenceleft2="1";
+					if(numbercincumferenceleft==3)
+						scoreutils.Circumferenceleft3="1";
+					if(numbercincumferenceleft==4)
+						scoreutils.Circumferenceleft4="1";
+					
+					
+					
+					
+					currentState='MeasureLeftCircunference';
+					lbllasmeasurement.text="Letf Circumference "+numbercincumferenceleft+"=To be Determinated";
+					numbercincumferenceleft++;
+					btnRecordLeftTine.label="Measure Letf Circumference "+numbercincumferenceleft;
+					
+				}else{
+					
+					cont++;
+					if(numbercincumferenceleft==1)
+						scoreutils.Circumferenceleft1="1";
+					if(numbercincumferenceleft==2)
+						scoreutils.Circumferenceleft2="1";
+					if(numbercincumferenceleft==3)
+						scoreutils.Circumferenceleft3="1";
+					if(numbercincumferenceleft==4)
+						scoreutils.Circumferenceleft4="1";
+					
+					
+					
+					currentState='MeasureRigthCircumference'
+					lbllasmeasurement.text="Letf Circumference "+numbercincumferenceleft+"=To be Determinated";
+					numbercincumferenceleft=1;
+					cont=0;
+				}
+				
+				
+			}
+			
+			protected function RecordRigthCircumferenceMirror_clickHandler(event:MouseEvent):void
+			{
+				var distance:Number=12;
+				
+				
+				if(numbercincumferencerigth<4){
+					cont++;
+					if(numbercincumferencerigth==1){
+						scoreutils.Circumferencerigth1="0";
+						if(scoreutils.Circumferenceleft1!="1") scoreutils.Circumferencerigth1=scoreutils.Circumferenceleft1;
+						else scoreutils.Circumferenceleft1="0";
+					}	
+					if(numbercincumferencerigth==2){
+						scoreutils.Circumferencerigth2="0";
+						if(scoreutils.Circumferenceleft2!="1") scoreutils.Circumferencerigth2=scoreutils.Circumferenceleft2;
+						else scoreutils.Circumferenceleft2="0";
+					}	
+					if(numbercincumferencerigth==3){
+						scoreutils.Circumferencerigth3="0";
+						if(scoreutils.Circumferenceleft3!="1") scoreutils.Circumferencerigth3=scoreutils.Circumferenceleft3;
+						else scoreutils.Circumferenceleft3="0";
+					}	
+					if(numbercincumferencerigth==4){
+						scoreutils.Circumferencerigth4="0";
+						if(scoreutils.Circumferenceleft4!="1") scoreutils.Circumferencerigth4=scoreutils.Circumferenceleft4;
+						else scoreutils.Circumferenceleft4="0";
+					}	
+					
+					currentState='MeasureRigthCircumference';
+					lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"=To be Determinated";
+					numbercincumferencerigth++;
+					btnRecordLeftTine.label="Measure Rigth Circumference "+numbercincumferencerigth;
+					
+				}else{
+					cont++;
+					if(numbercincumferencerigth==1){
+						scoreutils.Circumferencerigth1="0";
+						if(scoreutils.Circumferenceleft1!="1") scoreutils.Circumferencerigth1=scoreutils.Circumferenceleft1;
+						else scoreutils.Circumferenceleft1="0";
+					}	
+					if(numbercincumferencerigth==2){
+						scoreutils.Circumferencerigth2="0";
+						if(scoreutils.Circumferenceleft2!="1") scoreutils.Circumferencerigth2=scoreutils.Circumferenceleft2;
+						else scoreutils.Circumferenceleft2="0";
+					}	
+					if(numbercincumferencerigth==3){
+						scoreutils.Circumferencerigth3="0";
+						if(scoreutils.Circumferenceleft3!="1") scoreutils.Circumferencerigth3=scoreutils.Circumferenceleft3;
+						else scoreutils.Circumferenceleft3="0";
+					}	
+					if(numbercincumferencerigth==4){
+						scoreutils.Circumferencerigth4="0";
+						if(scoreutils.Circumferenceleft4!="1") scoreutils.Circumferencerigth4=scoreutils.Circumferenceleft4;
+						else scoreutils.Circumferenceleft4="0";
+					}	
+					currentState='MeasureAnormalPoints'
+					lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"=To be Determinated";
+					numbercincumferencerigth=1;
+					cont=0;
+				}
+				
+			}
+			
+			////////////////////////////////////////////////////////////////////////////////////	
+			
+			protected function callResultHandler(event:ResultEvent):void
+			{
+				var respuesta:Object = event.result;
+				trace(respuesta.toString());
+				var xml:XML=XML(event.result);
+				trace(xml.child("Email"));
+				if(xml.child("Email").toString()==""){
+					currentState='stateLogin';
+				}else{
+					currentState='stateMain';
+				}
+				
+			}
 			
 		]]>
 	</fx:Script>
@@ -2109,7 +2639,9 @@
 						   complete="fileReference_complete(event);" />
 		<mx:Zoom id="zoomProduct" zoomWidthTo="1.5" zoomHeightTo="1.5" zoomWidthFrom="1" zoomHeightFrom="1" originX="50" originY="30" />
 		
-		
+		<mx:WebService id="ws" wsdl="http://www.buckscore.com/WebService/WinAppIntegration.asmx?WSDL">
+			<mx:operation name="SignAndRegister" result="callResultHandler(event)" />
+		</mx:WebService> 
 		
 	</fx:Declarations>
 	<s:layout.stateLogin>
@@ -2130,15 +2662,16 @@
 							
 						</s:FormItem>
 						<s:FormItem label="UserName">
-							<s:TextInput width="142"/>
+							<s:TextInput id="txtusername" width="142"/>
 							
 						</s:FormItem>
 						<s:FormItem width="248" label="Paswoord">
-							<s:TextInput width="143"/>
+							<s:TextInput id="txtpasswoord" width="143" displayAsPassword="true"/>
 							
 						</s:FormItem>
 						<s:FormItem width="248">
-							<s:Button label="Validate"/>
+							<s:Button label="Validate"
+									  click="ws.SignAndRegister(txtusername.text,txtpasswoord.text)"/>
 						</s:FormItem>
 						
 					</s:Form>
@@ -3524,13 +4057,17 @@
 																x.RecordLeftCircunference="47"
 																y.RecordLeftCircunference="121"
 																width.RecordLeftCircunference="173"
+																click.RecordLeftCircunference="RecordLeftCircunferenceMirror_clickHandler(event)"
 																chromeColor.RecordLeftCircunference="#323232"
 																chromeColor.RecordLeftTineLine="#323232"
+																click.RecordLeftTineLine="RecordLeftTineLineMirror_clickHandler(event)"
 																x.RecordRigthCircumference="42"
 																y.RecordRigthCircumference="121"
 																width.RecordRigthCircumference="180"
 																chromeColor.RecordRigthCircumference="#323232"
-																chromeColor.RecordRigthTineLine="#323232"/>
+																click.RecordRigthCircumference="RecordRigthCircumferenceMirror_clickHandler(event)"
+																chromeColor.RecordRigthTineLine="#323232"
+																click.RecordRigthTineLine="RecordRigthTineLineMirror_clickHandler(event)"/>
 												<s:ToggleButton includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
 																x="59" y="146" width="144"
 																label="Erase Lines" alpha="8"
@@ -3701,9 +4238,10 @@
 										<s:Button includeIn="stateMain" id="btndeerscoresheet" x="187" y="3"
 												  label="Score Sheet" alpha="4"
 												  click="btn_scoringreview(event)" color="#FCF9F9" enabled="false"/>
-										<s:Button includeIn="stateMain" x="86" y="31" width="126"
-												  height="28" label="SCORE" alpha="4"
-												  click="button2_callscore(event)" color="#FEFDFD"/>
+										<s:Button id="btnScoreProccess" includeIn="stateMain" x="86"
+												  y="31" width="126" height="28" label="SCORE"
+												  alpha="4" click="button2_callscore(event)"
+												  color="#FEFDFD" enabled="false"/>
 										<s:ComboBox id="combophoto" includeIn="stateMain" x="7"
 													y="76" alpha="4"
 													change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo')currentState='editphoto';   "
@@ -4789,7 +5327,7 @@
 																			 colSpan="3"
 																			 horizontalAlign="left"
 																			 verticalAlign="bottom">	
-																	<s:Label id="totaldiference" paddingTop="3"
+																	<s:Label id="totaldiferencefinal" paddingTop="3"
 																			 text="31.91"
 																			 verticalAlign="middle"/>
 																</mx:GridItem>

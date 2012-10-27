@@ -4,6 +4,7 @@ package component
 	{
 		public function albumbuckscore()
 		{
+			
 		}
 		public var id:int;
 		public var deername:String;
