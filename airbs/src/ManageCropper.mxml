@@ -14,8 +14,15 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.complexless.utils.GraphicsUtils;
+			
+			import mx.controls.Alert;
+			import mx.graphics.Stroke;
+			import mx.managers.CursorManager;
 			
 			private var newImage:BitmapData;
+			private var originalImage:BitmapData;
+			private var points:Array = [];
 			
 			private function init():void {
 				imageCropper.outlineColor = 0xffffff;  	
@@ -33,17 +40,159 @@
 			}
 			
 			private function save():void {
-				newImage = imageCropper.croppedBitmapData;
-				imageCropper.sourceImage = newImage;
-				imageCropper.width = newImage.width;
-				imageCropper.height = newImage.height;
-			} 
+				if(imageCropper.visible) { 
+					newImage = imageCropper.croppedBitmapData;
+					_setImage(newImage, false);
+				}
+			}
 			
 			private  function imageready():void
 			{
-				imageCropper.setCropRect();
+				imageCropper.setCropRect();				
 				imageCropper.enabled = false;
 			}
+			
+			public function setImage(bitmapData:BitmapData):void {
+				imageCropper.visible = true;
+				_setImage(bitmapData);
+			}
+			
+			private function _setImage(bitmapData:BitmapData, recorder:Boolean = true):void {
+				newImage = bitmapData;
+				
+				if(recorder) {
+					originalImage = newImage;
+				}
+				
+				if(cropperPanel.width < bitmapData.width || cropperPanel.height < bitmapData.height) {
+					setScaleCropper(bitmapData);
+					
+				}
+				else {
+					imageCropper.width = bitmapData.width;
+					imageCropper.height = bitmapData.height;
+				}
+				
+				imageCropper.enabled = true;
+				imageCropper.sourceImage = bitmapData;
+			}
+			
+			private function setScaleCropper(bitmapData:BitmapData):void {
+				var imageWidth:int = bitmapData.width;
+				var imageHeight:int = bitmapData.height;
+				
+				var imageScaleFactor:Number = 1;
+				
+				var newXScale:Number = imageWidth == 0 ? 1 : cropperPanel.width / imageWidth;
+				var newYScale:Number = imageHeight == 0 ? 1 : cropperPanel.height / imageHeight;
+				
+				// Calculate the scaling factor based on which dimension must be scaled in order for the image to fit within the component
+				
+				var x:Number = 0;
+				var y:Number = 0;
+				
+				if (newXScale > newYScale) {
+					x = Math.floor((cropperPanel.width - imageWidth * newYScale));
+					imageScaleFactor = newYScale;
+				}
+				else {
+					y = Math.floor((cropperPanel.height - imageHeight * newXScale));
+					imageScaleFactor = newXScale;
+				}
+				
+				// Create a matrix to perform the image scaling
+				
+				var scaleMatrix:Matrix = new Matrix();
+				scaleMatrix.scale(imageScaleFactor, imageScaleFactor);
+				
+				// Calculate the scaled size of the image
+				
+				var imageScaledWidth:Number = Math.ceil(bitmapData.width * imageScaleFactor);
+				var imageScaledHeight:Number = Math.ceil(bitmapData.height * imageScaleFactor);
+				
+				imageCropper.width = imageScaledWidth;
+				imageCropper.height = imageScaledHeight;
+			}
+			
+			public function beginDraw():void {
+				erase();
+			
+				var rc:Rectangle = imageCropper.getVisibleRect();
+				
+				canvas.x = rc.x - getVisibleRect().x;
+				canvas.y = rc.y - getVisibleRect().y;
+				canvas.height = rc.height;
+				canvas.width = rc.width;
+				canvas.visible = true;
+				
+				drawLine(points);
+			}
+			
+			public function endDraw():void {
+				canvas.visible = false;
+			}
+			
+			public function erase(): void {
+				points.length = 0;
+				drawLine(points);
+			}
+			
+			public function getPoints():Array {
+				return points;
+			}
+			
+			private function addPoint():void
+			{
+				points.push({x: canvas.mouseX,y: canvas.mouseY});
+				drawLine(points);
+			}
+			
+			private function rubberBand():void
+			{
+				var tmp:Array = points.concat();
+				tmp.push({x: canvas.mouseX,y: canvas.mouseY});
+				drawLine(tmp);
+			}
+			
+			private function drawLine(points:Array):void
+			{
+				canvas.graphics.clear();
+				canvas.graphics.beginFill(0x83F52C,0.0);
+				canvas.graphics.drawRect(0, 0, canvas.width, canvas.height);
+				canvas.graphics.endFill();
+				
+				GraphicsUtils.drawDashedPolyLine(canvas, new Stroke(0xFF0000, 1, 1, false, "normal", CapsStyle.NONE), points);
+			}
+			
+			public function zoomIn():void {
+				Alert.show("Zoom In");
+			}
+			
+			public function zoomOut():void {
+				Alert.show("Zoom Out");
+			}
+			
+			public function pointer():void {
+				Alert.show("Arrow");
+			}
+			
+			public function zoomFit():void {
+				Alert.show("Zoom Fit");
+			}
+			
+			public function zoomActual():void {
+				if(originalImage != null) {
+					_setImage(originalImage, false);
+				}
+			}
+			
+			/**
+			 * zoomIn()
+			 * zoomOut()
+			 * draw()
+			 * getData()
+			 * setImage()
+			 * */
 			
 		]]>
 	</fx:Script>
@@ -51,32 +200,34 @@
 	<s:VGroup width="100%" height="100%" gap="0">
 		<s:SkinnableContainer width="100%" height="25" skinClass="com.complexless.skins.spark.ToolbarSkin">
 			<s:HGroup width="100%" height="100%" gap="0" verticalAlign="middle">
-				<mx:LinkButton icon="@Embed('assets/images/select16x16.png')"/>
+				<mx:LinkButton icon="@Embed('assets/images/select16x16.png')" click="pointer()"/>
 				<mx:LinkButton icon="@Embed('assets/images/save16x16.png')" click="save()"/>
 				<mx:LinkButton icon="@Embed('assets/images/crop16x16.png')" click="imageCropper.enabled = true"/>
-				<mx:LinkButton icon="@Embed('assets/images/zoom_in16x16.png')"/>
-				<mx:LinkButton icon="@Embed('assets/images/zoom_out16x16.png')"/>
-				<mx:LinkButton icon="@Embed('assets/images/zoom_fit16x16.png')"/>
-				<mx:LinkButton icon="@Embed('assets/images/zoom_actualsize16x16.png')"/>
+				<mx:LinkButton icon="@Embed('assets/images/zoom_in16x16.png')" click="zoomIn()"/>
+				<mx:LinkButton icon="@Embed('assets/images/zoom_out16x16.png')" click="zoomOut()"/>
+				<mx:LinkButton icon="@Embed('assets/images/zoom_fit16x16.png')" click="zoomFit()"/>
+				<mx:LinkButton icon="@Embed('assets/images/zoom_actualsize16x16.png')" click="zoomActual()"/>
 			</s:HGroup>
 		</s:SkinnableContainer>
 		<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
-			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" gap="20">
+			<s:VGroup id="cropperPanel" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" gap="20">
 				<c:ImageCropper id="imageCropper"
 								width="640"
 								height="480"
 								sourceImage="large.jpg"
-								enabled="true"
+								enabled="false"
+								visible="false"
 								cropConstraintDisabled="false"
 								sourceImageReady="imageready();"
 								sourceImageLoadError="trace('Error while loading image')"
 								cropRectChanged="trace('Crop Rect changed');"
 								cropConstraintChanged="trace('Crop constraint changed');"
 								cropDimensionsChanged="trace('Crop dimensions changed');"
-								cropPositionChanged="trace('Crop position changed');" />
+								cropPositionChanged="trace('Crop position changed');"/>
 				
 			</s:VGroup>
 		</s:SkinnableContainer>
 	</s:VGroup>
 	</s:BorderContainer>
+	<mx:UIComponent x="0" y="0" width="0" height="0" visible="false" id="canvas" mouseDown="addPoint()" mouseMove="rubberBand()" rollOut="drawLine(points);"/>
 </mx:Canvas>

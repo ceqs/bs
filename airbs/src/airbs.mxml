@@ -5,10 +5,10 @@
 					   xmlns:bs="library://ns.adobe.com/flex/mx"
 					   xmlns:net="flash.net.*"
 					   xmlns:imagecropper="com.flexblocks.imagecropper.*"
-					   xmlns:component="component.*"
+					   xmlns:utils="utils.*"
 					   xmlns:ns1="*"
 					   width="750" height="550" backgroundAlpha="0" creationComplete="initApp()"
-					   currentState="stateLogin" showStatusBar="false" styleName="main">
+					   currentState="stateMain" showStatusBar="false" styleName="main">
 	
 	<fx:Style source="assets/css/airbs.css"/>
 	
@@ -17,11 +17,6 @@
 		<![CDATA[
 			import air.update.ApplicationUpdaterUI;
 			import air.update.events.UpdateEvent;
-			
-			import component.SQLbuckscore;
-			import component.ScoreUtils;
-			import component.albumbuckscore;
-			import component.albumitembuck;
 			
 			import flash.filters.DropShadowFilter;
 			import flash.sampler.NewObjectSample;
@@ -33,12 +28,14 @@
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
 			import mx.controls.Image;
+			import mx.core.IFlexDisplayObject;
 			import mx.events.CloseEvent;
 			import mx.events.FlexEvent;
 			import mx.events.IndexChangedEvent;
 			import mx.events.ListEvent;
 			import mx.events.MenuEvent;
 			import mx.managers.PopUpManager;
+			import mx.messaging.messages.ErrorMessage;
 			import mx.printing.FlexPrintJob;
 			import mx.printing.FlexPrintJobScaleType;
 			import mx.rpc.events.ResultEvent;
@@ -50,15 +47,17 @@
 			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
 			
+			import utils.SQLbuckscore;
+			import utils.ScoreUtils;
+			import utils.albumbuckscore;
+			import utils.albumitembuck;
 			private var gVersion:String;
 			private var shadowFilter:DropShadowFilter;
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
-			
 			private var albumphoto:ArrayCollection= new ArrayCollection();
 			private var createalbum:ArrayCollection = new ArrayCollection();
 			private var fr:FileReference;
 			private var prefsXML:XML;
-			
 			private var sqlscore:SQLbuckscore = new SQLbuckscore();
 			[Bindable]
 			public var array:ArrayCollection=new ArrayCollection;
@@ -155,8 +154,10 @@
 			private function initApp():void {
 				trace("Iniciando aplicacion...");
 				
-				if (sqlscore.isExist())
-					sqlscore.opendb();
+				if (sqlscore.isExist()) {
+					// ceqs-revisar
+					sqlscore.create();
+				}
 				else
 					sqlscore.create();
 				/*
@@ -301,11 +302,6 @@
 			
 			
 			/////////////////////////////////finish//////////////////////////////////////////	
-			protected function combophoto_uploadphoto(event:MouseEvent):void
-			{	
-				
-				
-			}
 			
 			protected function button1_canceluploadphot(event:MouseEvent):void
 			{
@@ -493,14 +489,15 @@
 				itemalbum.namealbum= txtalbumname.text;
 				itemalbum.description=txtdescriptionalbum.text;
 				
-				sqlscore.addItemalbum(itemalbum.namealbum,itemalbum.description);
+				var typeerror:String=sqlscore.addItemalbum(itemalbum.namealbum,itemalbum.description);
 				//createalbum.addItem(itemalbum);
-				
+				if(typeerror=="1"){
 				combo.addItem(itemalbum.namealbum);
 				txtalbumname.text='';
 				txtdescriptionalbum.text="";
 				combophoto.selectedIndex=0;
 				currentState='stateMain';
+				}
 			}
 			
 			protected function DeleteAlbum_clickHandler(event:MouseEvent):void
@@ -578,10 +575,12 @@
 					baseEncoder.encodeBytes(imageByteArray);
 					encodedBytes= baseEncoder.toString();
 				}
-				
-				sqlscore.addItemphoto(itemalbumphoto.deername,itemalbumphoto.albumname,itemalbumphoto.tagnumber,itemalbumphoto.ranchname,itemalbumphoto.posturename,encodedBytes,itemalbumphoto.score);
+				var typeerror:String;
+				typeerror=sqlscore.addItemphoto(itemalbumphoto.deername,itemalbumphoto.albumname,itemalbumphoto.tagnumber,itemalbumphoto.ranchname,itemalbumphoto.posturename,encodedBytes,itemalbumphoto.score);
 				//saveAs("c:/tmp",itemalbumphoto.deername+".jpg");
 				//albumphoto.addItem(itemalbumphoto);
+				trace("codigo error:"+typeerror);
+				if(typeerror=="1"){
 				array.addItem({name:itemalbumphoto.deername,type:itemalbumphoto.albumname});
 				array2.addItem({image:byaarrayaux ,name:itemalbumphoto.deername,type:itemalbumphoto.albumname,score:itemalbumphoto.score});
 				currentState='stateMain';
@@ -591,7 +590,7 @@
 				txtposturenamesave.text="";
 				imgupload.visible=false;
 				btnbrowsetoadd.visible=true;
-				
+				}
 				
 			}
 			public function saveAs(filepath:String,filename:String):void {
@@ -621,6 +620,7 @@
 					var __deername:String= photoItem.deername as String;
 					
 					if(datagridalbumname.selectedItem.name==__deername){
+						deernamefinishscore=datagridalbumname.selectedItem.name; 
 						images=photoItem.image as String;
 						trace("image code"+images);
 						if(images!=""){
@@ -665,9 +665,7 @@
 			private function loader_COMPLETE(event:Event):void
 			{
 				var bitmap:Bitmap = event.target.content;
-				var bitmapData:BitmapData = bitmap.bitmapData;
-				manageCropper.imageCropper.enabled=true;
-				manageCropper.imageCropper.sourceImage =bitmapData;
+				manageCropper.setImage(bitmap.bitmapData);
 			}
 			
 			
@@ -732,16 +730,7 @@
 			////////////////////////////////datagrid edition filter finish///////////////////////////////	
 			
 			///////////////////////////////refence feature/////////////////////////
-			protected function image1_clickHandler(event:MouseEvent):void
-			{
-				
-				
-			}
-			
-			
-			
-			
-			
+	
 			/////////////////////////////////////////////update data statemain/////////////////////////////////////////////////
 			
 			protected function btnupdatedeername_clickHandler(event:MouseEvent):void
@@ -856,17 +845,41 @@
 					else{ currentState='RecordEyeballWidthFeature'; referencetype='005';};
 				}
 				trace("reference feature:"+referencetype);
+				manageCropper.beginDraw();
 			}
 			
 			protected function toggle_EarWidthHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
 				
-				if(!tglearwidth.selected){
+				if(arraypoints.length>1){
+				var medida:Number=0;
+				var x0:Number=0;
+				var y0:Number=0;
+				
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+						
+						}else{
+						
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
 					
-					if(grade=="90"){
-						currentState='RecorderInsideSpreadEstimate';
-						var  stateReferenceRule:String=(parseInt(scoredeerage)<2 && referencetype=='005' ? "Rule1":
+					
+					}
+					distance=distance/72;
+					if(!tglearwidth.selected){
+					
+						if(grade=="90"){
+							currentState='RecorderInsideSpreadEstimate';
+							var  stateReferenceRule:String=(parseInt(scoredeerage)<2 && referencetype=='005' ? "Rule1":
 							parseInt(scoredeerage)<2 && referencetype=='004' ? "Rule2":
 							parseInt(scoredeerage)<2 && referencetype=='003' ? "Rule3":
 							parseInt(scoredeerage)<2 && referencetype=='001' ? "Rule4":
@@ -875,11 +888,11 @@
 							parseInt(scoredeerage)>=2 && referencetype=='004' ? "Rule7":
 							parseInt(scoredeerage)>=2 && referencetype=='003' ? "Rule8":
 							parseInt(scoredeerage)>=2 && referencetype=='001' ? "Rule9":
-							parseInt(scoredeerage)>=2 && referencetype=='002' ? "Rule10":"");
+							parseInt(scoredeerage)>=2 && referencetype=='002' ? "Rule10":"Rule1");
 						
-						
-						var mylistposition:XMLList = prefsXML.child("States").child("State");
-						for(var i:int=0;i<mylistposition.length();i++){
+							
+							var mylistposition:XMLList = prefsXML.child("States").child("State");
+							for(i=0;i<mylistposition.length();i++){
 							if(mylistposition[i].attribute("Description")==scorestate){
 								var rule:Number=Number(mylistposition[i].attribute(stateReferenceRule));
 								inchvalue=distance/rule;
@@ -890,10 +903,11 @@
 						}
 						//trace(mylistposition[0].attribute("Code"));
 						
-					}	
-					else{
-						currentState='MeasureInsideSpread';
-						var  stateReferenceRule2:String=(parseInt(scoredeerage)<2 && referencetype=='005' ? "Rule1":
+						}	
+						else{
+						
+							currentState='MeasureInsideSpread';
+							var  stateReferenceRule2:String=(parseInt(scoredeerage)<2 && referencetype=='005' ? "Rule1":
 							parseInt(scoredeerage)<2 && referencetype=='004' ? "Rule2":
 							parseInt(scoredeerage)<2 && referencetype=='003' ? "Rule3":
 							parseInt(scoredeerage)<2 && referencetype=='001' ? "Rule4":
@@ -902,20 +916,23 @@
 							parseInt(scoredeerage)>=2 && referencetype=='004' ? "Rule7":
 							parseInt(scoredeerage)>=2 && referencetype=='003' ? "Rule8":
 							parseInt(scoredeerage)>=2 && referencetype=='001' ? "Rule9":
-							parseInt(scoredeerage)>=2 && referencetype=='002' ? "Rule10":"");
+							parseInt(scoredeerage)>=2 && referencetype=='002' ? "Rule10":"Rule1");
 						
 						
 						mylistposition = prefsXML.child("States").child("State");
 						for( i=0;i<mylistposition.length();i++){
-							if(mylistposition[i].attribute("Description")==scorestate){
+								if(mylistposition[i].attribute("Description")==scorestate){
 								var rule2:Number=Number(mylistposition[i].attribute(stateReferenceRule2));
 								inchvalue=distance/rule2;
 								trace("valueinch:"+inchvalue);
-							}
+								}
 							
+							}
 						}
-					}
+					manageCropper.endDraw();
+				}	
 				
+					
 			}
 			
 			
@@ -1031,122 +1048,358 @@
 				
 				
 			}
-			
-			
+			public var cancel:String;
+			public var si:String;
+			private function alertListenerScoringFinal(eventObj:CloseEvent):void
+			{
+				// Check to see if the OK button was pressed.
+				if (eventObj.detail==Alert.CANCEL) {
+					cancel='1';
+				}else{
+					if (eventObj.detail==Alert.YES) {
+						var adjustement:String=prefsXML.child("VelvetAdjustment").attribute("A").toString();
+						
+						if(scoreutils.Circumferenceleft1!="0")	scoreutils.Circumferenceleft1=(Number(scoreutils.Circumferenceleft1)*Number(adjustement)).toString();
+						if(scoreutils.Circumferenceleft2!="0")	scoreutils.Circumferenceleft2=(Number(scoreutils.Circumferenceleft2)*Number(adjustement)).toString();
+						if(scoreutils.Circumferenceleft3!="0")	scoreutils.Circumferenceleft3=(Number(scoreutils.Circumferenceleft3)*Number(adjustement)).toString();
+						if(scoreutils.Circumferenceleft4!="0")	scoreutils.Circumferenceleft4=(Number(scoreutils.Circumferenceleft4)*Number(adjustement)).toString();
+						if(scoreutils.Circumferencerigth1!="0")	scoreutils.Circumferencerigth1=(Number(scoreutils.Circumferencerigth1)*Number(adjustement)).toString();
+						if(scoreutils.Circumferencerigth2!="0")	scoreutils.Circumferencerigth2=(Number(scoreutils.Circumferencerigth2)*Number(adjustement)).toString();
+						if(scoreutils.Circumferencerigth3!="0")	scoreutils.Circumferencerigth3=(Number(scoreutils.Circumferencerigth3)*Number(adjustement)).toString();
+						if(scoreutils.Circumferencerigth4!="0")	scoreutils.Circumferencerigth4=(Number(scoreutils.Circumferencerigth4)*Number(adjustement)).toString();
+						trace("entre si")
+					}
+					else{
+						trace("nada ajuste");
+						
+					}
+					currentState='ScoringFinalBuck';
+					
+					txtDeerNickName.text=deernamefinishscore;
+					txtLocationDeer.text=location;
+					var someBirthday:Date = new Date();
+					txtdatedeer.text=someBirthday.toDateString();
+					imageforedition0.source=arraybyte;
+					numberleftponitsgrid.text=cmbletftypical.selectedItem;
+					numberrigthponitsgrid.text=cmbrigthtypical.selectedItem;
+					insidespread.text=scoreutils.insidespread;
+					mainbeamleftgrid.text=scoreutils.mainbeamleft;
+					mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
+					mainbeamdiferene.text=(Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))).toString();
+					t1l.text=scoreutils.Typicalpointleft1;
+					t1r.text=scoreutils.Typicalpointrigth1;
+					t1d.text=(Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))).toString();
+					t2l.text=scoreutils.Typicalpointleft2;
+					t2r.text=scoreutils.Typicalpointrigth2;
+					t2d.text=(Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))).toString();
+					t3l.text=scoreutils.Typicalpointleft3;
+					t3r.text=scoreutils.Typicalpointrigth3;
+					t3d.text=(Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))).toString();
+					t4l.text=scoreutils.Typicalpointleft4;
+					t4r.text=scoreutils.Typicalpointrigth4;
+					t4d.text=(Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))).toString();
+					t5l.text=scoreutils.Typicalpointleft5;
+					t5r.text=scoreutils.Typicalpointrigth5;
+					t5d.text=(Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))).toString();
+					t6l.text=scoreutils.Typicalpointleft6;
+					t6r.text=scoreutils.Typicalpointrigth6;
+					t6d.text=(Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))).toString();
+					t7l.text=scoreutils.Typicalpointleft7;
+					t7r.text=scoreutils.Typicalpointrigth7;
+					t7d.text=(Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))).toString();
+					t8l.text=scoreutils.Typicalpointleft8;
+					t8r.text=scoreutils.Typicalpointrigth8;
+					t8d.text=(Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))).toString();
+					t9l.text=scoreutils.Typicalpointleft9;
+					t9r.text=scoreutils.Typicalpointrigth9;
+					t9d.text=(Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))).toString();
+					t10l.text=scoreutils.Typicalpointleft10;
+					t10r.text=scoreutils.Typicalpointrigth10;
+					t10d.text=(Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))).toString();
+					
+					c1l.text=scoreutils.Circumferenceleft1;
+					c1r.text=scoreutils.Circumferencerigth1;
+					c1d.text=(Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))).toString();
+					c2l.text=scoreutils.Circumferenceleft2;
+					c2r.text=scoreutils.Circumferencerigth2;
+					c2d.text=(Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))).toString();
+					c3l.text=scoreutils.Circumferenceleft3;
+					c3r.text=scoreutils.Circumferencerigth3;
+					c3d.text=(Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))).toString();
+					c4l.text=scoreutils.Circumferenceleft4;
+					c4r.text=scoreutils.Circumferencerigth4;
+					c4d.text=(Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))).toString();
+					a1.text=scoreutils.Abnormalpointleft1;
+					ar1.text=scoreutils.Abnormalpointrigth1;
+					a2.text=scoreutils.Abnormalpointleft2;
+					ar2.text=scoreutils.Abnormalpointrigth2;
+					a3.text=scoreutils.Abnormalpointleft3;
+					ar3.text=scoreutils.Abnormalpointrigth3;
+					a4.text=scoreutils.Abnormalpointleft4;
+					ar4.text=scoreutils.Abnormalpointrigth4;
+					a5.text=scoreutils.Abnormalpointleft5;
+					ar5.text=scoreutils.Abnormalpointrigth5;
+					a6.text=scoreutils.Abnormalpointleft6;
+					ar6.text=scoreutils.Abnormalpointrigth6;
+					a7.text=scoreutils.Abnormalpointleft7;
+					ar7.text=scoreutils.Abnormalpointrigth7;
+					a8.text=scoreutils.Abnormalpointleft8;
+					ar8.text=scoreutils.Abnormalpointrigth8;
+					a9.text=scoreutils.Abnormalpointleft9;
+					ar9.text=scoreutils.Abnormalpointrigth9;
+					a10.text=scoreutils.Abnormalpointleft10;
+					ar10.text=scoreutils.Abnormalpointrigth10;
+					a11.text=scoreutils.Abnormalpointleft11;
+					ar11.text=scoreutils.Abnormalpointrigth11;
+					a12.text=scoreutils.Abnormalpointleft12;
+					ar12.text=scoreutils.Abnormalpointrigth12;
+					a13.text=scoreutils.Abnormalpointleft13;
+					ar13.text=scoreutils.Abnormalpointrigth13;
+					a14.text=scoreutils.Abnormalpointleft14;
+					ar14.text=scoreutils.Abnormalpointrigth14;
+					a15.text=scoreutils.Abnormalpointleft15;
+					ar15.text=scoreutils.Abnormalpointrigth15;
+					a16.text=scoreutils.Abnormalpointleft16;
+					ar16.text=scoreutils.Abnormalpointrigth16;
+					a17.text=scoreutils.Abnormalpointleft17;
+					ar17.text=scoreutils.Abnormalpointrigth17;
+					a18.text=scoreutils.Abnormalpointleft18;
+					ar18.text=scoreutils.Abnormalpointrigth18;
+					a19.text=scoreutils.Abnormalpointleft19;
+					ar19.text=scoreutils.Abnormalpointrigth19;
+					a20.text=scoreutils.Abnormalpointleft20;
+					ar20.text=scoreutils.Abnormalpointrigth20;
+					var totalleft:Number=scoreutils.calculateleft();
+					var totalrigth:Number=scoreutils.calculaterigth();
+					var totalabnormal:Number=scoreutils.calculateabnormal();
+					var totaldiference:Number=Math.abs(totalleft-totalrigth);
+					tleft.text=totalleft.toString();
+					trigth.text=totalrigth.toString();
+					tdiference.text=totaldiference.toString();
+					
+					grossscore.text=(totalleft+ totalrigth+ totalabnormal ).toString();
+					totaldiferencefinal.text=totaldiference.toString();
+					
+					
+					
+					
+					
+				}
+				
+			}
 			
 			
 			
 			protected function ScoringDeer_btn(event:MouseEvent):void
 			{
-				currentState='ScoringFinalBuck';
-				imageforedition0.source=arraybyte;
+				Alert.show("Is this deer in velvet", "Velvet Adjustement",
+					Alert.YES | Alert.NO | Alert.CANCEL, this, alertListenerScoringFinal)
+					
 				
-				numberleftponitsgrid.text=cmbletftypical.selectedItem;
-				numberrigthponitsgrid.text=cmbrigthtypical.selectedItem;
-				insidespread.text=scoreutils.insidespread;
-				mainbeamleftgrid.text=scoreutils.mainbeamleft;
-				mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
-				mainbeamdiferene.text=(Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))).toString();
-				t1l.text=scoreutils.Typicalpointleft1;
-				t1r.text=scoreutils.Typicalpointrigth1;
-				t1d.text=(Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))).toString();
-				t2l.text=scoreutils.Typicalpointleft2;
-				t2r.text=scoreutils.Typicalpointrigth2;
-				t2d.text=(Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))).toString();
-				t3l.text=scoreutils.Typicalpointleft3;
-				t3r.text=scoreutils.Typicalpointrigth3;
-				t3d.text=(Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))).toString();
-				t4l.text=scoreutils.Typicalpointleft4;
-				t4r.text=scoreutils.Typicalpointrigth4;
-				t4d.text=(Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))).toString();
-				t5l.text=scoreutils.Typicalpointleft5;
-				t5r.text=scoreutils.Typicalpointrigth5;
-				t5d.text=(Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))).toString();
-				t6l.text=scoreutils.Typicalpointleft6;
-				t6r.text=scoreutils.Typicalpointrigth6;
-				t6d.text=(Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))).toString();
-				t7l.text=scoreutils.Typicalpointleft7;
-				t7r.text=scoreutils.Typicalpointrigth7;
-				t7d.text=(Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))).toString();
-				t8l.text=scoreutils.Typicalpointleft8;
-				t8r.text=scoreutils.Typicalpointrigth8;
-				t8d.text=(Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))).toString();
-				t9l.text=scoreutils.Typicalpointleft9;
-				t9r.text=scoreutils.Typicalpointrigth9;
-				t9d.text=(Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))).toString();
-				t10l.text=scoreutils.Typicalpointleft10;
-				t10r.text=scoreutils.Typicalpointrigth10;
-				t10d.text=(Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))).toString();
-				
-				c1l.text=scoreutils.Circumferenceleft1;
-				c1r.text=scoreutils.Circumferencerigth1;
-				c1d.text=(Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))).toString();
-				c2l.text=scoreutils.Circumferenceleft2;
-				c2r.text=scoreutils.Circumferencerigth2;
-				c2d.text=(Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))).toString();
-				c3l.text=scoreutils.Circumferenceleft3;
-				c3r.text=scoreutils.Circumferencerigth3;
-				c3d.text=(Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))).toString();
-				c4l.text=scoreutils.Circumferenceleft4;
-				c4r.text=scoreutils.Circumferencerigth4;
-				c4d.text=(Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))).toString();
-				a1.text=scoreutils.Abnormalpointleft1;
-				ar1.text=scoreutils.Abnormalpointrigth1;
-				a2.text=scoreutils.Abnormalpointleft2;
-				ar2.text=scoreutils.Abnormalpointrigth2;
-				a3.text=scoreutils.Abnormalpointleft3;
-				ar3.text=scoreutils.Abnormalpointrigth3;
-				a4.text=scoreutils.Abnormalpointleft4;
-				ar4.text=scoreutils.Abnormalpointrigth4;
-				a5.text=scoreutils.Abnormalpointleft5;
-				ar5.text=scoreutils.Abnormalpointrigth5;
-				a6.text=scoreutils.Abnormalpointleft6;
-				ar6.text=scoreutils.Abnormalpointrigth6;
-				a7.text=scoreutils.Abnormalpointleft7;
-				ar7.text=scoreutils.Abnormalpointrigth7;
-				a8.text=scoreutils.Abnormalpointleft8;
-				ar8.text=scoreutils.Abnormalpointrigth8;
-				a9.text=scoreutils.Abnormalpointleft9;
-				ar9.text=scoreutils.Abnormalpointrigth9;
-				a10.text=scoreutils.Abnormalpointleft10;
-				ar10.text=scoreutils.Abnormalpointrigth10;
-				a11.text=scoreutils.Abnormalpointleft11;
-				ar11.text=scoreutils.Abnormalpointrigth11;
-				a12.text=scoreutils.Abnormalpointleft12;
-				ar12.text=scoreutils.Abnormalpointrigth12;
-				a13.text=scoreutils.Abnormalpointleft13;
-				ar13.text=scoreutils.Abnormalpointrigth13;
-				a14.text=scoreutils.Abnormalpointleft14;
-				ar14.text=scoreutils.Abnormalpointrigth14;
-				a15.text=scoreutils.Abnormalpointleft15;
-				ar15.text=scoreutils.Abnormalpointrigth15;
-				a16.text=scoreutils.Abnormalpointleft16;
-				ar16.text=scoreutils.Abnormalpointrigth16;
-				a17.text=scoreutils.Abnormalpointleft17;
-				ar17.text=scoreutils.Abnormalpointrigth17;
-				a18.text=scoreutils.Abnormalpointleft18;
-				ar18.text=scoreutils.Abnormalpointrigth18;
-				a19.text=scoreutils.Abnormalpointleft19;
-				ar19.text=scoreutils.Abnormalpointrigth19;
-				a20.text=scoreutils.Abnormalpointleft20;
-				ar20.text=scoreutils.Abnormalpointrigth20;
-				var totalleft:Number=scoreutils.calculateleft();
-				var totalrigth:Number=scoreutils.calculaterigth();
-				var totalabnormal:Number=scoreutils.calculateabnormal();
-				var totaldiference:Number=Math.abs(totalleft-totalrigth);
-				tleft.text=totalleft.toString();
-				trigth.text=totalrigth.toString();
-				tdiference.text=totaldiference.toString();
-				
-				grossscore.text=(totalleft+ totalrigth+ totalabnormal ).toString();
-				totaldiferencefinal.text=totaldiference.toString();
 			}
-			
+			public var statescoringview:String;
 			protected function btn_scoringreview(event:MouseEvent):void
 			{
-				currentState='ScoringFinalBuck';
-				if(arraybyte!=null){
-				imageforedition0.source=arraybyte;}
+				var scoresheet:ArrayCollection=new ArrayCollection();
+				scoresheet=sqlscore.resaultscore(deernamefinishscore);
+				trace("tamaño:"+scoresheet.length)
+				if(scoresheet.length==1){
+					var photoItem:Object =scoresheet[0];
+					statescoringview=currentState;
+					currentState='ScoringFinalBuck';
+					txtDeerNickName.text= photoItem.deername as String;
+					txtLocationDeer.text= photoItem.location as String;
+					txtdatedeer.text=photoItem.date as String;
+				
+				
+					if(arraybyte!=null){
+					imageforedition0.source=arraybyte;
+					}
+				var sumleft:Number=0;
+				var sumrigth:Number=0;
+				var diference:Number=0;
+				numberleftponitsgrid.text=photoItem.leftpoints as String;
+				numberrigthponitsgrid.text=photoItem.rigthpoints as String;
+				insidespread.text=photoItem.insidespread as String;
+				mainbeamleftgrid.text=photoItem.mainbeamleft as String;
+				mainbeamrigthgrid.text=photoItem.mainbeamrigth as String;
+				mainbeamdiferene.text=(Math.abs(Number(photoItem.mainbeamleft as String)-Number(photoItem.mainbeamrigth as String))).toString() ;
+				
+				sumleft=sumleft+Number(mainbeamleftgrid.text);
+				sumrigth=sumrigth+Number(mainbeamrigthgrid.text);
+				diference=diference+Number(mainbeamdiferene.text);
+				
+				t1l.text=photoItem.Typicalpointleft1 as String;
+				t1r.text=photoItem.Typicalpointrigth1 as String;
+				t1d.text=(Math.abs(Number(photoItem.Typicalpointleft1 as String)-Number(photoItem.Typicalpointrigth1 as String))).toString() ;
+				
+				sumleft=sumleft+Number(t1l.text);
+				sumrigth=sumrigth+Number(t1r.text);
+				diference=diference+Number(t1d.text);
+				
+				t2l.text=photoItem.Typicalpointleft2 as String;
+				t2r.text=photoItem.Typicalpointrigth2 as String;
+				t2d.text=(Math.abs(Number(photoItem.Typicalpointleft2 as String)-Number(photoItem.Typicalpointrigth2 as String))).toString();
+				
+				sumleft=sumleft+Number(t2l.text);
+				sumrigth=sumrigth+Number(t2r.text);
+				diference=diference+Number(t2d.text);
+				
+				t3l.text=photoItem.Typicalpointleft3 as String;
+				t3r.text=photoItem.Typicalpointrigth3 as String;
+				t3d.text=(Math.abs(Number(photoItem.Typicalpointleft3 as String)-Number(photoItem.Typicalpointrigth3 as String))).toString();
+				
+				sumleft=sumleft+Number(t3l.text);
+				sumrigth=sumrigth+Number(t3r.text);
+				diference=diference+Number(t3d.text);
+				
+				
+				t4l.text=photoItem.Typicalpointleft4 as String;
+				t4r.text=photoItem.Typicalpointrigth4 as String;
+				t4d.text=(Math.abs(Number(photoItem.Typicalpointleft4 as String)-Number(photoItem.Typicalpointrigth4 as String))).toString();
+				
+				sumleft=sumleft+Number(t4l.text);
+				sumrigth=sumrigth+Number(t4r.text);
+				diference=diference+Number(t4d.text);
+				
+				t5l.text=photoItem.Typicalpointleft5 as String;
+				t5r.text=photoItem.Typicalpointrigth5 as String;
+				t5d.text=(Math.abs(Number(photoItem.Typicalpointleft5 as String)-Number(photoItem.Typicalpointrigth5 as String))).toString();
+				
+				sumleft=sumleft+Number(t5l.text);
+				sumrigth=sumrigth+Number(t5r.text);
+				diference=diference+Number(t5d.text);
+				
+				t6l.text=photoItem.Typicalpointleft6 as String;
+				t6r.text=photoItem.Typicalpointrigth6 as String;
+				t6d.text=(Math.abs(Number(photoItem.Typicalpointleft6 as String)-Number(photoItem.Typicalpointrigth6 as String))).toString();
+				
+				sumleft=sumleft+Number(t6l.text);
+				sumrigth=sumrigth+Number(t6r.text);
+				diference=diference+Number(t6d.text);
+				
+				t7l.text=photoItem.Typicalpointleft7 as String;
+				t7r.text=photoItem.Typicalpointrigth7 as String;
+				t7d.text=(Math.abs(Number(photoItem.Typicalpointleft7 as String)-Number(photoItem.Typicalpointrigth7 as String))).toString();
+				
+				
+				sumleft=sumleft+Number(t7l.text);
+				sumrigth=sumrigth+Number(t7r.text);
+				diference=diference+Number(t7d.text);
+				
+				t8l.text=photoItem.Typicalpointleft8 as String;
+				t8r.text=photoItem.Typicalpointrigth8 as String;
+				t8d.text=(Math.abs(Number(photoItem.Typicalpointleft8 as String)-Number(photoItem.Typicalpointrigth8 as String))).toString();
+				
+				sumleft=sumleft+Number(t8l.text);
+				sumrigth=sumrigth+Number(t8r.text);
+				diference=diference+Number(t8d.text);
+				
+				
+				t9l.text=photoItem.Typicalpointleft9 as String;
+				t9r.text=photoItem.Typicalpointrigth9 as String;
+				t9d.text=(Math.abs(Number(photoItem.Typicalpointleft9 as String)-Number(photoItem.Typicalpointrigth9 as String))).toString();
+				
+				sumleft=sumleft+Number(t9l.text);
+				sumrigth=sumrigth+Number(t9r.text);
+				diference=diference+Number(t9d.text);
+				
+				t10l.text=photoItem.Typicalpointleft10 as String;
+				t10r.text=photoItem.Typicalpointrigth10 as String;
+				t10d.text=(Math.abs(Number(photoItem.Typicalpointleft10 as String)-Number(photoItem.Typicalpointrigth10 as String))).toString();
+				
+				sumleft=sumleft+Number(t10l.text);
+				sumrigth=sumrigth+Number(t10r.text);
+				diference=diference+Number(t10d.text);
+				
+				
+				c1l.text=photoItem.Circumferenceleft1 as String;
+				c1r.text=photoItem.Circumferencerigth1 as String;
+				c1d.text=(Math.abs(Number(photoItem.Circumferenceleft1 as String)-Number(photoItem.Circumferencerigth1 as String))).toString();
+				
+				sumleft=sumleft+Number(c1l.text);
+				sumrigth=sumrigth+Number(c1r.text);
+				diference=diference+Number(c1d.text);
+				
+				c2l.text=photoItem.Circumferenceleft2 as String;
+				c2r.text=photoItem.Circumferencerigth2 as String;
+				c2d.text=(Math.abs(Number(photoItem.Circumferenceleft2 as String)-Number(photoItem.Circumferencerigth2 as String))).toString();
+				
+				sumleft=sumleft+Number(c2l.text);
+				sumrigth=sumrigth+Number(c2r.text);
+				diference=diference+Number(c2d.text);
+				
+				
+				c3l.text=photoItem.Circumferenceleft3 as String;
+				c3r.text=photoItem.Circumferencerigth3 as String;
+				c3d.text=(Math.abs(Number(photoItem.Circumferenceleft3 as String)-Number(photoItem.Circumferencerigth3 as String))).toString();
+				
+				sumleft=sumleft+Number(c3l.text);
+				sumrigth=sumrigth+Number(c3r.text);
+				diference=diference+Number(c3d.text);
+				
+				
+				c4l.text=photoItem.Circumferenceleft4 as String;
+				c4r.text=photoItem.Circumferencerigth4 as String;
+				c4d.text=(Math.abs(Number(photoItem.Circumferenceleft4 as String)-Number(photoItem.Circumferencerigth4 as String))).toString();
+				
+				sumleft=sumleft+Number(c4l.text);
+				sumrigth=sumrigth+Number(c4r.text);
+				diference=diference+Number(c4d.text);
+				
+				
+				a1.text=photoItem.Abnormalpointleft1 as String;
+				ar1.text=photoItem.Abnormalpointrigth1 as String;	
+				a2.text=photoItem.Abnormalpointleft2 as String;
+				ar2.text=photoItem.Abnormalpointrigth2 as String;
+				a3.text=photoItem.Abnormalpointleft3 as String;
+				ar3.text=photoItem.Abnormalpointrigth3 as String;
+				a4.text=photoItem.Abnormalpointleft4 as String;
+				ar4.text=photoItem.Abnormalpointrigth4 as String;
+				a5.text=photoItem.Abnormalpointleft5 as String;
+				ar5.text=photoItem.Abnormalpointrigth5 as String;
+				a6.text=photoItem.Abnormalpointleft6 as String;
+				ar6.text=photoItem.Abnormalpointrigth6 as String;
+				a7.text=photoItem.Abnormalpointleft7 as String;
+				ar7.text=photoItem.Abnormalpointrigth7 as String;
+				a8.text=photoItem.Abnormalpointleft8 as String;
+				ar8.text=photoItem.Abnormalpointrigth8 as String;
+				a9.text=photoItem.Abnormalpointleft9 as String;
+				ar9.text=photoItem.Abnormalpointrigth9 as String;
+				a10.text=photoItem.Abnormalpointleft10 as String;
+				ar10.text=photoItem.Abnormalpointrigth10 as String;
+				a11.text=photoItem.Abnormalpointleft11 as String;
+				ar11.text=photoItem.Abnormalpointrigth11 as String;
+				a12.text=photoItem.Abnormalpointleft12 as String;
+				ar12.text=photoItem.Abnormalpointrigth12 as String;
+				a13.text=photoItem.Abnormalpointleft13 as String;
+				ar13.text=photoItem.Abnormalpointrigth13 as String;
+				a14.text=photoItem.Abnormalpointleft14 as String;
+				ar14.text=photoItem.Abnormalpointrigth14 as String;
+				a15.text=photoItem.Abnormalpointleft15 as String;
+				ar15.text=photoItem.Abnormalpointrigth15 as String;
+				a16.text=photoItem.Abnormalpointleft16 as String;
+				ar16.text=photoItem.Abnormalpointrigth16 as String;
+				a17.text=photoItem.Abnormalpointleft17 as String;
+				ar17.text=photoItem.Abnormalpointrigth17 as String;
+				a18.text=photoItem.Abnormalpointleft18 as String;
+				ar18.text=photoItem.Abnormalpointrigth18 as String;
+				a19.text=photoItem.Abnormalpointleft19 as String;
+				ar19.text=photoItem.Abnormalpointrigth19 as String;
+				a20.text=photoItem.Abnormalpointleft20 as String;
+				ar20.text=photoItem.Abnormalpointrigth20 as String;
+				
+				
+				tleft.text=sumleft.toString();
+				trigth.text=sumrigth.toString();
+				tdiference.text=diference.toString();
+				
+				grossscore.text=photoItem.socorefinal as String;
+				totaldiferencefinal.text=diference.toString();
+				}else{
+					Alert.show("No data found deer");
+				}
+				
 				
 			}
 			
@@ -1203,6 +1456,7 @@
 				currentState='MeasureLeftMainBeam';
 				txttypicalleft.text=cmbletftypical.selectedItem;
 				txttypicalrigth.text=cmbrigthtypical.selectedItem;
+				manageCropper.endDraw();
 				
 			}
 			
@@ -1211,7 +1465,7 @@
 				currentState='RecordLeftMainBeamLine';	
 				txtRecordMainLeftPoints.text=cmbletftypical.selectedItem;
 				txtRecordMainRigthPoints.text=cmbrigthtypical.selectedItem;
-				
+				manageCropper.beginDraw();
 			}
 			
 			
@@ -1221,7 +1475,7 @@
 				currentState='RecordRigthMainBeam';
 				txtTypicalLeftRecordRigth.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordRigth.text=cmbrigthtypical.selectedItem;
-				
+				manageCropper.beginDraw();
 			}
 			
 			
@@ -1250,9 +1504,10 @@
 				else if(parseInt(cmbabnormalpointsrigth.selectedItem)>0){
 					currentState='MeasureRigthAnormalTine';
 				}
-				
+			
 				txtleftanormalpoints.text=cmbabnormalpointsleft.selectedItem;
 				txtrigthanormalpoints.text=cmbabnormalpointsrigth.selectedItem;	
+				manageCropper.endDraw();
 			}
 			
 			
@@ -1276,6 +1531,7 @@
 					if(lblEyetoEyewidth.text!="Eyeball Width") currentState='RecordEyetoEyeWidth';
 					else currentState='RecordEyeballWidthFeature';
 				}
+				manageCropper.beginDraw();
 			}
 			
 			//////////////////////////////////////////////////////////DELELTE PHOTO/////////////////////////////////////////////////////////
@@ -1315,8 +1571,12 @@
 				// Start the print job.
 				if (printJob.start() != true) return;
 				
+				
 				// Add the object to print. Do not scale it.
-				printJob.addObject(skinablesocreprinting, FlexPrintJobScaleType.NONE);
+				//printJob.p
+				printJob.addObject(printingbody, FlexPrintJobScaleType.SHOW_ALL);
+		
+				//printJob.addObject(printingbody,FlexPrintJobScaleType.SHOW_ALL);
 				
 				// Send the job to the printer.
 				printJob.send();
@@ -1402,25 +1662,56 @@
 				
 			}
 			/////////////////////////////////////FINISH//////////////////////////////////////7	
-///////////////////////////////////////library SCORE EVALUATION////////////////////////////////			
+///////////////////////////////////////library SCORE EVALUATION////////////////////////////////		
+			public var location:String;
+			public var deernamefinishscore:String;
 			protected function scorephoto_clickHandler(event:MouseEvent):void
 			{
 				// TODO Auto-generated method stub
 				currentState='positionphoto'
 				scoredeerage=cmbage.selectedItem;
 				scorestate=cmbstate.selectedItem;
+				//deernamefinishscore=txtNamepaneltitle.text;
+				if(cmbstate.selectedIndex>9)
+				location="00"+cmbstate.selectedIndex;
+				else
+				location="000"+cmbstate.selectedIndex;	
+				trace(location);
 				trace("age:"+scoredeerage+" state:"+scorestate);
 			}
 			
 			protected function toggle_RecorderInsideSpread(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				if(arraypoints.length>1){
+				var medida:Number=0;
+				var x0:Number=0;
+				var y0:Number=0;
+				for(var i:int=0;i<arraypoints.length;i++){
+					trace(arraypoints[i].x);
+					trace(arraypoints[i].y);
+					if(i==0){
+						x0=Number(arraypoints[i].x);
+						y0=Number(arraypoints[i].y);
+						
+					}else{
+						
+						distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+						x0=arraypoints[i].x;
+						y0=arraypoints[i].y
+					}
+					
+					
+				}
+				distance=distance/72;
 				var options:XMLList;
 				if(tglearwidth.selected){
 					options=prefsXML.child("Equations").child("Equation");
 					
 					var j:int=0;
-					for(var i:int=0;options.length();i++){
+					for(i=0;options.length();i++){
 						if(options[i].attribute("ImageOrientation")==grade){
 							myangleoptions=options[i].child("Entity");
 							j=i;
@@ -1444,6 +1735,8 @@
 					currentState='NumberTypicalPoints';
 					lbllasmeasurement.text="Inside Spread:"+scoreutils.insidespread.toString();
 				}
+				manageCropper.endDraw();
+				}	
 				
 			}
 			
@@ -1457,7 +1750,31 @@
 			
 			protected function RecordLeftMainBeamLine_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				if(arraypoints.length>1){
+					var medida:Number=0;
+					var x0:Number=0;
+					var y0:Number=0;
+					
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+							
+						}else{
+							
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
+						
+						
+					}
+					distance=distance/72;
 				var ISP:Number;
 				var ldistance:Number=(distance)/(inchvalue);
 				if(grade=='0'){
@@ -1475,31 +1792,56 @@
 				txtTypicalLeftPonitsRigthMain.text=cmbletftypical.selectedItem;
 				txtTypicalRigthPonitsRigthMain.text=cmbrigthtypical.selectedItem;
 				lbllasmeasurement.text="LeftMainBeam="+scoreutils.mainbeamleft.toString();
+				manageCropper.endDraw();
 				
-				
+				}
 			}
 			
 			
 			protected function RecordRigthMainBeam_clickHandler(event:MouseEvent):void
 			{
 				// TODO Auto-generated method stub
-				var distance:Number=12;
-				var ISP:Number;
-				var ldistance:Number=(distance)/(inchvalue);
-				if(grade=='0'){
-					ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				if(arraypoints.length>1){
+					var medida:Number=0;
+					var x0:Number=0;
+					var y0:Number=0;
+					
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+							
+						}else{
+							
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
+						
+						
+					}
+					distance=distance/72;
+					var ISP:Number;
+					var ldistance:Number=(distance)/(inchvalue);
+					if(grade=='0'){
+						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 						Number(myangleoptions[1].attribute("C"))*Number(cmbrigthtypical.selectedItem);
 					
-				}else{
-					ISP=Number(myangleoptions[2].attribute("A"))*ldistance+Number(myangleoptions[2].attribute("B"))+
+					}else{
+						ISP=Number(myangleoptions[2].attribute("A"))*ldistance+Number(myangleoptions[2].attribute("B"))+
 						Number(myangleoptions[2].attribute("C"))*Number(cmbrigthtypical.selectedItem);
+					}
+					scoreutils.mainbeamrigth=ISP.toString();
+				
+					currentState='MeasureLeftTine';
+				
+					lbllasmeasurement.text="Rigth Main Beam="+scoreutils.mainbeamrigth.toString();
+					manageCropper.endDraw();
 				}
-				scoreutils.mainbeamrigth=ISP.toString();
-				
-				currentState='MeasureLeftTine';
-				
-				lbllasmeasurement.text="Rigth Main Beam="+scoreutils.mainbeamrigth.toString();
-				
 			}
 			
 			/////////////typical points lef//////////////////
@@ -1509,24 +1851,50 @@
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
 				btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+				manageCropper.beginDraw();
 				
 			}
 			public var cont:int=0;
 			protected function RecordLeftTineLine_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				if(arraypoints.length>1){
+					var medida:Number=0;
+					var x0:Number=0;
+					var y0:Number=0;
+					
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+							
+						}else{
+							
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
+						
+						
+					}
+					distance=distance/72;
 				var ISP:Number;
 				var ldistance:Number=(distance)/(inchvalue);
 				if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)){
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}else{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[3+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[3+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0)cont++;
 					if(numbertypicalleft==1){
 						scoreutils.Typicalpointleft1=ISP.toString();
 						if(scoreutils.Typicalpointrigth1=="1") scoreutils.Typicalpointrigth1=scoreutils.Typicalpointleft1;
@@ -1577,13 +1945,15 @@
 				}else{
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<5) cont++;
+						
 							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+							if(cont!=0 && cont<4) cont++;
 					}else{
-						if(cont!=0 && cont<5) cont++;
+						
 							ISP=Number(myangleoptions[3+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[3+(2*cont)].attribute("B"));
+							if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0)cont++;
 					if(numbertypicalleft==1){
 						scoreutils.Typicalpointleft1=ISP.toString();
 						if(scoreutils.Typicalpointrigth1=="1") scoreutils.Typicalpointrigth1=scoreutils.Typicalpointleft1;
@@ -1629,6 +1999,8 @@
 					numbertypicalleft=1;
 					cont=0;
 				}
+				manageCropper.endDraw();
+			  }
 			}
 			
 			/////////////typical points Rigth//////////////////
@@ -1639,23 +2011,51 @@
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
 				btnRecordLeftTine.label="Record Rigth Tine "+numbertypicalrigth;
+				manageCropper.beginDraw();
 				
 			}
 			protected function RecordRigthTineLine_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				
+				if(arraypoints.length>1){
+					var medida:Number=0;
+					var x0:Number=0;
+					var y0:Number=0;
+					
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+							
+						}else{
+							
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
+						
+						
+					}
+				
+				distance=distance/72;
 				var ISP:Number;
 				var ldistance:Number=(distance)/(inchvalue);
 				if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)){
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}else{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[4+2*cont].attribute("A"))*ldistance+Number(myangleoptions[4+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0) cont++;
 					if(numbertypicalrigth==1){
 						scoreutils.Typicalpointrigth1=ISP.toString();
 						if(scoreutils.Typicalpointleft1=="1") scoreutils.Typicalpointleft1=scoreutils.Typicalpointrigth1;
@@ -1704,13 +2104,15 @@
 				}else{
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}else{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[4+2*(cont)].attribute("A"))*ldistance+Number(myangleoptions[4+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0)cont++;
 					if(numbertypicalrigth==1){
 						scoreutils.Typicalpointrigth1=ISP.toString();
 						if(scoreutils.Typicalpointleft1=="1") scoreutils.Typicalpointleft1=scoreutils.Typicalpointrigth1;
@@ -1756,7 +2158,8 @@
 					numbertypicalrigth=1;
 					cont=0;
 				}
-				
+				manageCropper.endDraw();
+				}	
 			}
 			
 			
@@ -1769,26 +2172,53 @@
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
 				btnRecordLeftTine.label="Record Letf Circumference "+numbercincumferenceleft;
+				manageCropper.beginDraw();
 				
 			}
 			
 			
 			protected function RecordLeftCircunference_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				
+				if(arraypoints.length>1){
+					var medida:Number=0;
+					var x0:Number=0;
+					var y0:Number=0;
+					
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+							
+						}else{
+							
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
+						
+						
+					}
+				distance=distance/72;	
 				var ISP:Number;
 				var ldistance:Number=(3.14)*(distance)/(inchvalue);
 				if(numbercincumferenceleft<4){
 					
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<4) cont++;
+						
 						ISP=Number(myangleoptions[7+2*cont].attribute("A"))*ldistance+Number(myangleoptions[7+(2*cont)].attribute("B"));
-					}else{
 						if(cont!=0 && cont<4) cont++;
+					}else{
+						
 						ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0) cont++;
 					if(numbercincumferenceleft==1)
 						scoreutils.Circumferenceleft1=ISP.toString();
 					if(numbercincumferenceleft==2)
@@ -1809,13 +2239,15 @@
 				}else{
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<4) cont++;
+						
 						ISP=Number(myangleoptions[7+2*cont].attribute("A"))*ldistance+Number(myangleoptions[7+(2*cont)].attribute("B"));
-					}else{
 						if(cont!=0 && cont<4) cont++;
+					}else{
+						
 						ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0) cont++;
 					if(numbercincumferenceleft==1)
 						scoreutils.Circumferenceleft1=ISP.toString();
 					if(numbercincumferenceleft==2)
@@ -1832,7 +2264,8 @@
 					numbercincumferenceleft=1;
 					cont=0;
 				}
-				
+				manageCropper.endDraw();
+			  }	
 			}
 			
 			
@@ -1845,26 +2278,52 @@
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
 				btnRecordLeftTine.label="Record Rigth Circumference "+numbercincumferencerigth;
-				
+				manageCropper.beginDraw();
 			}
 			
 			
 			protected function RecordRigthCircumference_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				
+				if(arraypoints.length>1){
+					var medida:Number=0;
+					var x0:Number=0;
+					var y0:Number=0;
+					
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+							
+						}else{
+							
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
+						
+						
+					}
+					distance=distance/72;
 				var ISP:Number;
 				var ldistance:Number=(3.14)*(distance)/(inchvalue);
 				
 				if(numbercincumferencerigth<4){
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<4) cont++;
+						
 						ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
-					}else{
 						if(cont!=0 && cont<4) cont++;
+					}else{
+						
 						ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0)cont++;
 					if(numbercincumferencerigth==1){
 						scoreutils.Circumferencerigth1=ISP.toString();
 						if(scoreutils.Circumferenceleft1=="1") scoreutils.Circumferenceleft1=scoreutils.Circumferencerigth1;
@@ -1890,13 +2349,15 @@
 				}else{
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<4) cont++;
+						
 						ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
-					}else{
 						if(cont!=0 && cont<4) cont++;
+					}else{
+						
 						ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0)cont++;
 					if(numbercincumferencerigth==1){
 						scoreutils.Circumferencerigth1=ISP.toString();
 						if(scoreutils.Circumferenceleft1=="1") scoreutils.Circumferenceleft1=scoreutils.Circumferencerigth1;
@@ -1918,7 +2379,8 @@
 					numbercincumferencerigth=1;
 					cont=0;
 				}
-				
+				manageCropper.endDraw();
+			  } 	
 			}
 			
 			////abnormal point
@@ -1927,25 +2389,51 @@
 				currentState='RecordLefAbnormalTine';
 				
 				btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
-				
+				manageCropper.beginDraw();
 			}
 			
 			
 			protected function RecordLefAbnormalTine_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				
+				if(arraypoints.length>1){
+					var medida:Number=0;
+					var x0:Number=0;
+					var y0:Number=0;
+					
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+							
+						}else{
+							
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
+						
+						
+					}
+					distance=distance/72;
 				var ISP:Number;
 				var ldistance:Number=(distance)/(inchvalue);
 				if(numberabnormalleft<parseInt(cmbabnormalpointsleft.selectedItem)){
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}else{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[21+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[21+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0)cont++;
 					if(numberabnormalleft==1)
 						scoreutils.Abnormalpointleft1=ISP.toString();
 					if(numberabnormalleft==2)
@@ -1988,20 +2476,22 @@
 						scoreutils.Abnormalpointleft20=ISP.toString();
 					
 					currentState='MeasureLeftAnormalTine';
-					lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
+					//lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
 					numberabnormalleft++;
 					btnRecordLeftTine.label="Measure Left Anormal Tine "+numberabnormalleft;
 					
 				}else{
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}else{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[21+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[21+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0)cont++;
 					if(numberabnormalleft==1)
 						scoreutils.Abnormalpointleft1=ISP.toString();
 					if(numberabnormalleft==2)
@@ -2043,12 +2533,15 @@
 					if(numberabnormalleft==20)
 						scoreutils.Abnormalpointleft20=ISP.toString();
 					
-					currentState='MeasureRigthAnormalTine'
+					if(parseInt(cmbabnormalpointsrigth.selectedItem)==0) currentState='CompleteScoringfinal';
+					else currentState='MeasureRigthAnormalTine'
 					
-					lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
+					//lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
 					numberabnormalleft=1;
 					cont=0;
 				}
+			  	manageCropper.endDraw();
+			  }
 			}
 			
 			
@@ -2058,23 +2551,51 @@
 				
 				btnRecordLeftTine.label="Record Rigth Abnormal Tine "+numberabnormalright;
 				
+				manageCropper.beginDraw();
+				
 			}
 			
 			protected function RecordRigthAbnormalTine_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
+				var distance:Number=0;
+				var arraypoints:Array=manageCropper.getPoints();
+				
+				if(arraypoints.length>1){
+					var medida:Number=0;
+					var x0:Number=0;
+					var y0:Number=0;
+					
+					for(var i:int=0;i<arraypoints.length;i++){
+						trace(arraypoints[i].x);
+						trace(arraypoints[i].y);
+						if(i==0){
+							x0=Number(arraypoints[i].x);
+							y0=Number(arraypoints[i].y);
+							
+						}else{
+							
+							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
+							x0=arraypoints[i].x;
+							y0=arraypoints[i].y
+						}
+						
+						
+					}
+					distance=distance/72;	
 				var ISP:Number;
 				var ldistance:Number=(distance)/(inchvalue);
 				if(numberabnormalright<parseInt(cmbabnormalpointsrigth.selectedItem)){
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}else{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[22+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[22+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0)cont++;
 					if(numberabnormalright==1)
 						scoreutils.Abnormalpointrigth1=ISP.toString();
 					if(numberabnormalright==2)
@@ -2117,20 +2638,22 @@
 						scoreutils.Abnormalpointrigth20=ISP.toString();
 					
 					currentState='MeasureRigthAnormalTine';
-					lbllasmeasurement.text="Abnormal Rigth Tine "+numberabnormalright+"="+ISP.toString();
+					//lbllasmeasurement.text="Abnormal Rigth Tine "+numberabnormalright+"="+ISP.toString();
 					numberabnormalright++;
 					btnRecordLeftTine.label="Measure Rigth Anormal Tine "+numberabnormalright;
 					
 				}else{
 					if(grade=='0')
 					{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}else{
-						if(cont!=0 && cont<5) cont++;
+						
 						ISP=Number(myangleoptions[22+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[22+(2*cont)].attribute("B"));
+						if(cont!=0 && cont<4) cont++;
 					}
-					cont++;
+					if(cont==0) cont++;
 					if(numberabnormalright==1)
 						scoreutils.Abnormalpointrigth1=ISP.toString();
 					if(numberabnormalright==2)
@@ -2176,6 +2699,9 @@
 					numberabnormalright=1;
 					cont=0;
 				}
+				manageCropper.endDraw();
+			  }	
+				
 			}
 			
 			
@@ -2189,9 +2715,7 @@
 			
 			protected function RecordLeftTineLineMirror_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
-				var ISP:Number;
-				var ldistance:Number=(distance)/(inchvalue);
+				
 				if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)){
 					cont++;
 					if(numbertypicalleft==1)
@@ -2457,8 +2981,7 @@
 			
 			protected function RecordLeftCircunferenceMirror_clickHandler(event:MouseEvent):void
 			{
-				var distance:Number=12;
-				var ISP:Number;
+				
 				
 				if(numbercincumferenceleft<4){
 					cont++;
@@ -2567,20 +3090,538 @@
 			
 			////////////////////////////////////////////////////////////////////////////////////	
 			
+			
 			protected function callResultHandler(event:ResultEvent):void
 			{
 				var respuesta:Object = event.result;
 				trace(respuesta.toString());
 				var xml:XML=XML(event.result);
 				trace(xml.child("Email"));
-				if(xml.child("Email").toString()==""){
+				if(xml.child("Email").toString()=="" && xml.child("ErrorCode").toString()=="101"){
 					currentState='stateLogin';
 				}else{
 					currentState='stateMain';
 				}
 				
 			}
+			public var state:String;
+			protected function ViewScoreNoFinish_clickHandler(event:MouseEvent):void
+			{
+				state=currentState;
+				currentState='ScoringFinalBuckView';
+				txtDeerNickName.text=deernamefinishscore;
+				txtLocationDeer.text=location;
+				var someBirthday:Date = new Date();
+				txtdatedeer.text=someBirthday.toDateString();
+				imageforedition0.source=arraybyte;
+				
+				numberleftponitsgrid.text=cmbletftypical.selectedItem;
+				numberrigthponitsgrid.text=cmbrigthtypical.selectedItem;
+				insidespread.text=scoreutils.insidespread;
+				mainbeamleftgrid.text=scoreutils.mainbeamleft;
+				mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
+				mainbeamdiferene.text=(Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))).toString();
+				t1l.text=scoreutils.Typicalpointleft1;
+				t1r.text=scoreutils.Typicalpointrigth1;
+				t1d.text=(Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))).toString();
+				t2l.text=scoreutils.Typicalpointleft2;
+				t2r.text=scoreutils.Typicalpointrigth2;
+				t2d.text=(Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))).toString();
+				t3l.text=scoreutils.Typicalpointleft3;
+				t3r.text=scoreutils.Typicalpointrigth3;
+				t3d.text=(Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))).toString();
+				t4l.text=scoreutils.Typicalpointleft4;
+				t4r.text=scoreutils.Typicalpointrigth4;
+				t4d.text=(Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))).toString();
+				t5l.text=scoreutils.Typicalpointleft5;
+				t5r.text=scoreutils.Typicalpointrigth5;
+				t5d.text=(Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))).toString();
+				t6l.text=scoreutils.Typicalpointleft6;
+				t6r.text=scoreutils.Typicalpointrigth6;
+				t6d.text=(Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))).toString();
+				t7l.text=scoreutils.Typicalpointleft7;
+				t7r.text=scoreutils.Typicalpointrigth7;
+				t7d.text=(Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))).toString();
+				t8l.text=scoreutils.Typicalpointleft8;
+				t8r.text=scoreutils.Typicalpointrigth8;
+				t8d.text=(Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))).toString();
+				t9l.text=scoreutils.Typicalpointleft9;
+				t9r.text=scoreutils.Typicalpointrigth9;
+				t9d.text=(Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))).toString();
+				t10l.text=scoreutils.Typicalpointleft10;
+				t10r.text=scoreutils.Typicalpointrigth10;
+				t10d.text=(Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))).toString();
+				
+				c1l.text=scoreutils.Circumferenceleft1;
+				c1r.text=scoreutils.Circumferencerigth1;
+				c1d.text=(Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))).toString();
+				c2l.text=scoreutils.Circumferenceleft2;
+				c2r.text=scoreutils.Circumferencerigth2;
+				c2d.text=(Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))).toString();
+				c3l.text=scoreutils.Circumferenceleft3;
+				c3r.text=scoreutils.Circumferencerigth3;
+				c3d.text=(Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))).toString();
+				c4l.text=scoreutils.Circumferenceleft4;
+				c4r.text=scoreutils.Circumferencerigth4;
+				c4d.text=(Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))).toString();
+				a1.text=scoreutils.Abnormalpointleft1;
+				ar1.text=scoreutils.Abnormalpointrigth1;
+				a2.text=scoreutils.Abnormalpointleft2;
+				ar2.text=scoreutils.Abnormalpointrigth2;
+				a3.text=scoreutils.Abnormalpointleft3;
+				ar3.text=scoreutils.Abnormalpointrigth3;
+				a4.text=scoreutils.Abnormalpointleft4;
+				ar4.text=scoreutils.Abnormalpointrigth4;
+				a5.text=scoreutils.Abnormalpointleft5;
+				ar5.text=scoreutils.Abnormalpointrigth5;
+				a6.text=scoreutils.Abnormalpointleft6;
+				ar6.text=scoreutils.Abnormalpointrigth6;
+				a7.text=scoreutils.Abnormalpointleft7;
+				ar7.text=scoreutils.Abnormalpointrigth7;
+				a8.text=scoreutils.Abnormalpointleft8;
+				ar8.text=scoreutils.Abnormalpointrigth8;
+				a9.text=scoreutils.Abnormalpointleft9;
+				ar9.text=scoreutils.Abnormalpointrigth9;
+				a10.text=scoreutils.Abnormalpointleft10;
+				ar10.text=scoreutils.Abnormalpointrigth10;
+				a11.text=scoreutils.Abnormalpointleft11;
+				ar11.text=scoreutils.Abnormalpointrigth11;
+				a12.text=scoreutils.Abnormalpointleft12;
+				ar12.text=scoreutils.Abnormalpointrigth12;
+				a13.text=scoreutils.Abnormalpointleft13;
+				ar13.text=scoreutils.Abnormalpointrigth13;
+				a14.text=scoreutils.Abnormalpointleft14;
+				ar14.text=scoreutils.Abnormalpointrigth14;
+				a15.text=scoreutils.Abnormalpointleft15;
+				ar15.text=scoreutils.Abnormalpointrigth15;
+				a16.text=scoreutils.Abnormalpointleft16;
+				ar16.text=scoreutils.Abnormalpointrigth16;
+				a17.text=scoreutils.Abnormalpointleft17;
+				ar17.text=scoreutils.Abnormalpointrigth17;
+				a18.text=scoreutils.Abnormalpointleft18;
+				ar18.text=scoreutils.Abnormalpointrigth18;
+				a19.text=scoreutils.Abnormalpointleft19;
+				ar19.text=scoreutils.Abnormalpointrigth19;
+				a20.text=scoreutils.Abnormalpointleft20;
+				ar20.text=scoreutils.Abnormalpointrigth20;
+				var totalleft:Number=scoreutils.calculateleft();
+				var totalrigth:Number=scoreutils.calculaterigth();
+				var totalabnormal:Number=scoreutils.calculateabnormal();
+				var totaldiference:Number=Math.abs(totalleft-totalrigth);
+				tleft.text=totalleft.toString();
+				trigth.text=totalrigth.toString();
+				tdiference.text=totaldiference.toString();
+				
+				grossscore.text=(totalleft+ totalrigth+ totalabnormal ).toString();
+				totaldiferencefinal.text=totaldiference.toString();
+			}
+////////////////////////////////////////////////////////back SCORE //////////////////////////////			
+			protected function ScoringFinalBuckView_clickHandler(event:MouseEvent):void
+			{
+				currentState=state;
+				
+					
+				
+				
+			}
 			
+			protected function MeasureLeftTineBack_clickHandler(event:MouseEvent):void
+			{
+				if(numbertypicalleft==1){
+					currentState='RecordRigthMainBeam';
+					btnRecordLeftTine.label="Record Rigth Main Beam";
+				}else{
+					numbertypicalleft--;
+					cont--;
+					currentState='RecordLeftTineLine';
+					btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+				}
+				manageCropper.beginDraw();
+			}
+			
+			protected function RecordLeftTineLineBack_clickHandler(event:MouseEvent):void
+			{
+				
+				currentState='MeasureLeftTine';
+				if((numbertypicalleft-1)==1)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft1;
+				else if((numbertypicalleft-1)==2)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft2;
+				else if((numbertypicalleft-1)==3)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft3;
+				else if((numbertypicalleft-1)==4)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft4;
+				else if((numbertypicalleft-1)==5)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft5;
+				else if((numbertypicalleft-1)==6)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft6;
+				else if((numbertypicalleft-1)==7)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft7;
+				else if((numbertypicalleft-1)==8)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft8;
+				else if((numbertypicalleft-1)==9)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft9;
+				else if((numbertypicalleft-1)==10)
+					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft10;
+				else lbllasmeasurement.text="Rigth Main beam "+scoreutils.mainbeamrigth;
+				btnRecordLeftTine.label="Measure Left Tine "+numbertypicalleft;
+				manageCropper.endDraw();
+			}
+			
+			protected function MeasureRigthTineBack_clickHandler(event:MouseEvent):void
+			{
+				if(numbertypicalrigth==1){
+					currentState='RecordLeftTineLine';
+					numbertypicalleft=parseInt(cmbletftypical.selectedItem);
+					btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+				}else{
+					numbertypicalrigth--;
+					cont--;
+					currentState='RecordRigthTineLine';
+					btnRecordLeftTine.label="Recorder Rigth Tine "+numbertypicalrigth;
+				}
+				manageCropper.beginDraw();
+			}
+			
+			protected function RecordRigthTineLineBack_clickHandler(event:MouseEvent):void
+			{
+				currentState='MeasureRigthTine';
+				if((numbertypicalrigth-1)==1)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth1;
+				else if((numbertypicalrigth-1)==2)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth2;
+				else if((numbertypicalrigth-1)==3)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth3;
+				else if((numbertypicalrigth-1)==4)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth4;
+				else if((numbertypicalrigth-1)==5)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth5;
+				else if((numbertypicalrigth-1)==6)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth6;
+				else if((numbertypicalrigth-1)==7)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth7;
+				else if((numbertypicalrigth-1)==8)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth8;
+				else if((numbertypicalrigth-1)==9)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth9;
+				else if((numbertypicalrigth-1)==10)
+					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth10;
+				else {
+					var val:String;
+					if(parseInt(cmbletftypical.selectedItem)==1) val=scoreutils.Typicalpointleft1;
+					else if(parseInt(cmbletftypical.selectedItem)==2) val=scoreutils.Typicalpointleft2;
+					else if(parseInt(cmbletftypical.selectedItem)==3) val=scoreutils.Typicalpointleft3;
+					else if(parseInt(cmbletftypical.selectedItem)==4) val=scoreutils.Typicalpointleft4;
+					else if(parseInt(cmbletftypical.selectedItem)==5) val=scoreutils.Typicalpointleft5;
+					else if(parseInt(cmbletftypical.selectedItem)==6) val=scoreutils.Typicalpointleft6;
+					else if(parseInt(cmbletftypical.selectedItem)==7) val=scoreutils.Typicalpointleft7;
+					else if(parseInt(cmbletftypical.selectedItem)==8) val=scoreutils.Typicalpointleft8;
+					else if(parseInt(cmbletftypical.selectedItem)==9) val=scoreutils.Typicalpointleft9;
+					else if(parseInt(cmbletftypical.selectedItem)==10) val=scoreutils.Typicalpointleft10;
+					
+					lbllasmeasurement.text="Typical Left Line "+parseInt(cmbletftypical.selectedItem)+"="+val;
+				}
+				btnRecordLeftTine.label="Measure Rigth Tine "+numbertypicalrigth;
+				manageCropper.endDraw();
+				
+			}
+			
+			protected function MeasureLeftCircunferenceBack_clickHandler(event:MouseEvent):void
+			{
+				if(numbercincumferenceleft==1){
+					currentState='RecordRigthTineLine';
+					numbertypicalrigth=parseInt(cmbrigthtypical.selectedItem);
+					btnRecordLeftTine.label="Recorder Rigth Tine "+numbertypicalrigth;
+				}else{
+					numbercincumferenceleft--;
+					cont--;
+					currentState='RecordLeftCircunference';
+					btnRecordLeftTine.label="Recorder Left Circumference "+numbercincumferenceleft;
+				}
+				manageCropper.beginDraw();
+					
+				
+			}
+			
+			protected function RecordLeftCircunferenceBack_clickHandler(event:MouseEvent):void
+			{
+				currentState='MeasureLeftCircunference';
+				if((numbercincumferenceleft-1)==1)
+					lbllasmeasurement.text="Letf Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft1;
+				else if((numbercincumferenceleft-1)==2)
+					lbllasmeasurement.text="Letf Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft2;
+				else if((numbercincumferenceleft-1)==3)
+					lbllasmeasurement.text="Letf Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft3;
+				else if((numbercincumferenceleft-1)==4)
+					lbllasmeasurement.text="Letf Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft4;
+				else{
+					var val:String;
+					if(parseInt(cmbrigthtypical.selectedItem)==1) val=scoreutils.Typicalpointrigth1;
+					else if(parseInt(cmbrigthtypical.selectedItem)==2) val=scoreutils.Typicalpointrigth2;
+					else if(parseInt(cmbrigthtypical.selectedItem)==3) val=scoreutils.Typicalpointrigth3;
+					else if(parseInt(cmbrigthtypical.selectedItem)==4) val=scoreutils.Typicalpointrigth4;
+					else if(parseInt(cmbrigthtypical.selectedItem)==5) val=scoreutils.Typicalpointrigth5;
+					else if(parseInt(cmbrigthtypical.selectedItem)==6) val=scoreutils.Typicalpointrigth6;
+					else if(parseInt(cmbrigthtypical.selectedItem)==7) val=scoreutils.Typicalpointrigth7;
+					else if(parseInt(cmbrigthtypical.selectedItem)==8) val=scoreutils.Typicalpointrigth8;
+					else if(parseInt(cmbrigthtypical.selectedItem)==9) val=scoreutils.Typicalpointrigth9;
+					else if(parseInt(cmbrigthtypical.selectedItem)==10) val=scoreutils.Typicalpointrigth10;
+					lbllasmeasurement.text="Typical Rigth Line "+parseInt(cmbrigthtypical.selectedItem)+"="+val;
+				}
+					
+				
+				btnRecordLeftTine.label="Measure Left Circunference "+numbercincumferenceleft;
+				manageCropper.endDraw();
+			}
+			
+			protected function MeasureRigthCircumferenceBack_clickHandler(event:MouseEvent):void
+			{
+				if(numbercincumferencerigth==1){
+					currentState='RecordLeftCircunference';
+					numbercincumferenceleft=4;
+					btnRecordLeftTine.label="Recorder Left Circumference "+numbercincumferenceleft;
+				}else{
+					numbercincumferencerigth--;
+					cont--;
+					currentState='RecordRigthCircumference';
+					btnRecordLeftTine.label="Recorder Rigth Circumference "+numbercincumferencerigth;
+				}
+				manageCropper.beginDraw();
+			}
+			
+			protected function RecordRigthCircumferenceBack_clickHandler(event:MouseEvent):void
+			{
+				currentState='MeasureRigthCircumference';
+				if((numbercincumferencerigth-1)==1)
+					lbllasmeasurement.text="Rigth Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth1;
+				else if((numbercincumferencerigth-1)==2)
+					lbllasmeasurement.text="Rigth Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth2;
+				else if((numbercincumferencerigth-1)==3)
+					lbllasmeasurement.text="Rigth Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth3;
+				else if((numbercincumferencerigth-1)==4)
+					lbllasmeasurement.text="Rigth Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth4;
+				else
+					lbllasmeasurement.text="Left Circumference 4="+scoreutils.Circumferenceleft4;
+				
+				btnRecordLeftTine.label="Measure Rigth Circunference "+numbercincumferencerigth;
+				manageCropper.endDraw();
+			}
+			
+			protected function MeasureAnormalPointsBack(event:MouseEvent):void
+			{
+				numbercincumferencerigth=4;
+				currentState='RecordRigthCircumference';
+				lbllasmeasurement.text="Rigth Circumference 4"+"="+scoreutils.Circumferencerigth4;
+				btnRecordLeftTine.label="Measure Rigth Circunference "+numbercincumferencerigth;
+				manageCropper.beginDraw();
+			}
+			
+			protected function MeasureLeftAnormalTineBack_clickHandler(event:MouseEvent):void
+			{
+				if(numberabnormalleft==1){
+					currentState='MeasureAnormalPoints';
+					btnRecordLeftTine.label="Measure Anormal Points";
+					lbllasmeasurement.text="Rigth Circumference 4 :"+scoreutils.Circumferencerigth4;
+					manageCropper.endDraw();
+				}else{
+					numberabnormalleft--;
+					cont--;
+					currentState='RecordLefAbnormalTine';
+					btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
+					manageCropper.beginDraw();
+				}
+				
+			}
+			
+			protected function RecordLefAbnormalTineBack_clickHandler(event:MouseEvent):void
+			{
+				currentState='MeasureLeftAnormalTine';
+				
+				btnRecordLeftTine.label="Measure Left Anormal Tine "+numberabnormalleft;
+				manageCropper.endDraw();
+				
+			}
+			
+			protected function MeasureRigthAnormalTineBack_clickHandler(event:MouseEvent):void
+			{
+				if(numberabnormalright==1){
+					currentState='RecordLefAbnormalTine';
+					numberabnormalleft=parseInt(cmbabnormalpointsleft.selectedItem);
+					btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
+					
+				}else{
+					numberabnormalright--;
+					cont--;
+					currentState='RecordRigthAbnormalTine';
+					btnRecordLeftTine.label="Record Rigth Abnormal Tine "+numberabnormalright;
+				}
+				manageCropper.beginDraw();
+			}
+			
+			protected function RecordRigthAbnormalTineBack_clickHandler(event:MouseEvent):void
+			{
+				currentState='MeasureRigthAnormalTine';
+				
+				
+				btnRecordLeftTine.label="Measure Rigth Anormal Tine "+numberabnormalright;
+				manageCropper.endDraw();
+				
+			}
+			
+			protected function CompleteScoringfinalBack_clickHandler(event:MouseEvent):void
+			{
+				if(parseInt(cmbabnormalpointsrigth.selectedItem)==0){
+					if(parseInt(cmbabnormalpointsleft.selectedItem)==0){
+						currentState='MeasureAnormalPoints';
+						btnRecordLeftTine.label="Measure Left Anormal Tine";
+						lbllasmeasurement.text="Measure Rigth Circunference 4 "+scoreutils.Circumferencerigth4;
+						manageCropper.endDraw();
+					}else{
+						numberabnormalleft=parseInt(cmbabnormalpointsleft.selectedItem);
+						currentState='RecordLefAbnormalTine';
+						btnRecordLeftTine.label="Recorder Left Anormal Tine "+numberabnormalleft;
+						manageCropper.beginDraw();
+					}
+					
+				}else{
+					numberabnormalright=parseInt(cmbabnormalpointsrigth.selectedItem);
+					currentState='RecordRigthAbnormalTine';
+					btnRecordLeftTine.label="Recorder Rigth Anormal Tine "+numberabnormalright;
+					manageCropper.beginDraw();
+				}
+			}
+			
+			protected function ScoringFinalBuck_clickHandler(event:MouseEvent):void
+			{
+				if(statescoringview!="stateMain"){
+				var  verificatescore:ArrayCollection=sqlscore.resaultscore(txtDeerNickName.text);
+				if(verificatescore.length>=1) sqlscore.removescore(txtDeerNickName.text);
+				var typeerror:String=sqlscore.addItemscore(txtDeerNickName.text,location,txtdatedeer.text,txtcommentsdeer.text,"",scoreutils.insidespread,
+					scoreutils.mainbeamleft,
+					scoreutils.mainbeamrigth,
+					scoreutils.Typicalpointleft1,
+					scoreutils.Typicalpointrigth1,
+					scoreutils.Typicalpointleft2,
+					scoreutils.Typicalpointrigth2,
+					scoreutils.Typicalpointleft3,
+					scoreutils.Typicalpointrigth3,
+					scoreutils.Typicalpointleft4,
+					scoreutils.Typicalpointrigth4,
+					scoreutils.Typicalpointleft5,
+					scoreutils.Typicalpointrigth5,
+					scoreutils.Typicalpointleft6,
+					scoreutils.Typicalpointrigth6,
+					scoreutils.Typicalpointleft7,
+					scoreutils.Typicalpointrigth7,
+					scoreutils.Typicalpointleft8,
+					scoreutils.Typicalpointrigth8,
+					scoreutils.Typicalpointleft9,
+					scoreutils.Typicalpointrigth9,
+					scoreutils.Typicalpointleft10,
+					scoreutils.Typicalpointrigth10,
+					scoreutils.Circumferenceleft1,
+					scoreutils.Circumferencerigth1,
+					scoreutils.Circumferenceleft2,
+					scoreutils.Circumferencerigth2,
+					scoreutils.Circumferenceleft3,
+					scoreutils.Circumferencerigth3,
+					scoreutils.Circumferenceleft4,
+					scoreutils.Circumferencerigth4,
+					scoreutils.Abnormalpointleft1,
+					scoreutils.Abnormalpointrigth1,
+					scoreutils.Abnormalpointleft2,
+					scoreutils.Abnormalpointrigth2,
+					scoreutils.Abnormalpointleft3,
+					scoreutils.Abnormalpointrigth3,
+					scoreutils.Abnormalpointleft4,
+					scoreutils.Abnormalpointrigth4,
+					scoreutils.Abnormalpointleft5,
+					scoreutils.Abnormalpointrigth5,
+					scoreutils.Abnormalpointleft6,
+					scoreutils.Abnormalpointrigth6,
+					scoreutils.Abnormalpointleft7,
+					scoreutils.Abnormalpointrigth7,
+					scoreutils.Abnormalpointleft8,
+					scoreutils.Abnormalpointrigth8,
+					scoreutils.Abnormalpointleft9,
+					scoreutils.Abnormalpointrigth9,
+					scoreutils.Abnormalpointleft10,
+					scoreutils.Abnormalpointrigth10,
+					scoreutils.Abnormalpointleft11,
+					scoreutils.Abnormalpointrigth11,
+					scoreutils.Abnormalpointleft12,
+					scoreutils.Abnormalpointrigth12,
+					scoreutils.Abnormalpointleft13,
+					scoreutils.Abnormalpointrigth13,
+					scoreutils.Abnormalpointleft14,
+					scoreutils.Abnormalpointrigth14,
+					scoreutils.Abnormalpointleft15,
+					scoreutils.Abnormalpointrigth15,
+					scoreutils.Abnormalpointleft16,
+					scoreutils.Abnormalpointrigth16,
+					scoreutils.Abnormalpointleft17,
+					scoreutils.Abnormalpointrigth17,
+					scoreutils.Abnormalpointleft18,
+					scoreutils.Abnormalpointrigth18,
+					scoreutils.Abnormalpointleft19,
+					scoreutils.Abnormalpointrigth19,
+					scoreutils.Abnormalpointleft20,
+					scoreutils.Abnormalpointrigth20,
+					cmbletftypical.selectedItem,
+					cmbrigthtypical.selectedItem,
+					grossscore.text);
+				if(typeerror=="1")
+				currentState='stateMain'; scoreutils=new ScoreUtils();
+				}
+				else {
+					currentState='stateMain'; scoreutils=new ScoreUtils();
+					statescoringview="";
+				}
+			}
+			
+			protected function ViewInstructions_clickHandler(event:MouseEvent):void
+			{
+				var appDirectory:File = File.applicationDirectory;
+				//var helpFile:File = appDirectory.resolvePath("pdf/Instructions.pdf");
+				var helpFile:File = new File(File.applicationDirectory.url + "pdf/Instructions.pdf");
+				//var helpFile:File = new File(File.applicationDirectory.url + "JavaScriptAPI.chm");
+				trace(helpFile.nativePath);
+				try
+				{
+					trace(helpFile);
+					helpFile.openWithDefaultApplication();
+					
+					//filePath.text = helpFile.nativePath;
+				}catch(e:Error){
+					//filePath.text = e.message;
+					
+				}
+			}
+			
+			protected function helpcircumference_clickHandler(event:MouseEvent):void
+			{
+				var appDirectory:File = File.applicationDirectory;
+				//var helpFile:File = appDirectory.resolvePath("pdf/Instructions.pdf");
+				var helpFile:File = new File(File.applicationDirectory.url + "pdf/Circumference.pdf");
+				//var helpFile:File = new File(File.applicationDirectory.url + "JavaScriptAPI.chm");
+				trace(helpFile.nativePath);
+				try
+				{
+					trace(helpFile);
+					helpFile.openWithDefaultApplication();
+					trace("entre");
+					//filePath.text = helpFile.nativePath;
+				}catch(e:Error){
+					//filePath.text = e.message;
+					trace("hola");
+				}
+			}
+			
+			public function click_MeasureInsideSpread():void {
+				currentState='RecorderInsideSpread';
+				
+				manageCropper.beginDraw();
+			}
 		]]>
 	</fx:Script>
 	
@@ -2622,6 +3663,7 @@
 		<s:State name="ScoringFinalBuck"/>
 		<s:State name="ExpandDeerName"/>
 		<s:State name="RecorderInsideSpreadEstimate"/>
+		<s:State name="ScoringFinalBuckView"/>
 	</s:states>
 	
 	<s:transitions>
@@ -2678,7 +3720,7 @@
 					
 				</s:VGroup>
 				
-				<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+				<s:VGroup includeIn="CompleteScoringfinal,ExpandDeerName,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,ScoringFinalBuck,ScoringFinalBuckView,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 						  width="100%" height="100%" gap="0" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6">
 					<s:SkinnableContainer width="100%" height="56" backgroundColor="#323232" skinClass="com.complexless.skins.spark.TitleMainSkin">
 						<s:HGroup id="titleMain" width="100%" height="100%" gap="0" paddingLeft="5" paddingRight="5">
@@ -2777,7 +3819,8 @@
 							</s:Group>
 						</s:VGroup>
 						<s:VGroup width="308" height="100%"
-								  width.ScoringFinalBuck="100%">
+								  width.ScoringFinalBuck="100%"
+								  width.ScoringFinalBuckView="100%">
 							<s:SkinnableContainer id="holder" width="100%" height="100%"
 												  backgroundColor.CompleteScoringfinal="#3F8AF0"
 												  backgroundColor.editAlbum="#3F8AF0"
@@ -2812,6 +3855,7 @@
 												  backgroundColor.referenceFeature="#3F8AF0"
 												  backgroundColor.scorephoto="#3F8AF0"
 												  backgroundColor.ScoringFinalBuck="#FBFBFB"
+												  backgroundColor.ScoringFinalBuckView="#FBFBFB"
 												  backgroundColor.stateMain="#040404"
 												  backgroundColor.updatephotodata="#3F8AF0">
 								<s:VGroup width="100%" height="100%" gap="0"
@@ -2841,13 +3885,14 @@
 										  height.RecordRigthMainBeam="422"
 										  height.RecordRigthTineLine="422"
 										  height.referenceFeature="354"
-										  width.ScoringFinalBuck="100%">
+										  width.ScoringFinalBuck="100%"
+										  width.ScoringFinalBuckView="100%">
 									<s:SkinnableContainer x="0" y="0" width="100%" height="45"
 														  backgroundColor="#848484" textAlign="left">
 										<s:HGroup x="0" y="0" width="100%" height="100%"
 												  verticalAlign="middle">
 											<s:Label id="txtNamepaneltitle"
-													 includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,ScoringFinalBuck,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
+													 includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,ScoringFinalBuck,ScoringFinalBuckView,editAlbum,editphoto,positionphoto,referenceFeature,scorephoto,stateMain,updatephotodata"
 													 x="0" y="0" width="100%" color="#DCD3D3"
 													 fontSize="20"
 													 text.CompleteScoringfinal=" Name"
@@ -2881,33 +3926,34 @@
 													 text.referenceFeature=" Name"
 													 text.scorephoto=" Name"
 													 text.ScoringFinalBuck=" "
+													 text.ScoringFinalBuckView=" "
 													 text.updatephotodata=" Name"/>
 											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,positionphoto,referenceFeature,scorephoto" label="Close" click="closebutton_buckscore()"/>
 											<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,positionphoto,referenceFeature,scorephoto"
 													  label.CompleteScoringfinal="Back"
-													  click.CompleteScoringfinal="currentState='referenceFeature'"
+													  click.CompleteScoringfinal="CompleteScoringfinalBack_clickHandler(event)"
 													  label.MeasureAnormalPoints="Back"
-													  click.MeasureAnormalPoints="currentState='referenceFeature'"
+													  click.MeasureAnormalPoints="MeasureAnormalPointsBack(event)"
 													  label.MeasureInsideSpread="Back"
 													  click.MeasureInsideSpread="BackMeasureInsideSpread_clickHandler(event)"
 													  label.MeasureLeftAnormalTine="Back"
-													  click.MeasureLeftAnormalTine="currentState='referenceFeature'"
+													  click.MeasureLeftAnormalTine="MeasureLeftAnormalTineBack_clickHandler(event)"
 													  label.MeasureLeftCircunference="Back"
-													  click.MeasureLeftCircunference="currentState='referenceFeature'"
+													  click.MeasureLeftCircunference="MeasureLeftCircunferenceBack_clickHandler(event)"
 													  label.MeasureLeftMainBeam="Back"
-													  click.MeasureLeftMainBeam="currentState='NumberTypicalPoints'; numbertypicalleft=1;"
+													  click.MeasureLeftMainBeam="currentState='NumberTypicalPoints'; numbertypicalleft=1; lbllasmeasurement.text='Inside Spread: '+ scoreutils.insidespread;"
 													  label.MeasureLeftTine="Back"
-													  click.MeasureLeftTine="currentState='RecordRigthMainBeam'"
+													  click.MeasureLeftTine="MeasureLeftTineBack_clickHandler(event)"
 													  label.MeasureRigthAnormalTine="Back"
-													  click.MeasureRigthAnormalTine="currentState='referenceFeature'"
+													  click.MeasureRigthAnormalTine="MeasureRigthAnormalTineBack_clickHandler(event)"
 													  label.MeasureRigthCircumference="Back"
-													  click.MeasureRigthCircumference="currentState='referenceFeature'"
+													  click.MeasureRigthCircumference="MeasureRigthCircumferenceBack_clickHandler(event)"
 													  label.MeasureRigthMainBeam="Back"
-													  click.MeasureRigthMainBeam="currentState='RecordLeftMainBeamLine'"
+													  click.MeasureRigthMainBeam="currentState='RecordLeftMainBeamLine'; manageCropper.beginDraw(); "
 													  label.MeasureRigthTine="Back"
-													  click.MeasureRigthTine="currentState='RecordRigthMainBeam'; numbertypicalrigth=1;"
+													  click.MeasureRigthTine="MeasureRigthTineBack_clickHandler(event)"
 													  label.NumberTypicalPoints="Back"
-													  click.NumberTypicalPoints="if(grade!='90')currentState='RecorderInsideSpread'else currentState='RecorderInsideSpreadEstimate'"
+													  click.NumberTypicalPoints="if(grade!='90'){currentState='RecorderInsideSpread'; manageCropper.beginDraw();}else currentState='RecorderInsideSpreadEstimate' "
 													  label.positionphoto="Back"
 													  click.positionphoto="button3_backeditphoto(event)"
 													  label.RecordEarWidth="Back"
@@ -2921,21 +3967,21 @@
 													  label.RecordEyetoEyeWidth="Back"
 													  click.RecordEyetoEyeWidth="currentState='referenceFeature'"
 													  label.RecordLefAbnormalTine="Back"
-													  click.RecordLefAbnormalTine="currentState='referenceFeature'"
+													  click.RecordLefAbnormalTine="RecordLefAbnormalTineBack_clickHandler(event)"
 													  label.RecordLeftCircunference="Back"
-													  click.RecordLeftCircunference="currentState='referenceFeature'"
+													  click.RecordLeftCircunference="RecordLeftCircunferenceBack_clickHandler(event)"
 													  label.RecordLeftMainBeamLine="Back"
 													  click.RecordLeftMainBeamLine="currentState='MeasureLeftMainBeam'"
 													  label.RecordLeftTineLine="Back"
-													  click.RecordLeftTineLine="currentState='RecordRigthMainBeam'; numbertypicalleft=1;"
+													  click.RecordLeftTineLine="RecordLeftTineLineBack_clickHandler(event)"
 													  label.RecordRigthAbnormalTine="Back"
-													  click.RecordRigthAbnormalTine="currentState='referenceFeature'"
+													  click.RecordRigthAbnormalTine="RecordRigthAbnormalTineBack_clickHandler(event)"
 													  label.RecordRigthCircumference="Back"
-													  click.RecordRigthCircumference="currentState='referenceFeature'"
+													  click.RecordRigthCircumference="RecordRigthCircumferenceBack_clickHandler(event)"
 													  label.RecordRigthMainBeam="Back"
-													  click.RecordRigthMainBeam="currentState='MeasureRigthMainBeam'"
+													  click.RecordRigthMainBeam="currentState='MeasureRigthMainBeam'; lbllasmeasurement.text='Record Rigth Main Beam:'+scoreutils.mainbeamrigth;"
 													  label.RecordRigthTineLine="Back"
-													  click.RecordRigthTineLine="currentState='RecordRigthMainBeam'; numbertypicalrigth=1;"
+													  click.RecordRigthTineLine="RecordRigthTineLineBack_clickHandler(event)"
 													  label.referenceFeature="Back"
 													  click.referenceFeature="button3_referenceFeature(event)"
 													  label.scorephoto="Back"
@@ -2944,7 +3990,7 @@
 													 color="#FCF9F9" fontSize="20" fontWeight="bold"
 													 text="Deer Statistic"/>
 											<s:Button includeIn="stateMain" label="Delete" click="deletephoto_clickHandler(event)"/>
-											<s:HGroup includeIn="ScoringFinalBuck" y="10" width="470"
+											<s:HGroup includeIn="ScoringFinalBuck,ScoringFinalBuckView" y="10" width="470"
 													  height="26">
 												<s:Button label="Facebook" alpha="8"
 														  chromeColor="#323232" cornerRadius="6"/>
@@ -2957,8 +4003,12 @@
 												<s:Button label="Print" alpha="8"
 														  chromeColor="#323232" cornerRadius="6" click="printingscore_clickHandler(event)"/>
 												<s:Button label="Finish" alpha="8"
-														  chromeColor="#323232" cornerRadius="6"
-														  click="currentState='stateMain'"/>
+														  chromeColor="#323232"
+														  click.ScoringFinalBuck="ScoringFinalBuck_clickHandler(event)"
+														  cornerRadius="6"
+														  label.ScoringFinalBuckView="Close"
+														  click.ScoringFinalBuckView="ScoringFinalBuckView_clickHandler(event)"
+														  />
 											</s:HGroup>
 										</s:HGroup>
 									</s:SkinnableContainer>
@@ -3490,7 +4540,7 @@
 																label.MeasureInsideSpread="Measure Inside Spread"
 																alpha.MeasureInsideSpread="10"
 																chromeColor.MeasureInsideSpread="#323232"
-																click.MeasureInsideSpread="currentState='RecorderInsideSpread';"
+																click.MeasureInsideSpread="click_MeasureInsideSpread(); "
 																alpha.RecordEarWidth="10"
 																chromeColor.RecordEarWidth="#323232"
 																click.RecordEarWidth="toggle_EarWidthHandler(event)"
@@ -3510,7 +4560,7 @@
 																alpha.RecordEyetoEyeWidth="10"
 																chromeColor.RecordEyetoEyeWidth="#323232"
 																click.RecordEyetoEyeWidth="toggle_EarWidthHandler(event)"/>
-												<s:ToggleButton includeIn="RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+												<s:Button includeIn="RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
 																x="28" y="63" width="208"
 																height="34" label="Erase Lines"
 																cornerRadius="10"
@@ -3521,7 +4571,8 @@
 																alpha.RecordEyeballWidthFeature="10"
 																chromeColor.RecordEyeballWidthFeature="#323232"
 																alpha.RecordEyetoEyeWidth="10"
-																chromeColor.RecordEyetoEyeWidth="#323232"/>
+																chromeColor.RecordEyetoEyeWidth="#323232"
+																click="manageCropper.erase()"/>
 												<s:VGroup includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 														  x="10" y="8" width="238" height="87"
 														  x.MeasureLeftAnormalTine="10"
@@ -3960,14 +5011,8 @@
 														  y.CompleteScoringfinal="181">
 													<s:Label text="Last Measurement&#xd;"/>
 													<s:Label id="lbllasmeasurement"
-															 text="Inside Spread=10.9605"
-															 text.CompleteScoringfinal="Rigth MainBeam=10.9605"
-															 text.MeasureAnormalPoints="Rigth MainBeam=10.9605"
-															 text.MeasureLeftCircunference="Rigth MainBeam=10.9605"
-															 text.MeasureLeftTine="Rigth MainBeam=10.9605"
-															 text.MeasureRigthCircumference="Rigth MainBeam=10.9605"
-															 text.MeasureRigthMainBeam="Left Main Bream =10.9605"
-															 text.MeasureRigthTine="Rigth MainBeam=10.9605"/>
+															 text.MeasureRigthMainBeam="Rigth Main Beam ="
+															 text.NumberTypicalPoints="Inside Spread="/>
 													<s:Button width="188" height="29"
 															  label="View ScoreSheet" alpha="8"
 															  fontSize="18"
@@ -3978,7 +5023,8 @@
 															  chromeColor.MeasureRigthCircumference="#323232"
 															  chromeColor.MeasureRigthMainBeam="#323232"
 															  chromeColor.MeasureRigthTine="#323232"
-															  chromeColor.NumberTypicalPoints="#323232"/>
+															  chromeColor.NumberTypicalPoints="#323232"
+															  click="ViewScoreNoFinish_clickHandler(event)"/>
 													<s:Button width="186" height="29"
 															  label="View Instructions" alpha="8"
 															  fontSize="18"
@@ -3989,7 +5035,8 @@
 															  chromeColor.MeasureRigthCircumference="#323232"
 															  chromeColor.MeasureRigthMainBeam="#323232"
 															  chromeColor.MeasureRigthTine="#323232"
-															  chromeColor.NumberTypicalPoints="#323232"/>
+															  chromeColor.NumberTypicalPoints="#323232"
+															  click="ViewInstructions_clickHandler(event)"/>
 												</s:VGroup>
 												<s:Image id="imagezoomscoring"
 														 includeIn="MeasureLeftAnormalTine,MeasureLeftMainBeam,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
@@ -4035,12 +5082,14 @@
 														  y="97" width="268"/>
 												<s:Button includeIn="RecordLeftMainBeamLine" x="59"
 														  y="127" width="144" label="Erase Lines"
-														  alpha="8" chromeColor="#323232"/>
+														  alpha="8" chromeColor="#323232"
+														  click="manageCropper.erase();"/>
 												<mx:HRule includeIn="RecordRigthMainBeam" x="0"
 														  y="96" width="267" height="2"/>
 												<s:Button includeIn="RecordRigthMainBeam" x="61"
 														  y="127" width="144" label="Erase Lines"
-														  alpha="8" chromeColor="#323232"/>
+														  alpha="8" chromeColor="#323232"
+														  click="manageCropper.erase();"/>
 												<mx:HRule includeIn="MeasureLeftAnormalTine,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthTineLine"
 														  x="0" y="91" width="267"
 														  x.MeasureLeftAnormalTine="0"
@@ -4080,7 +5129,8 @@
 																y.RecordRigthCircumference="145"
 																width.RecordRigthCircumference="180"
 																chromeColor.RecordRigthCircumference="#323232"
-																chromeColor.RecordRigthTineLine="#323232"/>
+																chromeColor.RecordRigthTineLine="#323232"
+																click="manageCropper.erase();"/>
 												<s:ToggleButton includeIn="RecordLeftCircunference,RecordRigthCircumference"
 																x="46" y="168" width="174"
 																label="Help" alpha="8"
@@ -4088,14 +5138,16 @@
 																x.RecordRigthCircumference="41"
 																y.RecordRigthCircumference="168"
 																width.RecordRigthCircumference="181"
-																chromeColor.RecordRigthCircumference="#323232"/>
+																chromeColor.RecordRigthCircumference="#323232"
+																click="helpcircumference_clickHandler(event)"/>
 												<s:ToggleButton includeIn="RecordLefAbnormalTine,RecordRigthAbnormalTine"
 																x="42" y="139" width="180"
 																label="Erase Lines" alpha="8"
 																x.RecordLefAbnormalTine="40"
 																width.RecordLefAbnormalTine="187"
 																chromeColor.RecordLefAbnormalTine="#323232"
-																chromeColor.RecordRigthAbnormalTine="#323232"/>
+																chromeColor.RecordRigthAbnormalTine="#323232"
+																click="manageCropper.erase();"/>
 											</s:Group>
 											<s:Image id="imagebusckscorezoom"
 													 includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
@@ -4246,7 +5298,7 @@
 													y="76" alpha="4"
 													change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo')currentState='editphoto';   "
 													cornerRadius="5"
-													doubleClick="combophoto_uploadphoto(event)"
+													doubleClick="currentState='editphoto';"
 													labelField="Add Photo" selectedIndex="0">
 											<s:dataProvider>
 												<mx:ArrayList>
@@ -4328,64 +5380,80 @@
 									
 									
 									<s:SkinnableContainer id="skinablesocreprinting"
-														  includeIn="ScoringFinalBuck" width="100%"
+														  includeIn="ScoringFinalBuck,ScoringFinalBuckView" width="100%"
 														  height="100%">
-										<s:VGroup width="100%" height="100%" >
-											<s:HGroup width="100%" height="95" accentColor="#3F8AF0">
-												<s:SkinnableContainer width="698" backgroundColor="#FEFAFA">
-													<s:HGroup>
-														
-														
-														<s:VGroup width="130" height="92">
-															<s:Image id="imageforedition0"
-																	 width="128" height="89"
-																	 source="c:/tmp/22_L.png"/>
-														</s:VGroup>
-														<s:VGroup width="100%" height="93">
-															<s:Group width="100%" height="90">
-																<s:HGroup x="10" y="6" width="482"
-																		  height="15">
-																	<s:Label color="#323232"
-																			 text="Deer NickName"/>
-																	<s:Label color="#323232"
-																			 text="Name"/>
-																</s:HGroup>
-																<s:HGroup x="10" y="28" width="482"
-																		  height="13">
-																	<s:Label color="#323232"
-																			 text="Location"/>
-																	<s:Label color="#323232"
-																			 text="0006"/>
-																</s:HGroup>
-																<s:HGroup x="10" y="67" width="482"
-																		  height="13">
-																	<s:Label color="#323232"
-																			 text="Comments"/>
-																	<s:TextInput width="342"/>
-																</s:HGroup>
-																<s:HGroup x="11" y="49" width="482"
-																		  height="13"
-																		  color="#323232">
-																	<s:Label text="Date"/>
-																	<s:Label text="10/3/2012 11:10:58 AM"/>
-																</s:HGroup>
-															</s:Group>
-														</s:VGroup>
-													</s:HGroup>
-												</s:SkinnableContainer>	
-											</s:HGroup>
+										<s:VGroup  width="100%" height="100%" id="printingtotalscore">
+											
 											<s:Scroller y="81" width="100%" height="100%">
 												<s:VGroup width="100%" height="100%">
-													<s:SkinnableContainer width="100%" height="900" >
+													<s:SkinnableContainer id="printingbody"
+																		  width="100%" height="900">
+														<s:HGroup width="100%" height="95" accentColor="#3F8AF0">
+															<s:SkinnableContainer id="printinghead" width="698"
+																				  backgroundColor="#FEFAFA">
+																<s:HGroup>
+																	
+																	
+																	<s:VGroup width="130" height="92">
+																		<s:Image id="imageforedition0"
+																				 width="128" height="89"
+																				 source="c:/tmp/22_L.png"/>
+																	</s:VGroup>
+																	<s:VGroup width="100%" height="93">
+																		<s:Group width="100%" height="90">
+																			<s:HGroup x="10" y="6" width="482"
+																					  height="15">
+																				<s:Label color="#323232"
+																						 text="Deer NickName"/>
+																				<s:Label id="txtDeerNickName"
+																						 color="#323232"
+																						 text="Name"/>
+																			</s:HGroup>
+																			<s:HGroup x="10" y="28" width="482"
+																					  height="13">
+																				<s:Label color="#323232"
+																						 text="Location"/>
+																				<s:Label id="txtLocationDeer"
+																						 color="#323232"
+																						 text="0006"/>
+																			</s:HGroup>
+																			<s:HGroup x="10" y="67" width="482"
+																					  height="13">
+																				<s:Label color="#323232"
+																						 text="Comments"/>
+																				<s:TextInput id="txtcommentsdeer"
+																							 width="342"/>
+																			</s:HGroup>
+																			<s:HGroup x="11" y="49" width="482"
+																					  height="13"
+																					  color="#323232">
+																				<s:Label text="Date"/>
+																				<s:Label id="txtdatedeer"
+																						 text="10/3/2012 11:10:58 AM"/>
+																			</s:HGroup>
+																		</s:Group>
+																	</s:VGroup>
+																</s:HGroup>
+															</s:SkinnableContainer>	
+														</s:HGroup>
 														<s:Image x="10" y="4" width="207"
 																 height="203"
-																 source="Image/logo.png"/>
+																 source="Image/logo.png"
+																 x.ScoringFinalBuck="31"
+																 y.ScoringFinalBuck="103"
+																 width.ScoringFinalBuck="186"
+																 x.ScoringFinalBuckView="10"
+																 y.ScoringFinalBuckView="106"/>
 														
 														
 														<mx:Grid id="myGrid" x="251" y="3"
 																 width="100%" height="261"
-																 borderAlpha="5"
-																 color="#323232">
+																 borderAlpha="5" color="#323232"
+																 x.ScoringFinalBuck="251"
+																 y.ScoringFinalBuck="102"
+																 width.ScoringFinalBuck="100%"
+																 x.ScoringFinalBuckView="251"
+																 y.ScoringFinalBuckView="97">
 															
 															<!-- Define Row 0. -->
 															<mx:GridRow id="row0" width="100%"
@@ -4708,8 +5776,11 @@
 														
 														<mx:Grid id="myGridResult" x="7" y="250"
 																 width="100%" height="100%"
-																 borderAlpha="5"
-																 color="#323232">
+																 borderAlpha="5" color="#323232"
+																 x.ScoringFinalBuck="7"
+																 y.ScoringFinalBuck="370"
+																 x.ScoringFinalBuckView="7"
+																 y.ScoringFinalBuckView="362">
 															<mx:GridRow id="Rrow0" width="100%">
 																<!-- Define the first cell of Row 1. -->
 																<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
@@ -5378,7 +6449,7 @@
 											  chromeColor="#323232" color="#FCFCFC" cornerRadius="5"
 											  click="selectiontypefeature_clickHandler(event)"/>
 								</s:Group>
-								<s:VGroup includeIn="ScoringFinalBuck" x="705" y="0" width="6"
+								<s:VGroup includeIn="ScoringFinalBuck,ScoringFinalBuckView" x="705" y="0" width="6"
 										  height="100%">
 								</s:VGroup>
 								
