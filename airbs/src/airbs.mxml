@@ -736,12 +736,12 @@
 			protected function btnupdatedeername_clickHandler(event:MouseEvent):void
 			{
 				
-				
+				var namephoto:String=txtNamepaneltitle.text;
 				currentState="updatephotodata";	
 				albumphoto=sqlscore.resault();
 				imgupload.visible=true;
-				txtdeernamesave.text=txtNamepaneltitle.text;
-				
+				txtdeernamesave.text=namephoto;
+				txtNamepaneltitle.text=namephoto;
 				
 				for(var i:int =0;i<albumphoto.length;i++){
 					var photoItem:Object = albumphoto[i];
@@ -1192,6 +1192,7 @@
 			
 			protected function ScoringDeer_btn(event:MouseEvent):void
 			{
+				manageCropper.endDraw();
 				Alert.show("Is this deer in velvet", "Velvet Adjustement",
 					Alert.YES | Alert.NO | Alert.CANCEL, this, alertListenerScoringFinal)
 					
@@ -4302,8 +4303,10 @@
 													  height.updatephotodata="285">
 												<s:Label includeIn="editphoto,updatephotodata" text="Deer Name"/>
 												
-												<s:TextInput includeIn="editphoto,updatephotodata" width="164"
-															 name="txtdeernamesave" id="txtdeernamesave"/>
+												<s:TextInput id="txtdeernamesave"
+															 includeIn="editphoto,updatephotodata"
+															 width="164" name="txtdeernamesave"
+															 editable.updatephotodata="false"/>
 												<s:Label includeIn="scorephoto" text="State"/>
 												<s:ComboBox id="cmbstate"   includeIn="scorephoto"/>
 												<s:HGroup includeIn="editAlbum" width="277"
