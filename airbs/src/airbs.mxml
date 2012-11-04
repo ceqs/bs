@@ -737,8 +737,10 @@
 			{
 				
 				var namephoto:String=txtNamepaneltitle.text;
-				currentState="updatephotodata";	
 				albumphoto=sqlscore.resault();
+				if(albumphoto.length!=0){
+				currentState="updatephotodata";	
+				
 				imgupload.visible=true;
 				txtdeernamesave.text=namephoto;
 				txtNamepaneltitle.text=namephoto;
@@ -772,7 +774,7 @@
 					}
 				}
 				
-				
+				}else Alert.show("No data ");	
 				
 			}
 			protected function updatesavephotoedition():void
@@ -1557,7 +1559,9 @@
 							trace("entro o no");
 						}
 					}
-					
+					txtNamepaneltitle.text="Name";
+					btnScoreProccess.enabled=false;
+					btndeerscoresheet.enabled=false;
 					trace("entro");
 				}
 				
@@ -4093,7 +4097,7 @@
 																 includeIn="ExpandDeerName" x="3"
 																 y="57" fontSize="14"
 																 fontStyle="normal"
-																 fontWeight="bold" text="HENRY"/>
+																 fontWeight="bold"/>
 													</s:Group>
 												</s:VGroup>
 											</s:HGroup>
@@ -4303,8 +4307,10 @@
 													  height.updatephotodata="285">
 												<s:Label includeIn="editphoto,updatephotodata" text="Deer Name"/>
 												
-												<s:TextInput includeIn="editphoto,updatephotodata" width="164"
-															 name="txtdeernamesave" id="txtdeernamesave"/>
+												<s:TextInput id="txtdeernamesave"
+															 includeIn="editphoto,updatephotodata"
+															 width="164" name="txtdeernamesave"
+															 editable.updatephotodata="false"/>
 												<s:Label includeIn="scorephoto" text="State"/>
 												<s:ComboBox id="cmbstate"   includeIn="scorephoto"/>
 												<s:HGroup includeIn="editAlbum" width="277"
