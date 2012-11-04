@@ -4303,10 +4303,8 @@
 													  height.updatephotodata="285">
 												<s:Label includeIn="editphoto,updatephotodata" text="Deer Name"/>
 												
-												<s:TextInput id="txtdeernamesave"
-															 includeIn="editphoto,updatephotodata"
-															 width="164" name="txtdeernamesave"
-															 editable.updatephotodata="false"/>
+												<s:TextInput includeIn="editphoto,updatephotodata" width="164"
+															 name="txtdeernamesave" id="txtdeernamesave"/>
 												<s:Label includeIn="scorephoto" text="State"/>
 												<s:ComboBox id="cmbstate"   includeIn="scorephoto"/>
 												<s:HGroup includeIn="editAlbum" width="277"
