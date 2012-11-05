@@ -542,11 +542,12 @@
 			
 			
 			////////////////////////////////////////////////////upload photo file explorer///////////	
+			public var banderadeer:String="0";
 			protected function uploadfile():void{
 				var arr:Array = [];
 				arr.push(new FileFilter("Images Buckscore", ".gif;*.jpeg;*.jpg;*.png"));
 				fileReference.browse(arr);
-				
+				banderadeer="1";
 			}
 			
 			protected function uploadfile2():void{
@@ -574,7 +575,7 @@
 			
 			private  function savephotoedition():void
 			{
-				if(txtdeernamesave.text!="" &&	cmbalbumnameselection.selectedItem!="" && fileReference.data!=null)
+				if(txtdeernamesave.text!="" &&	cmbalbumnameselection.selectedItem!="" && banderadeer=="1")
 				{	
 				var itemalbumphoto:albumbuckscore = new albumbuckscore();
 				var banderaphoto:String="1";
@@ -625,7 +626,9 @@
 				txtposturenamesave.text="";
 				imgupload.visible=false;
 				btnbrowsetoadd.visible=true;
-				fileReference=null;
+				combophoto.selectedIndex=0;
+				banderadeer="0";
+				fileReference.data.clear();
 				}
 				}else{
 					Alert.show("Name Duplicate");
@@ -890,7 +893,7 @@
 				txtranchnamesave.text="";
 				txtposturenamesave.text="";
 				imgupload.visible=false;
-				fileReference=null;
+				fileReference.data.clear();
 				txtNamepaneltitle.text=txtdeernamesave.text;
 				currentState="stateMain";
 				bandera="0";
