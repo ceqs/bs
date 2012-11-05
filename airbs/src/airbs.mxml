@@ -202,6 +202,35 @@
 				
 			}
 			
+			 private function array2refresh():void
+			{
+				albumphoto=sqlscore.resault();
+				for(var i:int = 0;i<albumphoto.length;i++)
+				{	
+					
+					var photoItem:Object = albumphoto[i];
+					
+					var _deername:String= photoItem.deername as String;
+					var _albumname:String= photoItem.albumname as String;
+					var _images:String=photoItem.image as String;
+					var byteArray:ByteArray;
+					if(_images!=""){
+						var encodedBytes:String = _images;
+						
+						var baseDecoder:Base64Decoder = new Base64Decoder();
+						baseDecoder.decode(encodedBytes);
+						byteArray= baseDecoder.toByteArray();
+						trace("entre jiji");
+					}else{
+						byteArray=null;
+					}
+					var _score:String = photoItem.score as String;
+					array2.addItem({image:byteArray ,name:_deername,type:_albumname,score:_score});
+					
+				}
+				
+			}
+			
 			private function addShadow(comp:DisplayObject):void {
 				comp.filters = [this.shadowFilter];
 			}
@@ -824,8 +853,13 @@
 				}else Alert.show("No data ");	
 				
 			}
+			var index:int;
 			protected function updatesavephotoedition():void
 			{
+				var arrayauximage:ByteArray;
+				var imageByteArray:ByteArray;
+				var deernameaux:String;
+				
 				if(txtdeernamesave.text!=""){
 				var albumphotoaux:ArrayCollection=new ArrayCollection();
 				albumphoto=sqlscore.resault();
@@ -844,6 +878,7 @@
 						
 						var __score:String = photoItem.score as String;	
 						var __deername:String=txtdeernamesave.text;
+						deernameaux=__deername;
 						var __albumname:String=cmbalbumnameselection.selectedItem;
 						var __tagnumber:String=txttagnumbersave.text;
 						var __ranchname:String=txtranchnamesave.text;
@@ -852,7 +887,7 @@
 						if(bandera=="1"){
 							
 							if(fileReference.data!=null){
-								var imageByteArray:ByteArray=fileReference.data;
+								imageByteArray=fileReference.data;
 								var baseEncoder:Base64Encoder = new Base64Encoder();
 								baseEncoder.encodeBytes(imageByteArray);
 								encodedBytes= baseEncoder.toString();
@@ -875,13 +910,8 @@
 						}
 						array.removeItemAt(i);
 						array.addItemAt({name:__deername,type:__albumname},i);
-						array2.removeItemAt(i);
-						if(fileReference.data!=null){
-						array2.addItemAt({image:fileReference.data ,name:__deername,type:__albumname,score:__score},i);
-						}else{
-							var arrayaux:Object=array2.getItemAt(i);
-							array2.addItemAt({image:arrayaux.image,name:__deername,type:__albumname,score:__score},i);
-						}
+						index=i;
+						array2refresh();
 					}
 					
 					
@@ -893,14 +923,28 @@
 				txtranchnamesave.text="";
 				txtposturenamesave.text="";
 				imgupload.visible=false;
-				fileReference.data.clear();
-				txtNamepaneltitle.text=txtdeernamesave.text;
+				
 				currentState="stateMain";
+				if(bandera=="1"){
+				for(i=1;i<array2.length;i++){
+					var objectaux:Object=array2[i];
+					if(objectaux.name==deernameaux){
+						imageforedition.source=objectaux.image;
+					}
+				}
+				
+				trace("entre");
+				
+				}
+				
+				txtNamepaneltitle.text=deernameaux;
 				bandera="0";
 				combophoto.selectedIndex=0;
 				}else Alert.show("Insert value for deer");
 				
 			}
+			
+			
 			
 			protected function selectiontypefeature_clickHandler(event:MouseEvent):void
 			{
@@ -1623,8 +1667,9 @@
 						}
 					}
 					txtNamepaneltitle.text="Name";
+					imageforedition.source="";
 					btnScoreProccess.enabled=false;
-					//manageCropper.clearImage();
+					//manageCropper.clearImage();       descomentarlooooooooooooooooo
 					btndeerscoresheet.enabled=false;
 					btndeerinfo.enabled=false;
 					trace("entro");
@@ -4141,8 +4186,7 @@
 												
 												<s:VGroup includeIn="stateMain" width="130"
 														  height="92">
-													<s:Image id="imageforedition" width="128"
-															 height="89"/>
+													<s:Image id="imageforedition" width="128" height="89"/>
 												</s:VGroup>
 												<s:VGroup width="168" height="93"
 														  width.ExpandDeerName="304"
