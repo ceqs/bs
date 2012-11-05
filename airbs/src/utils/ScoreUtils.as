@@ -84,7 +84,8 @@ package utils
 		public  function calculateleft():Number
 		{
 			var totalleft:String="";
-			var suma:Number= Number(Typicalpointleft1)+
+			var suma:Number= Number(mainbeamleft)+
+				Number(Typicalpointleft1)+
 			
 			Number(Typicalpointleft2)+
 			
@@ -119,7 +120,8 @@ package utils
 		public  function calculaterigth():Number
 		{
 			var totalrigth:String="";
-			var suma:Number= Number(Typicalpointrigth1)+
+			var suma:Number= Number(mainbeamrigth)+
+				Number(Typicalpointrigth1)+
 				
 				Number(Typicalpointrigth2)+
 				

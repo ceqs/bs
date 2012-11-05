@@ -58,18 +58,18 @@ package utils
 			
 			sqls= new SQLStatement();
 			sqls.sqlConnection = sqlc;
-			sqls.text = "CREATE TABLE IF NOT EXISTS  photobuckscore (deername TEXT PRIMARY KEY, albumname TEXT,tagnumber TEXT,ranchname TEXT,posturename TEXT,image BLOB,score TEXT);";
+			sqls.text = "CREATE TABLE IF NOT EXISTS  photobuckscore (id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,deername TEXT, albumname TEXT,tagnumber TEXT,ranchname TEXT,posturename TEXT,image BLOB,score TEXT);";
 			sqls.execute();
 			
 			sqlsa=new SQLStatement();
 			sqlsa.sqlConnection=sqlc;
-			sqlsa.text = "CREATE TABLE IF NOT EXISTS  albumbuckscore (albumname TEXT PRIMARY KEY, description TEXT);";
+			sqlsa.text = "CREATE TABLE IF NOT EXISTS  albumbuckscore (id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,albumname TEXT, description TEXT);";
 
 			sqlsa.execute();
 			
 			sqlscore=new SQLStatement();
 			sqlscore.sqlConnection=sqlc;
-			sqlscore.text = "CREATE TABLE IF NOT EXISTS buckscorefinish (deername TEXT PRIMARY KEY, location TEXT,date TEXT,comments TEXT,ftrfeatures  TEXT	,insidespread  TEXT, mainbeamleft  TEXT, mainbeamrigth  TEXT, Typicalpointleft1  TEXT, Typicalpointrigth1  TEXT, Typicalpointleft2  TEXT, Typicalpointrigth2  TEXT, Typicalpointleft3  TEXT, Typicalpointrigth3  TEXT, Typicalpointleft4  TEXT, Typicalpointrigth4  TEXT, Typicalpointleft5  TEXT, Typicalpointrigth5  TEXT	, Typicalpointleft6  TEXT, Typicalpointrigth6  TEXT	, Typicalpointleft7  TEXT, Typicalpointrigth7  TEXT	, Typicalpointleft8  TEXT, Typicalpointrigth8  TEXT	, Typicalpointleft9  TEXT, Typicalpointrigth9  TEXT, Typicalpointleft10  TEXT, Typicalpointrigth10  TEXT, Circumferenceleft1  TEXT, Circumferencerigth1  TEXT, Circumferenceleft2  TEXT, Circumferencerigth2  TEXT, Circumferenceleft3  TEXT, Circumferencerigth3  TEXT	, Circumferenceleft4  TEXT, Circumferencerigth4  TEXT	, Abnormalpointleft1  TEXT, Abnormalpointrigth1  TEXT, Abnormalpointleft2  TEXT	, Abnormalpointrigth2  TEXT	, Abnormalpointleft3  TEXT, Abnormalpointrigth3  TEXT, Abnormalpointleft4  TEXT	, Abnormalpointrigth4  TEXT	, Abnormalpointleft5  TEXT	, Abnormalpointrigth5  TEXT	, Abnormalpointleft6  TEXT	, Abnormalpointrigth6  TEXT, Abnormalpointleft7  TEXT, Abnormalpointrigth7  TEXT, Abnormalpointleft8  TEXT, Abnormalpointrigth8  TEXT, Abnormalpointleft9  TEXT	, Abnormalpointrigth9  TEXT, Abnormalpointleft10  TEXT, Abnormalpointrigth10  TEXT, Abnormalpointleft11  TEXT, Abnormalpointrigth11  TEXT, Abnormalpointleft12  TEXT, Abnormalpointrigth12  TEXT, Abnormalpointleft13  TEXT, Abnormalpointrigth13  TEXT	, Abnormalpointleft14  TEXT	, Abnormalpointrigth14  TEXT, Abnormalpointleft15  TEXT	, Abnormalpointrigth15  TEXT, Abnormalpointleft16  TEXT	, Abnormalpointrigth16  TEXT, Abnormalpointleft17  TEXT	, Abnormalpointrigth17  TEXT, Abnormalpointleft18  TEXT, Abnormalpointrigth18  TEXT	, Abnormalpointleft19  TEXT	, Abnormalpointrigth19  TEXT, Abnormalpointleft20  TEXT	, Abnormalpointrigth20  TEXT,leftpoints TEXT,rigthpoints TEXT,socorefinal TEXT);";		
+			sqlscore.text = "CREATE TABLE IF NOT EXISTS buckscorefinish (id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,deername TEXT, location TEXT,date TEXT,comments TEXT,ftrfeatures  TEXT	,insidespread  TEXT, mainbeamleft  TEXT, mainbeamrigth  TEXT, Typicalpointleft1  TEXT, Typicalpointrigth1  TEXT, Typicalpointleft2  TEXT, Typicalpointrigth2  TEXT, Typicalpointleft3  TEXT, Typicalpointrigth3  TEXT, Typicalpointleft4  TEXT, Typicalpointrigth4  TEXT, Typicalpointleft5  TEXT, Typicalpointrigth5  TEXT	, Typicalpointleft6  TEXT, Typicalpointrigth6  TEXT	, Typicalpointleft7  TEXT, Typicalpointrigth7  TEXT	, Typicalpointleft8  TEXT, Typicalpointrigth8  TEXT	, Typicalpointleft9  TEXT, Typicalpointrigth9  TEXT, Typicalpointleft10  TEXT, Typicalpointrigth10  TEXT, Circumferenceleft1  TEXT, Circumferencerigth1  TEXT, Circumferenceleft2  TEXT, Circumferencerigth2  TEXT, Circumferenceleft3  TEXT, Circumferencerigth3  TEXT	, Circumferenceleft4  TEXT, Circumferencerigth4  TEXT	, Abnormalpointleft1  TEXT, Abnormalpointrigth1  TEXT, Abnormalpointleft2  TEXT	, Abnormalpointrigth2  TEXT	, Abnormalpointleft3  TEXT, Abnormalpointrigth3  TEXT, Abnormalpointleft4  TEXT	, Abnormalpointrigth4  TEXT	, Abnormalpointleft5  TEXT	, Abnormalpointrigth5  TEXT	, Abnormalpointleft6  TEXT	, Abnormalpointrigth6  TEXT, Abnormalpointleft7  TEXT, Abnormalpointrigth7  TEXT, Abnormalpointleft8  TEXT, Abnormalpointrigth8  TEXT, Abnormalpointleft9  TEXT	, Abnormalpointrigth9  TEXT, Abnormalpointleft10  TEXT, Abnormalpointrigth10  TEXT, Abnormalpointleft11  TEXT, Abnormalpointrigth11  TEXT, Abnormalpointleft12  TEXT, Abnormalpointrigth12  TEXT, Abnormalpointleft13  TEXT, Abnormalpointrigth13  TEXT	, Abnormalpointleft14  TEXT	, Abnormalpointrigth14  TEXT, Abnormalpointleft15  TEXT	, Abnormalpointrigth15  TEXT, Abnormalpointleft16  TEXT	, Abnormalpointrigth16  TEXT, Abnormalpointleft17  TEXT	, Abnormalpointrigth17  TEXT, Abnormalpointleft18  TEXT, Abnormalpointrigth18  TEXT	, Abnormalpointleft19  TEXT	, Abnormalpointrigth19  TEXT, Abnormalpointleft20  TEXT	, Abnormalpointrigth20  TEXT,leftpoints TEXT,rigthpoints TEXT,socorefinal TEXT);";		
 			
 			sqlscore.execute();	
 			
@@ -106,7 +106,7 @@ package utils
 			// in property text of our SQLStatment we write our sql command. We can also combine sql statments in our text property so that more than one statment can be executed at a time.
 			// in this sql statment we create table in our database with name "test_table" with three columns (id, first_name and last_name). Id is an integer that is auto incremented when each item is added. First_name and last_name are columns in which we can store text
 			// If you want to know more about sql statments search the web.
-			sqls.text = "CREATE TABLE IF NOT EXISTS  photobuckscore ( deername TEXT PRIMARY KEY, albumname TEXT,tagnumber TEXT,ranchname TEXT,posturename TEXT,image BLOB,score TEXT);";
+			sqls.text = "CREATE TABLE IF NOT EXISTS  photobuckscore (id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, deername TEXT, albumname TEXT,tagnumber TEXT,ranchname TEXT,posturename TEXT,image BLOB,score TEXT);";
 			// after we have connected sql statment to our sql connection and writen our sql commands we also need to execute our sql statment.
 			// nothing will change in database until we execute sql statment.
 			
@@ -117,7 +117,7 @@ package utils
 			//refresh();
 			sqlsa=new SQLStatement();
 			sqlsa.sqlConnection=sqlc;
-			sqlsa.text = "CREATE TABLE IF NOT EXISTS  albumbuckscore (albumname TEXT PRIMARY KEY, description TEXT);";
+			sqlsa.text = "CREATE TABLE IF NOT EXISTS  albumbuckscore (id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,albumname TEXT, description TEXT);";
 			// after we have connected sql statment to our sql connection and writen our sql commands we also need to execute our sql statment.
 			// nothing will change in database until we execute sql statment.
 			
@@ -125,7 +125,7 @@ package utils
 			
 			sqlscore=new SQLStatement();
 			sqlscore.sqlConnection=sqlc;
-			sqlscore.text = "CREATE TABLE IF NOT EXISTS buckscorefinish (deername TEXT PRIMARY KEY, location TEXT,date TEXT,comments TEXT,ftrfeatures  TEXT	,insidespread  TEXT, mainbeamleft  TEXT, mainbeamrigth  TEXT, Typicalpointleft1  TEXT, Typicalpointrigth1  TEXT, Typicalpointleft2  TEXT, Typicalpointrigth2  TEXT, Typicalpointleft3  TEXT, Typicalpointrigth3  TEXT, Typicalpointleft4  TEXT, Typicalpointrigth4  TEXT, Typicalpointleft5  TEXT, Typicalpointrigth5  TEXT	, Typicalpointleft6  TEXT, Typicalpointrigth6  TEXT	, Typicalpointleft7  TEXT, Typicalpointrigth7  TEXT	, Typicalpointleft8  TEXT, Typicalpointrigth8  TEXT	, Typicalpointleft9  TEXT, Typicalpointrigth9  TEXT, Typicalpointleft10  TEXT, Typicalpointrigth10  TEXT, Circumferenceleft1  TEXT, Circumferencerigth1  TEXT, Circumferenceleft2  TEXT, Circumferencerigth2  TEXT, Circumferenceleft3  TEXT, Circumferencerigth3  TEXT	, Circumferenceleft4  TEXT, Circumferencerigth4  TEXT	, Abnormalpointleft1  TEXT, Abnormalpointrigth1  TEXT, Abnormalpointleft2  TEXT	, Abnormalpointrigth2  TEXT	, Abnormalpointleft3  TEXT, Abnormalpointrigth3  TEXT, Abnormalpointleft4  TEXT	, Abnormalpointrigth4  TEXT	, Abnormalpointleft5  TEXT	, Abnormalpointrigth5  TEXT	, Abnormalpointleft6  TEXT	, Abnormalpointrigth6  TEXT, Abnormalpointleft7  TEXT, Abnormalpointrigth7  TEXT, Abnormalpointleft8  TEXT, Abnormalpointrigth8  TEXT, Abnormalpointleft9  TEXT	, Abnormalpointrigth9  TEXT, Abnormalpointleft10  TEXT, Abnormalpointrigth10  TEXT, Abnormalpointleft11  TEXT, Abnormalpointrigth11  TEXT, Abnormalpointleft12  TEXT, Abnormalpointrigth12  TEXT, Abnormalpointleft13  TEXT, Abnormalpointrigth13  TEXT	, Abnormalpointleft14  TEXT	, Abnormalpointrigth14  TEXT, Abnormalpointleft15  TEXT	, Abnormalpointrigth15  TEXT, Abnormalpointleft16  TEXT	, Abnormalpointrigth16  TEXT, Abnormalpointleft17  TEXT	, Abnormalpointrigth17  TEXT, Abnormalpointleft18  TEXT, Abnormalpointrigth18  TEXT	, Abnormalpointleft19  TEXT	, Abnormalpointrigth19  TEXT, Abnormalpointleft20  TEXT	, Abnormalpointrigth20  TEXT,leftpoints TEXT,rigthpoints TEXT,socorefinal TEXT);";		
+			sqlscore.text = "CREATE TABLE IF NOT EXISTS buckscorefinish (id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,deername TEXT, location TEXT,date TEXT,comments TEXT,ftrfeatures  TEXT	,insidespread  TEXT, mainbeamleft  TEXT, mainbeamrigth  TEXT, Typicalpointleft1  TEXT, Typicalpointrigth1  TEXT, Typicalpointleft2  TEXT, Typicalpointrigth2  TEXT, Typicalpointleft3  TEXT, Typicalpointrigth3  TEXT, Typicalpointleft4  TEXT, Typicalpointrigth4  TEXT, Typicalpointleft5  TEXT, Typicalpointrigth5  TEXT	, Typicalpointleft6  TEXT, Typicalpointrigth6  TEXT	, Typicalpointleft7  TEXT, Typicalpointrigth7  TEXT	, Typicalpointleft8  TEXT, Typicalpointrigth8  TEXT	, Typicalpointleft9  TEXT, Typicalpointrigth9  TEXT, Typicalpointleft10  TEXT, Typicalpointrigth10  TEXT, Circumferenceleft1  TEXT, Circumferencerigth1  TEXT, Circumferenceleft2  TEXT, Circumferencerigth2  TEXT, Circumferenceleft3  TEXT, Circumferencerigth3  TEXT	, Circumferenceleft4  TEXT, Circumferencerigth4  TEXT	, Abnormalpointleft1  TEXT, Abnormalpointrigth1  TEXT, Abnormalpointleft2  TEXT	, Abnormalpointrigth2  TEXT	, Abnormalpointleft3  TEXT, Abnormalpointrigth3  TEXT, Abnormalpointleft4  TEXT	, Abnormalpointrigth4  TEXT	, Abnormalpointleft5  TEXT	, Abnormalpointrigth5  TEXT	, Abnormalpointleft6  TEXT	, Abnormalpointrigth6  TEXT, Abnormalpointleft7  TEXT, Abnormalpointrigth7  TEXT, Abnormalpointleft8  TEXT, Abnormalpointrigth8  TEXT, Abnormalpointleft9  TEXT	, Abnormalpointrigth9  TEXT, Abnormalpointleft10  TEXT, Abnormalpointrigth10  TEXT, Abnormalpointleft11  TEXT, Abnormalpointrigth11  TEXT, Abnormalpointleft12  TEXT, Abnormalpointrigth12  TEXT, Abnormalpointleft13  TEXT, Abnormalpointrigth13  TEXT	, Abnormalpointleft14  TEXT	, Abnormalpointrigth14  TEXT, Abnormalpointleft15  TEXT	, Abnormalpointrigth15  TEXT, Abnormalpointleft16  TEXT	, Abnormalpointrigth16  TEXT, Abnormalpointleft17  TEXT	, Abnormalpointrigth17  TEXT, Abnormalpointleft18  TEXT, Abnormalpointrigth18  TEXT	, Abnormalpointleft19  TEXT	, Abnormalpointrigth19  TEXT, Abnormalpointleft20  TEXT	, Abnormalpointrigth20  TEXT,leftpoints TEXT,rigthpoints TEXT,socorefinal TEXT);";		
 			
 			sqlscore.execute();			
 			// after we load the database and create the table if it doesn't already exists, we call refresh method which i have created to populate our datagrid
@@ -224,13 +224,51 @@ package utils
 			sqls=new SQLStatement();
 			sqls.sqlConnection=sqlc;
 			sqls.text = "SELECT * FROM photobuckscore"
-			sqls.execute();
+			try{sqls.execute();
 			// with sqls.getResault().data we get the array of objects for each row out of our database
 			var data:Array = sqls.getResult().data;
 			// we pass the array of objects to our data provider to fill the datagrid
 			dp = new ArrayCollection(data);
 			return dp;
+			}catch (error:SQLError)
+			{
+			
+			
+			trace("SELECT error:", error);
+			trace("error.message:", error.message);
+			trace("error.details:", error.details);
+			
+			
+			}
+			return dp;
 		}
+		public function resaultname(name:String):ArrayCollection
+		{
+			
+			sqls=new SQLStatement();
+			sqls.sqlConnection=sqlc;
+			sqls.text = "SELECT * FROM photobuckscore where='"+name+"'"; 
+			try{sqls.execute();
+			// with sqls.getResault().data we get the array of objects for each row out of our database
+			var data:Array = sqls.getResult().data;
+			// we pass the array of objects to our data provider to fill the datagrid
+			dp = new ArrayCollection(data);
+			//return dp;
+			}catch (error:SQLError)
+			{
+				
+				
+				trace("SELECT error:", error);
+				trace("error.message:", error.message);
+				trace("error.details:", error.details);
+				return dp;
+				
+			}
+			
+			
+			return dp;
+		}
+		
 		
 		public function resaulta():ArrayCollection
 		{
@@ -238,13 +276,53 @@ package utils
 			// with sqls.getResault().data we get the array of objects for each row out of our database
 			sqlsa=new SQLStatement();
 			sqlsa.sqlConnection=sqlc;
-			sqlsa.text = "SELECT * FROM albumbuckscore"
-			sqlsa.execute();
+			sqlsa.text = "SELECT * FROM albumbuckscore";
+			try{
+				sqlsa.execute();
+			
 			var data:Array = sqlsa.getResult().data;
 			// we pass the array of objects to our data provider to fill the datagrid
 			dpa = new ArrayCollection(data);
 			
 			return dpa;
+			}catch (error:SQLError)
+			{
+				
+				
+				trace("SELECT error:", error);
+				trace("error.message:", error.message);
+				trace("error.details:", error.details);
+				
+				
+			}
+			return dpa;
+		}
+		
+		public function resaultaname(name:String):int
+		{
+			
+			// with sqls.getResault().data we get the array of objects for each row out of our database
+			sqlsa=new SQLStatement();
+			sqlsa.sqlConnection=sqlc;
+			sqlsa.text = "SELECT * FROM albumbuckscore where='"+name+"'";
+			try{ sqlsa.execute();
+			var data:Array = sqlsa.getResult().data;
+			// we pass the array of objects to our data provider to fill the datagrid
+			dpa = new ArrayCollection(data);
+			
+			
+			}
+			catch (error:SQLError)
+			{
+				
+				
+				trace("SELECT error:", error);
+				trace("error.message:", error.message);
+				trace("error.details:", error.details);
+				return 0;
+				
+			}
+			return dpa.length;
 		}
 		
 		public function resaultscore(name:String):ArrayCollection
@@ -254,12 +332,25 @@ package utils
 			sqlscore=new SQLStatement();
 			sqlscore.sqlConnection=sqlc;
 			sqlscore.text = "SELECT * FROM buckscorefinish where deername='"+name+"'";
-			sqlscore.execute();
+			try{sqlscore.execute();
 			var data:Array = sqlscore.getResult().data;
 			// we pass the array of objects to our data provider to fill the datagrid
 			dpscore = new ArrayCollection(data);
 			
 			return dpscore;
+			}
+			catch (error:SQLError)
+			{
+				
+				
+				trace("SELECT error:", error);
+				trace("error.message:", error.message);
+				trace("error.details:", error.details);
+				
+				
+			}
+			
+			return dpa;
 		}
 		
 		// method to remove row from database.
@@ -293,17 +384,42 @@ package utils
 			
 		}
 		
-		public function updatephoto(id:String,albumname:String,tagnumber:String,ranchname:String,posturename:String,encodebytes:String,score:String):void
+		public function updatephoto(id:int,name:String,albumname:String,tagnumber:String,ranchname:String,posturename:String,encodebytes:String,score:String):void
 		{
 			// sql statment to delete from our test_table the row that has the same number in number column as our selected row from datagrid
 			
 			sqls=new SQLStatement();
 			sqls.sqlConnection=sqlc;
-			sqls.text = "UPDATE photobuckscore SET  albumname='"+albumname+"',tagnumber='"+tagnumber+"',ranchname='"+ranchname+"',posturename='"+posturename+"',image='"+encodebytes+"',score='"+score+"'  WHERE deername='"+id+"';";
+			sqls.text = "UPDATE photobuckscore SET deername='"+name+"',albumname='"+albumname+"',tagnumber='"+tagnumber+"',ranchname='"+ranchname+"',posturename='"+posturename+"',image='"+encodebytes+"',score='"+score+"'  WHERE id="+id+";";
 			
 			sqls.execute();
 			
 		}
+		public function updatephotoscore(name:String,score:String):void
+		{
+			// sql statment to delete from our test_table the row that has the same number in number column as our selected row from datagrid
+			
+			sqls=new SQLStatement();
+			sqls.sqlConnection=sqlc;
+			sqls.text = "UPDATE photobuckscore SET score='"+score+"'  WHERE deername='"+name+"';";
+			
+			sqls.execute();
+			
+		}
+		
+		public function updatebuckscorefinish(id:int,name:String):void
+		{
+			// sql statment to delete from our test_table the row that has the same number in number column as our selected row from datagrid
+			
+			sqlscore=new SQLStatement();
+			sqlscore.sqlConnection=sqlc;
+			sqlscore.text = "UPDATE buckscorefinish SET deername='"+name+"'  WHERE id="+id+";";
+			
+			sqlscore.execute();
+			
+		}
+		
+		
 		
 		// method which gets called when we recive an error  from sql connection or sql statment and displays the error in the alert
 		public function error(e:SQLErrorEvent):void
