@@ -574,7 +574,7 @@
 			
 			private  function savephotoedition():void
 			{
-				if(txtdeernamesave.text!="" &&	cmbalbumnameselection.selectedItem!="")
+				if(txtdeernamesave.text!="" &&	cmbalbumnameselection.selectedItem!="" && fileReference.data!=null)
 				{	
 				var itemalbumphoto:albumbuckscore = new albumbuckscore();
 				var banderaphoto:String="1";
@@ -625,6 +625,7 @@
 				txtposturenamesave.text="";
 				imgupload.visible=false;
 				btnbrowsetoadd.visible=true;
+				fileReference=null;
 				}
 				}else{
 					Alert.show("Name Duplicate");
@@ -697,6 +698,7 @@
 				
 				btndeerscoresheet.enabled=true;
 				btnScoreProccess.enabled=true;
+				btndeerinfo.enabled=true;
 				lbldeernastate.text=datagridalbumname.selectedItem.name;
 				lbldeeralbumstate.text=datagridalbumname.selectedItem.type;
 				txtNamepaneltitle.text=datagridalbumname.selectedItem.name;
@@ -888,7 +890,7 @@
 				txtranchnamesave.text="";
 				txtposturenamesave.text="";
 				imgupload.visible=false;
-				
+				fileReference=null;
 				txtNamepaneltitle.text=txtdeernamesave.text;
 				currentState="stateMain";
 				bandera="0";
@@ -1619,7 +1621,9 @@
 					}
 					txtNamepaneltitle.text="Name";
 					btnScoreProccess.enabled=false;
+					//manageCropper.clearImage();
 					btndeerscoresheet.enabled=false;
+					btndeerinfo.enabled=false;
 					trace("entro");
 				}
 				
@@ -4400,10 +4404,13 @@
 																name="txtdescriptionalbum"/>
 												</s:HGroup>
 												<s:Label includeIn="editphoto,updatephotodata" text="Album Name"/>
-												<s:ComboBox id="cmbalbumnameselection" includeIn="editphoto,updatephotodata" width="164" dataProvider="{combo}">
+												<s:DropDownList id="cmbalbumnameselection"
+															includeIn="editphoto,updatephotodata"
+															width="164" dataProvider="{combo}"
+															>
 													
 													
-												</s:ComboBox>
+												</s:DropDownList>
 												<s:Label includeIn="scorephoto" text="Deer Age"/>
 												<s:ComboBox includeIn="scorephoto" id="cmbage"/>
 												
@@ -5364,10 +5371,10 @@
 														  width="307" height="105"
 														  height.ExpandDeerName="200"
 														  fontStyle.stateMain="normal">
-										<s:Button includeIn="stateMain" x="46" y="3"
+										<s:Button id="btndeerinfo" includeIn="stateMain" x="46" y="3"
 												  label="Deer Info" alpha="4"
 												  click="btnupdatedeername_clickHandler(event)"
-												  color="#FEFEFE"/>
+												  color="#FEFEFE" enabled="false"/>
 										<s:Button includeIn="stateMain" id="btndeerscoresheet" x="187" y="3"
 												  label="Score Sheet" alpha="4"
 												  click="btn_scoringreview(event)" color="#FCF9F9" enabled="false"/>
@@ -5377,9 +5384,9 @@
 												  color="#FEFDFD" enabled="false"/>
 										<s:ComboBox id="combophoto" includeIn="stateMain" x="7"
 													y="76" alpha="4"
-													change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo')currentState='editphoto';   "
+													change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo'){currentState='editphoto';  imgupload.source='';};   "
 													cornerRadius="5"
-													doubleClick="currentState='editphoto';"
+													doubleClick="currentState='editphoto'; imgupload.source=''; "
 													labelField="Add Photo" selectedIndex="0">
 											<s:dataProvider>
 												<mx:ArrayList>
