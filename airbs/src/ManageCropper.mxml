@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		   xmlns:s="library://ns.adobe.com/flex/spark" 
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
 		   xmlns:mx="library://ns.adobe.com/flex/mx"
 		   xmlns:c="com.flexblocks.imagecropper.*"
-		   width="670"
-		   height="516"
+		   width="670" height="516" creationComplete="init()"
+		   currentState="init"
 		   horizontalScrollPolicy="off"
-		   verticalScrollPolicy="off"
-		   creationComplete="init()">
+		   verticalScrollPolicy="off">
 	
 	<fx:Declarations>
 	</fx:Declarations>
@@ -16,13 +15,26 @@
 		<![CDATA[
 			import com.complexless.utils.GraphicsUtils;
 			
+			import flash.utils.setTimeout;
+			
+			import mx.binding.utils.ChangeWatcher;
 			import mx.controls.Alert;
+			import mx.graphics.ImageSnapshot;
 			import mx.graphics.Stroke;
 			import mx.managers.CursorManager;
 			
 			private var newImage:BitmapData;
 			private var originalImage:BitmapData;
 			private var points:Array = [];
+			private var border:int = 30;
+			private var cursorID:Number = 0;
+			private var imageScaleFactor:Number = 1;
+			
+			private var widthWatch:ChangeWatcher;
+			private var heightWatch:ChangeWatcher;
+			
+			[Embed(source="assets/cursors/cursor_win_crosshair.png")]
+			private var crosshairCursor:Class;
 			
 			private function init():void {
 				imageCropper.outlineColor = 0xffffff;  	
@@ -37,6 +49,29 @@
 				imageCropper.constrainToAspectRatio = false;
 				imageCropper.setCropRect();
 				imageCropper.enabled = false;
+				
+				widthWatch = ChangeWatcher.watch(cropperPanel,'width',onSizeChange);
+				heightWatch = ChangeWatcher.watch(cropperPanel,'height',onSizeChange);
+			}
+			
+			private function onSizeChange(event:Event):void
+			{
+				
+			}
+			
+			public function setImage(bitmapData:BitmapData):void {
+				currentState = "process";
+				setTimeout(function():void {
+					imageCropper.visible = true;
+					_setImage(bitmapData);
+				}, 100);
+			}
+			
+			public function clearImage():void {
+				imageCropper.height = 0;
+				imageCropper.width = 0;
+				imageCropper.visible = false;
+				currentState = "init";
 			}
 			
 			private function save():void {
@@ -52,11 +87,6 @@
 				imageCropper.enabled = false;
 			}
 			
-			public function setImage(bitmapData:BitmapData):void {
-				imageCropper.visible = true;
-				_setImage(bitmapData);
-			}
-			
 			private function _setImage(bitmapData:BitmapData, recorder:Boolean = true):void {
 				newImage = bitmapData;
 				
@@ -64,13 +94,14 @@
 					originalImage = newImage;
 				}
 				
-				if(cropperPanel.width < bitmapData.width || cropperPanel.height < bitmapData.height) {
+				if((cropperPanel.width - border) < bitmapData.width || (cropperPanel.height - border) < bitmapData.height) {
 					setScaleCropper(bitmapData);
 					
 				}
 				else {
 					imageCropper.width = bitmapData.width;
 					imageCropper.height = bitmapData.height;
+					imageScaleFactor = 1;
 				}
 				
 				imageCropper.enabled = true;
@@ -81,10 +112,8 @@
 				var imageWidth:int = bitmapData.width;
 				var imageHeight:int = bitmapData.height;
 				
-				var imageScaleFactor:Number = 1;
-				
-				var newXScale:Number = imageWidth == 0 ? 1 : cropperPanel.width / imageWidth;
-				var newYScale:Number = imageHeight == 0 ? 1 : cropperPanel.height / imageHeight;
+				var newXScale:Number = imageWidth == 0 ? 1 : (cropperPanel.width - border) / imageWidth;
+				var newYScale:Number = imageHeight == 0 ? 1 : (cropperPanel.height - border) / imageHeight;
 				
 				// Calculate the scaling factor based on which dimension must be scaled in order for the image to fit within the component
 				
@@ -92,11 +121,11 @@
 				var y:Number = 0;
 				
 				if (newXScale > newYScale) {
-					x = Math.floor((cropperPanel.width - imageWidth * newYScale));
+					x = Math.floor(((cropperPanel.width - border) - imageWidth * newYScale));
 					imageScaleFactor = newYScale;
 				}
 				else {
-					y = Math.floor((cropperPanel.height - imageHeight * newXScale));
+					y = Math.floor(((cropperPanel.height - border) - imageHeight * newXScale));
 					imageScaleFactor = newXScale;
 				}
 				
@@ -115,12 +144,13 @@
 			}
 			
 			public function beginDraw():void {
+				//cursorID = CursorManager.setCursor(crosshairCursor);
 				erase();
-			
+				
 				var rc:Rectangle = imageCropper.getVisibleRect();
 				
-				canvas.x = rc.x - getVisibleRect().x;
-				canvas.y = rc.y - getVisibleRect().y;
+				canvas.x = imageCropper.x;
+				canvas.y = imageCropper.y;
 				canvas.height = rc.height;
 				canvas.width = rc.width;
 				canvas.visible = true;
@@ -129,6 +159,7 @@
 			}
 			
 			public function endDraw():void {
+				//CursorManager.removeCursor(cursorID);
 				canvas.visible = false;
 			}
 			
@@ -165,11 +196,35 @@
 			}
 			
 			public function zoomIn():void {
-				Alert.show("Zoom In");
+				var z:Number = (imageScaleFactor / 10);
+				var imageScaledWidth:Number = Math.ceil(newImage.width * (imageScaleFactor + z));
+				var imageScaledHeight:Number = Math.ceil(newImage.height * (imageScaleFactor + z));
+				
+				if(imageScaleFactor == 1) {
+					var scaleMatrix:Matrix = new Matrix();
+					scaleMatrix.scale(imageScaleFactor + z, imageScaleFactor + z);
+					var scaledImageBitmapData:BitmapData = new BitmapData(imageScaledWidth, imageScaledHeight, true, 0xFF000000);
+					scaledImageBitmapData.draw(newImage, scaleMatrix, null, null, null, true);
+					newImage = scaledImageBitmapData;
+				}
+				
+				imageCropper.width = imageScaledWidth;
+				imageCropper.height = imageScaledHeight;
+				
+				imageCropper.enabled = true;
+				imageCropper.sourceImage = newImage;
 			}
 			
 			public function zoomOut():void {
-				Alert.show("Zoom Out");
+				var z:Number = (imageScaleFactor / 10);
+				var imageScaledWidth:Number = Math.ceil(newImage.width * (imageScaleFactor - z));
+				var imageScaledHeight:Number = Math.ceil(newImage.height * (imageScaleFactor - z));
+				
+				imageCropper.width = imageScaledWidth;
+				imageCropper.height = imageScaledHeight;
+				
+				imageCropper.enabled = true;
+				imageCropper.sourceImage = newImage;
 			}
 			
 			public function pointer():void {
@@ -177,7 +232,7 @@
 			}
 			
 			public function zoomFit():void {
-				Alert.show("Zoom Fit");
+				_setImage(newImage, false);
 			}
 			
 			public function zoomActual():void {
@@ -196,38 +251,49 @@
 			
 		]]>
 	</fx:Script>
+	
+	<mx:states>
+		<s:State name="init"/>
+		<s:State name="process"/>
+	</mx:states>
+	
 	<s:BorderContainer x="0" y="0" width="100%" height="100%" borderColor="0x000000" borderAlpha="1.0" borderWeight="1">
-	<s:VGroup width="100%" height="100%" gap="0">
-		<s:SkinnableContainer width="100%" height="25" skinClass="com.complexless.skins.spark.ToolbarSkin">
-			<s:HGroup width="100%" height="100%" gap="0" verticalAlign="middle">
-				<mx:LinkButton icon="@Embed('assets/images/select16x16.png')" click="pointer()"/>
-				<mx:LinkButton icon="@Embed('assets/images/save16x16.png')" click="save()"/>
-				<mx:LinkButton icon="@Embed('assets/images/crop16x16.png')" click="imageCropper.enabled = true"/>
-				<mx:LinkButton icon="@Embed('assets/images/zoom_in16x16.png')" click="zoomIn()"/>
-				<mx:LinkButton icon="@Embed('assets/images/zoom_out16x16.png')" click="zoomOut()"/>
-				<mx:LinkButton icon="@Embed('assets/images/zoom_fit16x16.png')" click="zoomFit()"/>
-				<mx:LinkButton icon="@Embed('assets/images/zoom_actualsize16x16.png')" click="zoomActual()"/>
-			</s:HGroup>
-		</s:SkinnableContainer>
-		<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
-			<s:VGroup id="cropperPanel" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" gap="20">
-				<c:ImageCropper id="imageCropper"
-								width="640"
-								height="480"
-								sourceImage="large.jpg"
-								enabled="false"
-								visible="false"
-								cropConstraintDisabled="false"
-								sourceImageReady="imageready();"
-								sourceImageLoadError="trace('Error while loading image')"
-								cropRectChanged="trace('Crop Rect changed');"
-								cropConstraintChanged="trace('Crop constraint changed');"
-								cropDimensionsChanged="trace('Crop dimensions changed');"
-								cropPositionChanged="trace('Crop position changed');"/>
-				
-			</s:VGroup>
-		</s:SkinnableContainer>
-	</s:VGroup>
+		<s:VGroup width="100%" height="100%" gap="0">
+			<s:SkinnableContainer id="toolbar" width="100%" height="25" 
+								  skinClass="com.complexless.skins.spark.ToolbarSkin"
+								  includeIn="process">
+				<s:HGroup width="100%" height="100%" gap="0" verticalAlign="middle">
+					<mx:LinkButton icon="@Embed('assets/images/select16x16.png')" click="pointer()" toolTip="Select"/>
+					<mx:LinkButton icon="@Embed('assets/images/save16x16.png')" click="save()" toolTip="Save"/>
+					<mx:LinkButton icon="@Embed('assets/images/crop16x16.png')" click="imageCropper.enabled = true" toolTip="Crop"/>
+					<mx:LinkButton icon="@Embed('assets/images/zoom_in16x16.png')" click="zoomIn()" toolTip="Zoom In"/>
+					<mx:LinkButton icon="@Embed('assets/images/zoom_out16x16.png')" click="zoomOut()" toolTip="Zoom out"/>
+					<mx:LinkButton icon="@Embed('assets/images/zoom_fit16x16.png')" click="zoomFit()" toolTip="Zoom Fit"/>
+					<mx:LinkButton icon="@Embed('assets/images/zoom_actualsize16x16.png')" click="zoomActual()" toolTip="Zoom Actual"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+			<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
+				<mx:Canvas id="cropperPanel" width="100%" height="100%" verticalScrollPolicy="auto" horizontalScrollPolicy="auto" >
+					<c:ImageCropper id="imageCropper"
+									width="0"
+									height="0"
+									enabled="false"
+									visible="false"
+									horizontalCenter="0.5"
+									verticalCenter="0"
+									cropConstraintDisabled="false"
+									sourceImageReady="imageready();"
+									sourceImageLoadError="trace('Error while loading image')"
+									cropRectChanged="trace('Crop Rect changed');"
+									cropConstraintChanged="trace('Crop constraint changed');"
+									cropDimensionsChanged="trace('Crop dimensions changed');"
+									cropPositionChanged="trace('Crop position changed');"/>
+					
+					<mx:UIComponent id="canvas" visible="false" mouseDown="addPoint()"
+									mouseMove="rubberBand()" rollOut="drawLine(points);"/>			
+				</mx:Canvas>
+			</s:SkinnableContainer>
+		</s:VGroup>
 	</s:BorderContainer>
-	<mx:UIComponent x="0" y="0" width="0" height="0" visible="false" id="canvas" mouseDown="addPoint()" mouseMove="rubberBand()" rollOut="drawLine(points);"/>
+	
 </mx:Canvas>

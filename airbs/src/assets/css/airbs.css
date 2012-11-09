@@ -6,7 +6,7 @@
 global
 {
 	vertical-align: middle;
-	font-size: 11;
+	font-size: 13;
 	font-family: "Calibri";
 	
 	chrome-color: #303030;
@@ -20,7 +20,6 @@ global
 
 bs|MenuBar
 {
-	font-size: 11;
 	font-anti-alias-type: advanced;
 	font-grid-fit-type: subpixel;
 	
@@ -32,6 +31,9 @@ bs|MenuBar
 	text-roll-over-color: #cecece;
 	text-selected-color: #cecece;
 	color: #ffffff;
+	
+	roll-over-color: #666666;
+	selection-color: #000000;
 }
 
 bs|Menu
@@ -51,4 +53,37 @@ bs|Menu
 	borderColor: #000000;
 	borderWeight: 1;
 	borderVisible: true;
+}
+
+mx|Alert{
+	color : #ffffff;
+	buttonStyleName: "buttonStyle";
+	title-style-name: "alertTitleStyle";
+	messageStyleName: "messageStyle";
+	header-height:30;
+
+	background-color: #606060;
+	corner-radius :0;
+	border-style :solid;
+
+	border-color : #5970a0;
+}
+.alertTitleStyle{
+	font-family: Verdana;
+	font-size: 13;
+	font-weight :bold;
+	text-align :left;
+	color :#ffffff;
+}
+
+.messageStyle{
+	font-family: Arial;
+	font-size: 13;
+	font-weight: bold;
+}
+
+.buttonStyle {
+	background-color: #323232;
+	theme-color: #323232;
+	color: red;
 }
