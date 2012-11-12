@@ -1465,7 +1465,7 @@
 												<s:itemRenderer>
 													<fx:Component>
 														<s:GridItemRenderer>
-															<s:Image source="{data.image}" width="75" height="100"/>
+															<s:Image source="{data.image}" width="75" height="100" cacheAsBitmap="true"/>
 														</s:GridItemRenderer>
 													</fx:Component>
 												</s:itemRenderer>	   
