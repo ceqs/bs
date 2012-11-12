@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%">
+		<s:Form width="400" height="302">
+			<s:Label fontSize="18" fontWeight="bold" text="LOGIN"/>
+			<s:FormItem width="248" label="URL"
+						width.stateUpdateLicense="304">
+				<s:TextInput width="144" text="http://www.buckscore.com"
+							 width.stateUpdateLicense="204"
+							 text.stateUpdateLicense="http://www.buckscore.com:8043"/>
+			</s:FormItem>
+			<s:FormItem width="247" label="UserName"
+						width.stateUpdateLicense="303">
+				<s:TextInput id="txtusername" width="142"
+							 width.stateUpdateLicense="201"/>
+			</s:FormItem>
+			<s:FormItem width="248" label="Paswoord"
+						width.stateUpdateLicense="302">
+				<s:TextInput id="txtpasswoord" width="143" displayAsPassword="true"
+							 width.stateUpdateLicense="199"/>
+			</s:FormItem>
+			<s:FormItem width="248"
+						width.stateUpdateLicense="302">
+				<s:HGroup width="181" height="30" horizontalAlign="center">
+					<s:Button includeIn="stateUpdateLicense" label="Close"
+							  click="currentState='stateMain'"/>
+					<s:Button label="Update"
+							  click="ws.SignAndRegister(txtusername.text,txtpasswoord.text)"
+							  label.stateLogin="Validate"/>
+				</s:HGroup>
+			</s:FormItem>
+		</s:Form>
+	</s:VGroup>
+</s:Group>

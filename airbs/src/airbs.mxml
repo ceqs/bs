@@ -8,7 +8,7 @@
 					   xmlns:utils="utils.*"
 					   xmlns:ns1="*"
 					   width="750" height="550" backgroundAlpha="0" creationComplete="initApp()"
-					   currentState="stateMain" showStatusBar="false" styleName="main">
+					   currentState="stateLogin" showStatusBar="false" styleName="main">
 	
 	<fx:Style source="assets/css/airbs.css"/>
 	
@@ -17,10 +17,13 @@
 		<![CDATA[
 			import air.update.ApplicationUpdaterUI;
 			import air.update.events.UpdateEvent;
+			
 			import flash.filters.DropShadowFilter;
 			import flash.sampler.NewObjectSample;
+			
 			import flashx.textLayout.formats.Float;
 			import flashx.textLayout.tlf_internal;
+			
 			import mx.collections.ArrayCollection;
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
@@ -41,8 +44,12 @@
 			import mx.utils.Base64Encoder;
 			import mx.utils.ObjectUtil;
 			import mx.utils.StringUtil;
+			
+			import mycomponents.ComponentsSerials;
+			
 			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
+			
 			import utils.SQLbuckscore;
 			import utils.ScoreUtils;
 			import utils.albumbuckscore;
@@ -79,8 +86,6 @@
 			public var inchvalue:Number;
 			public var myangleoptions:XMLList;
 			public var deernamefinishscore:String;
-			public var leftpoints:String;
-			public var rigthpoints:String;
 			///////////////////////////////////////////////////////////////////////////////////////////////			
 
 			public function llenarTabla():void
@@ -205,15 +210,39 @@
 				gVersion = appXML.ns::version;
 			}
 			////////////////////////menu bar control///////////////////////////////////////////
+			[Embed(source="assets/images/iconalert.png")]
+			private var alertIcon:Class;
 			private function menuHandler(event:MenuEvent):void  {
 				if (event.item.@label == "Album") {
 					currentState='editAlbum';
 				}
 				else if(event.item.@label == "Deer"){
 					currentState='editphoto';
+				}
+				else if(event.item.@label == "Update License"){
+					currentState='stateUpdateLicense';
+				}
+				else if(event.item.@label == "View Help"){
+					var url :URLRequest = new URLRequest("http://www.buckscore.com:8043/Account/gettingstarted");
+					navigateToURL(url, "_blank")
+				}else if(event.item.@label == "Syncronization"){
+					Alert.show("This feature only exists with the Pro version", "Version Upgrade", 
+						Alert.OK | Alert.CANCEL, null, null, alertIcon);
+				}else if(event.item.@label == "About BuckScore Application"){
+			
+					var scoreserials:ComponentsSerials=new ComponentsSerials;
+					scoreserials.closeButton;
+					scoreserials.addEventListener(CloseEvent.CLOSE, ttlWndw_close);
+
+					PopUpManager.addPopUp(scoreserials,this,false);
+					
+					PopUpManager.centerPopUp(scoreserials);	
 				}else if(event.item.@label != "Deer" && event.item.@label != "Album"){
 					Alert.show("Menu: " + event.item.@label, "Buckscore menu item");
 				}
+			}
+			protected function ttlWndw_close(evt:CloseEvent):void {
+				PopUpManager.removePopUp(evt.currentTarget as IFlexDisplayObject);
 			}
 			private var firstTime:Boolean = true;
 			private function filter():void {
@@ -303,8 +332,8 @@
 							combophoto.selectedIndex=0;
 							currentState='stateMain';
 						}
-					}else Alert.show("Album Name Duplicate");
-				}else Alert.show("Insert value for Album");
+					}else Alert.show("Album Name Duplicate","Buckscore");
+				}else Alert.show("Insert value for Album","Buckscore");
 			}
 			
 			protected function DeleteAlbum_clickHandler(event:MouseEvent):void
@@ -553,7 +582,7 @@
 							txtposturenamesave.text=_posturename;
 						}
 					}				
-				}else Alert.show("No data ");	
+				}else Alert.show("No data ","Buckscore");	
 				
 			}
 			private var index:int;
@@ -639,7 +668,7 @@
 						bandera="0";
 						combophoto.selectedIndex=0;
 					}else Alert.show("Name Duplicate");
-				}else Alert.show("Insert value for deer");
+				}else Alert.show("Insert value for deer","Buckscore");
 			}
 			
 			public var grade:String="";
@@ -653,14 +682,14 @@
 				}else{
 					if (eventObj.detail==Alert.YES) {
 						var adjustement:String=panelscoreproccess.adjustement;
-						if(scoreutils.Circumferenceleft1!="0")	scoreutils.Circumferenceleft1=(Number(scoreutils.Circumferenceleft1)*Number(adjustement)).toString();
-						if(scoreutils.Circumferenceleft2!="0")	scoreutils.Circumferenceleft2=(Number(scoreutils.Circumferenceleft2)*Number(adjustement)).toString();
-						if(scoreutils.Circumferenceleft3!="0")	scoreutils.Circumferenceleft3=(Number(scoreutils.Circumferenceleft3)*Number(adjustement)).toString();
-						if(scoreutils.Circumferenceleft4!="0")	scoreutils.Circumferenceleft4=(Number(scoreutils.Circumferenceleft4)*Number(adjustement)).toString();
-						if(scoreutils.Circumferencerigth1!="0")	scoreutils.Circumferencerigth1=(Number(scoreutils.Circumferencerigth1)*Number(adjustement)).toString();
-						if(scoreutils.Circumferencerigth2!="0")	scoreutils.Circumferencerigth2=(Number(scoreutils.Circumferencerigth2)*Number(adjustement)).toString();
-						if(scoreutils.Circumferencerigth3!="0")	scoreutils.Circumferencerigth3=(Number(scoreutils.Circumferencerigth3)*Number(adjustement)).toString();
-						if(scoreutils.Circumferencerigth4!="0")	scoreutils.Circumferencerigth4=(Number(scoreutils.Circumferencerigth4)*Number(adjustement)).toString();
+						if(scoreutils.Circumferenceleft1!="0")	scoreutils.Circumferenceleft1=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft1)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferenceleft2!="0")	scoreutils.Circumferenceleft2=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft2)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferenceleft3!="0")	scoreutils.Circumferenceleft3=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft3)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferenceleft4!="0")	scoreutils.Circumferenceleft4=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft4)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferencerigth1!="0")	scoreutils.Circumferencerigth1=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth1)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferencerigth2!="0")	scoreutils.Circumferencerigth2=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth2)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferencerigth3!="0")	scoreutils.Circumferencerigth3=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth3)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferencerigth4!="0")	scoreutils.Circumferencerigth4=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth4)*Number(adjustement)),4).toString();
 						trace("entre si")
 					}
 					else{
@@ -672,54 +701,54 @@
 					var someBirthday:Date = new Date();
 					txtdatedeer.text=someBirthday.toDateString();
 					imageforedition0.source=arraybyte;
-					numberleftponitsgrid.text=leftpoints;
-					numberrigthponitsgrid.text=rigthpoints;
+					numberleftponitsgrid.text=panelscoreproccess.cmbletftypical.selectedItem;
+					numberrigthponitsgrid.text=panelscoreproccess.cmbrigthtypical.selectedItem;
 					insidespread.text=scoreutils.insidespread;
 					mainbeamleftgrid.text=scoreutils.mainbeamleft;
 					mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
-					mainbeamdiferene.text=(Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))).toString();
+					mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),4).toString();
 					t1l.text=scoreutils.Typicalpointleft1;
 					t1r.text=scoreutils.Typicalpointrigth1;
-					t1d.text=(Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))).toString();
+					t1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))),4).toString();
 					t2l.text=scoreutils.Typicalpointleft2;
 					t2r.text=scoreutils.Typicalpointrigth2;
-					t2d.text=(Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))).toString();
+					t2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))),4).toString();
 					t3l.text=scoreutils.Typicalpointleft3;
 					t3r.text=scoreutils.Typicalpointrigth3;
-					t3d.text=(Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))).toString();
+					t3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))),4).toString();
 					t4l.text=scoreutils.Typicalpointleft4;
 					t4r.text=scoreutils.Typicalpointrigth4;
-					t4d.text=(Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))).toString();
+					t4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))),4).toString();
 					t5l.text=scoreutils.Typicalpointleft5;
 					t5r.text=scoreutils.Typicalpointrigth5;
-					t5d.text=(Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))).toString();
+					t5d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))),4).toString();
 					t6l.text=scoreutils.Typicalpointleft6;
 					t6r.text=scoreutils.Typicalpointrigth6;
-					t6d.text=(Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))).toString();
+					t6d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))),4).toString();
 					t7l.text=scoreutils.Typicalpointleft7;
 					t7r.text=scoreutils.Typicalpointrigth7;
-					t7d.text=(Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))).toString();
+					t7d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))),4).toString();
 					t8l.text=scoreutils.Typicalpointleft8;
 					t8r.text=scoreutils.Typicalpointrigth8;
-					t8d.text=(Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))).toString();
+					t8d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))),4).toString();
 					t9l.text=scoreutils.Typicalpointleft9;
 					t9r.text=scoreutils.Typicalpointrigth9;
-					t9d.text=(Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))).toString();
+					t9d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))),4).toString();
 					t10l.text=scoreutils.Typicalpointleft10;
 					t10r.text=scoreutils.Typicalpointrigth10;
-					t10d.text=(Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))).toString();
+					t10d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))),4).toString();
 					c1l.text=scoreutils.Circumferenceleft1;
 					c1r.text=scoreutils.Circumferencerigth1;
-					c1d.text=(Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))).toString();
+					c1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))),4).toString();
 					c2l.text=scoreutils.Circumferenceleft2;
 					c2r.text=scoreutils.Circumferencerigth2;
-					c2d.text=(Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))).toString();
+					c2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))),4).toString();
 					c3l.text=scoreutils.Circumferenceleft3;
 					c3r.text=scoreutils.Circumferencerigth3;
-					c3d.text=(Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))).toString();
+					c3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))),4).toString();
 					c4l.text=scoreutils.Circumferenceleft4;
 					c4r.text=scoreutils.Circumferencerigth4;
-					c4d.text=(Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))).toString();
+					c4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))),4).toString();
 					a1.text=scoreutils.Abnormalpointleft1;
 					ar1.text=scoreutils.Abnormalpointrigth1;
 					a2.text=scoreutils.Abnormalpointleft2;
@@ -763,7 +792,7 @@
 					var totalleft:Number=scoreutils.calculateleft();
 					var totalrigth:Number=scoreutils.calculaterigth();
 					var totalabnormal:Number=scoreutils.calculateabnormal();
-					var totaldiference:Number=Math.abs(totalleft-totalrigth);
+					var totaldiference:Number=scoreutils.roundDecimals(Math.abs(totalleft-totalrigth),4);
 					tleft.text=totalleft.toString();
 					trigth.text=totalrigth.toString();
 					tdiference.text=totaldiference.toString();
@@ -796,30 +825,31 @@
 					var sumleft:Number=0;
 					var sumrigth:Number=0;
 					var diference:Number=0;
+					txtcommentsdeer.text=photoItem.comments as String;
 					numberleftponitsgrid.text=photoItem.leftpoints as String;
 					numberrigthponitsgrid.text=photoItem.rigthpoints as String;
 					insidespread.text=photoItem.insidespread as String;
 					mainbeamleftgrid.text=photoItem.mainbeamleft as String;
 					mainbeamrigthgrid.text=photoItem.mainbeamrigth as String;
-					mainbeamdiferene.text=(Math.abs(Number(photoItem.mainbeamleft as String)-Number(photoItem.mainbeamrigth as String))).toString() ;				
+					mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.mainbeamleft as String)-Number(photoItem.mainbeamrigth as String))),4).toString();				
 					sumleft=sumleft+Number(mainbeamleftgrid.text);
 					sumrigth=sumrigth+Number(mainbeamrigthgrid.text);
 					diference=diference+Number(mainbeamdiferene.text);
 					t1l.text=photoItem.Typicalpointleft1 as String;
 					t1r.text=photoItem.Typicalpointrigth1 as String;
-					t1d.text=(Math.abs(Number(photoItem.Typicalpointleft1 as String)-Number(photoItem.Typicalpointrigth1 as String))).toString() ;
+					t1d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft1 as String)-Number(photoItem.Typicalpointrigth1 as String))),4).toString();
 					sumleft=sumleft+Number(t1l.text);
 					sumrigth=sumrigth+Number(t1r.text);
 					diference=diference+Number(t1d.text);
 					t2l.text=photoItem.Typicalpointleft2 as String;
 					t2r.text=photoItem.Typicalpointrigth2 as String;
-					t2d.text=(Math.abs(Number(photoItem.Typicalpointleft2 as String)-Number(photoItem.Typicalpointrigth2 as String))).toString();
+					t2d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft2 as String)-Number(photoItem.Typicalpointrigth2 as String))),4).toString();
 					sumleft=sumleft+Number(t2l.text);
 					sumrigth=sumrigth+Number(t2r.text);
 					diference=diference+Number(t2d.text);
 					t3l.text=photoItem.Typicalpointleft3 as String;
 					t3r.text=photoItem.Typicalpointrigth3 as String;
-					t3d.text=(Math.abs(Number(photoItem.Typicalpointleft3 as String)-Number(photoItem.Typicalpointrigth3 as String))).toString();
+					t3d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft3 as String)-Number(photoItem.Typicalpointrigth3 as String))),4).toString();
 					
 					sumleft=sumleft+Number(t3l.text);
 					sumrigth=sumrigth+Number(t3r.text);
@@ -828,7 +858,7 @@
 					
 					t4l.text=photoItem.Typicalpointleft4 as String;
 					t4r.text=photoItem.Typicalpointrigth4 as String;
-					t4d.text=(Math.abs(Number(photoItem.Typicalpointleft4 as String)-Number(photoItem.Typicalpointrigth4 as String))).toString();
+					t4d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft4 as String)-Number(photoItem.Typicalpointrigth4 as String))),4).toString();
 					
 					sumleft=sumleft+Number(t4l.text);
 					sumrigth=sumrigth+Number(t4r.text);
@@ -836,7 +866,7 @@
 					
 					t5l.text=photoItem.Typicalpointleft5 as String;
 					t5r.text=photoItem.Typicalpointrigth5 as String;
-					t5d.text=(Math.abs(Number(photoItem.Typicalpointleft5 as String)-Number(photoItem.Typicalpointrigth5 as String))).toString();
+					t5d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft5 as String)-Number(photoItem.Typicalpointrigth5 as String))),4).toString();
 					
 					sumleft=sumleft+Number(t5l.text);
 					sumrigth=sumrigth+Number(t5r.text);
@@ -844,7 +874,7 @@
 					
 					t6l.text=photoItem.Typicalpointleft6 as String;
 					t6r.text=photoItem.Typicalpointrigth6 as String;
-					t6d.text=(Math.abs(Number(photoItem.Typicalpointleft6 as String)-Number(photoItem.Typicalpointrigth6 as String))).toString();
+					t6d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft6 as String)-Number(photoItem.Typicalpointrigth6 as String))),4).toString();
 					
 					sumleft=sumleft+Number(t6l.text);
 					sumrigth=sumrigth+Number(t6r.text);
@@ -852,7 +882,7 @@
 					
 					t7l.text=photoItem.Typicalpointleft7 as String;
 					t7r.text=photoItem.Typicalpointrigth7 as String;
-					t7d.text=(Math.abs(Number(photoItem.Typicalpointleft7 as String)-Number(photoItem.Typicalpointrigth7 as String))).toString();
+					t7d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft7 as String)-Number(photoItem.Typicalpointrigth7 as String))),4).toString();
 					
 					
 					sumleft=sumleft+Number(t7l.text);
@@ -861,7 +891,7 @@
 					
 					t8l.text=photoItem.Typicalpointleft8 as String;
 					t8r.text=photoItem.Typicalpointrigth8 as String;
-					t8d.text=(Math.abs(Number(photoItem.Typicalpointleft8 as String)-Number(photoItem.Typicalpointrigth8 as String))).toString();
+					t8d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft8 as String)-Number(photoItem.Typicalpointrigth8 as String))),4).toString();
 					
 					sumleft=sumleft+Number(t8l.text);
 					sumrigth=sumrigth+Number(t8r.text);
@@ -870,7 +900,7 @@
 					
 					t9l.text=photoItem.Typicalpointleft9 as String;
 					t9r.text=photoItem.Typicalpointrigth9 as String;
-					t9d.text=(Math.abs(Number(photoItem.Typicalpointleft9 as String)-Number(photoItem.Typicalpointrigth9 as String))).toString();
+					t9d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft9 as String)-Number(photoItem.Typicalpointrigth9 as String))),4).toString();
 					
 					sumleft=sumleft+Number(t9l.text);
 					sumrigth=sumrigth+Number(t9r.text);
@@ -878,7 +908,7 @@
 					
 					t10l.text=photoItem.Typicalpointleft10 as String;
 					t10r.text=photoItem.Typicalpointrigth10 as String;
-					t10d.text=(Math.abs(Number(photoItem.Typicalpointleft10 as String)-Number(photoItem.Typicalpointrigth10 as String))).toString();
+					t10d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft10 as String)-Number(photoItem.Typicalpointrigth10 as String))),4).toString();
 					
 					sumleft=sumleft+Number(t10l.text);
 					sumrigth=sumrigth+Number(t10r.text);
@@ -887,7 +917,7 @@
 					
 					c1l.text=photoItem.Circumferenceleft1 as String;
 					c1r.text=photoItem.Circumferencerigth1 as String;
-					c1d.text=(Math.abs(Number(photoItem.Circumferenceleft1 as String)-Number(photoItem.Circumferencerigth1 as String))).toString();
+					c1d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft1 as String)-Number(photoItem.Circumferencerigth1 as String))),4).toString();
 					
 					sumleft=sumleft+Number(c1l.text);
 					sumrigth=sumrigth+Number(c1r.text);
@@ -895,7 +925,7 @@
 					
 					c2l.text=photoItem.Circumferenceleft2 as String;
 					c2r.text=photoItem.Circumferencerigth2 as String;
-					c2d.text=(Math.abs(Number(photoItem.Circumferenceleft2 as String)-Number(photoItem.Circumferencerigth2 as String))).toString();
+					c2d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft2 as String)-Number(photoItem.Circumferencerigth2 as String))),4).toString();
 					
 					sumleft=sumleft+Number(c2l.text);
 					sumrigth=sumrigth+Number(c2r.text);
@@ -904,7 +934,7 @@
 					
 					c3l.text=photoItem.Circumferenceleft3 as String;
 					c3r.text=photoItem.Circumferencerigth3 as String;
-					c3d.text=(Math.abs(Number(photoItem.Circumferenceleft3 as String)-Number(photoItem.Circumferencerigth3 as String))).toString();
+					c3d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft3 as String)-Number(photoItem.Circumferencerigth3 as String))),4).toString();
 					
 					sumleft=sumleft+Number(c3l.text);
 					sumrigth=sumrigth+Number(c3r.text);
@@ -913,7 +943,7 @@
 					
 					c4l.text=photoItem.Circumferenceleft4 as String;
 					c4r.text=photoItem.Circumferencerigth4 as String;
-					c4d.text=(Math.abs(Number(photoItem.Circumferenceleft4 as String)-Number(photoItem.Circumferencerigth4 as String))).toString();
+					c4d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft4 as String)-Number(photoItem.Circumferencerigth4 as String))),4).toString();
 					
 					sumleft=sumleft+Number(c4l.text);
 					sumrigth=sumrigth+Number(c4r.text);
@@ -962,14 +992,14 @@
 					ar20.text=photoItem.Abnormalpointrigth20 as String;
 					
 					
-					tleft.text=sumleft.toString();
-					trigth.text=sumrigth.toString();
-					tdiference.text=diference.toString();
+					tleft.text=scoreutils.roundDecimals(sumleft,4).toString();
+					trigth.text=scoreutils.roundDecimals(sumrigth,4).toString();
+					tdiference.text=scoreutils.roundDecimals(diference,4).toString();
 					
 					grossscore.text=photoItem.socorefinal as String;
-					totaldiferencefinal.text=diference.toString();
+					totaldiferencefinal.text=tdiference.text;
 				}else{
-					Alert.show("No data found deer");
+					Alert.show("No data found deer","Buckscore");
 				}	
 			}
 			
@@ -978,11 +1008,12 @@
 			{
 				var deletename:String=txtNamepaneltitle.text;
 				if(deletename.toLowerCase()==""){
-					Alert.show("Selection DeerName");
+					Alert.show("Selection DeerName","Buckscore");
 					trace("no entro");
 					
 				}else{
 					sqlscore.remove(deletename);
+					sqlscore.removescore(deletename);
 					array2refresh();
 					txtNamepaneltitle.text="Name";
 					imageforedition.source="";
@@ -1014,6 +1045,8 @@
 			
 			protected function listscoremin_changeHandler(event:Event):void
 			{
+				listscoremax.selectedIndex=-1;
+				listscoremedium.selectedIndex=-1;
 				var filter:Object=listscoremin.selectedItem;
 				trace(filter.deername);
 				var filtername:String=filter.deername;	
@@ -1032,6 +1065,8 @@
 			
 			protected function listscoremedium_changeHandler(event:IndexChangeEvent):void
 			{
+				listscoremax.selectedIndex=-1;
+				listscoremin.selectedIndex=-1;
 				var filter:Object=listscoremedium.selectedItem;
 				trace(filter.deername);
 				var filtername:String=filter.deername;	
@@ -1050,6 +1085,8 @@
 			
 			protected function listscoremax_changeHandler(event:IndexChangeEvent):void
 			{
+				listscoremin.selectedIndex=-1;
+				listscoremedium.selectedIndex=-1;
 				var filter:Object=listscoremax.selectedItem;
 				trace(filter.deername);
 				var filtername:String=filter.deername;	
@@ -1090,55 +1127,54 @@
 				var someBirthday:Date = new Date();
 				txtdatedeer.text=someBirthday.toDateString();
 				imageforedition0.source=arraybyte;
-				numberleftponitsgrid.text=leftpoints;
-				numberrigthponitsgrid.text=rigthpoints;
+				numberleftponitsgrid.text=panelscoreproccess.cmbletftypical.selectedItem;
+				numberrigthponitsgrid.text=panelscoreproccess.cmbrigthtypical.selectedItem;
 				insidespread.text=scoreutils.insidespread;
 				mainbeamleftgrid.text=scoreutils.mainbeamleft;
 				mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
-				mainbeamdiferene.text=(Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))).toString();
+				mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),4).toString();
 				t1l.text=scoreutils.Typicalpointleft1;
 				t1r.text=scoreutils.Typicalpointrigth1;
-				t1d.text=(Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))).toString();
+				t1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))),4).toString();
 				t2l.text=scoreutils.Typicalpointleft2;
 				t2r.text=scoreutils.Typicalpointrigth2;
-				t2d.text=(Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))).toString();
+				t2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))),4).toString();
 				t3l.text=scoreutils.Typicalpointleft3;
 				t3r.text=scoreutils.Typicalpointrigth3;
-				t3d.text=(Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))).toString();
+				t3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))),4).toString();
 				t4l.text=scoreutils.Typicalpointleft4;
 				t4r.text=scoreutils.Typicalpointrigth4;
-				t4d.text=(Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))).toString();
+				t4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))),4).toString();
 				t5l.text=scoreutils.Typicalpointleft5;
 				t5r.text=scoreutils.Typicalpointrigth5;
-				t5d.text=(Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))).toString();
+				t5d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))),4).toString();
 				t6l.text=scoreutils.Typicalpointleft6;
 				t6r.text=scoreutils.Typicalpointrigth6;
-				t6d.text=(Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))).toString();
+				t6d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))),4).toString();
 				t7l.text=scoreutils.Typicalpointleft7;
 				t7r.text=scoreutils.Typicalpointrigth7;
-				t7d.text=(Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))).toString();
+				t7d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))),4).toString();
 				t8l.text=scoreutils.Typicalpointleft8;
 				t8r.text=scoreutils.Typicalpointrigth8;
-				t8d.text=(Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))).toString();
+				t8d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))),4).toString();
 				t9l.text=scoreutils.Typicalpointleft9;
 				t9r.text=scoreutils.Typicalpointrigth9;
-				t9d.text=(Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))).toString();
+				t9d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))),4).toString();
 				t10l.text=scoreutils.Typicalpointleft10;
 				t10r.text=scoreutils.Typicalpointrigth10;
-				t10d.text=(Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))).toString();
-				
+				t10d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))),4).toString();
 				c1l.text=scoreutils.Circumferenceleft1;
 				c1r.text=scoreutils.Circumferencerigth1;
-				c1d.text=(Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))).toString();
+				c1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))),4).toString();
 				c2l.text=scoreutils.Circumferenceleft2;
 				c2r.text=scoreutils.Circumferencerigth2;
-				c2d.text=(Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))).toString();
+				c2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))),4).toString();
 				c3l.text=scoreutils.Circumferenceleft3;
 				c3r.text=scoreutils.Circumferencerigth3;
-				c3d.text=(Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))).toString();
+				c3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))),4).toString();
 				c4l.text=scoreutils.Circumferenceleft4;
 				c4r.text=scoreutils.Circumferencerigth4;
-				c4d.text=(Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))).toString();
+				c4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))),4).toString();
 				a1.text=scoreutils.Abnormalpointleft1;
 				ar1.text=scoreutils.Abnormalpointrigth1;
 				a2.text=scoreutils.Abnormalpointleft2;
@@ -1182,12 +1218,11 @@
 				var totalleft:Number=scoreutils.calculateleft();
 				var totalrigth:Number=scoreutils.calculaterigth();
 				var totalabnormal:Number=scoreutils.calculateabnormal();
-				var totaldiference:Number=Math.abs(totalleft-totalrigth);
+				var totaldiference:Number=scoreutils.roundDecimals(Math.abs(totalleft-totalrigth),4);
 				tleft.text=totalleft.toString();
 				trigth.text=totalrigth.toString();
 				tdiference.text=totaldiference.toString();
-				
-				grossscore.text=(totalleft+ totalrigth+ totalabnormal ).toString();
+				grossscore.text=String (totalleft+ totalrigth+ totalabnormal);
 				totaldiferencefinal.text=totaldiference.toString();
 			}
 			////////////////////////////////////////////////////////back SCORE //////////////////////////////			
@@ -1271,15 +1306,17 @@
 						scoreutils.Abnormalpointrigth19,
 						scoreutils.Abnormalpointleft20,
 						scoreutils.Abnormalpointrigth20,
-						leftpoints,
-						rigthpoints,
+						panelscoreproccess.cmbletftypical.selectedItem,
+						panelscoreproccess.cmbrigthtypical.selectedItem,
 						grossscore.text);
 					sqlscore.updatephotoscore(txtDeerNickName.text,grossscore.text);
-					array2refresh();
+					
 					if(typeerror=="1")
 						currentState='stateMain'; scoreutils=new ScoreUtils();
+						array2refresh();
 				}
 				else {
+					txtcommentsdeer.text='';
 					currentState='stateMain'; scoreutils=new ScoreUtils();
 					statescoringview="";
 				}
@@ -1312,13 +1349,17 @@
 		<s:State name="ExpandDeerName"/>
 		<s:State name="ScoringFinalBuckView"/>
 		<s:State name="PanelScoreState"/>
+		<s:State name="stateUpdateLicense"/>
 	</s:states>
+	<s:layout.stateUpdateLicense>
+		<s:BasicLayout/>
+	</s:layout.stateUpdateLicense>
 	
 	<s:transitions>
 		<s:Transition id="t1" autoReverse="true">
 			<s:CrossFade
 				target="{holder}" 
-				duration="900" />
+				duration="50" />
 		</s:Transition>
 	</s:transitions>
 	
@@ -1346,32 +1387,16 @@
 		<s:VGroup width="100%" height="100%" gap="0">
 			<s:HGroup id="borderTop" height="15" width="100%"/>
 			<s:SkinnableContainer id="mainBox" width="100%" height="100%">
-				<s:VGroup includeIn="stateLogin" width="100%" height="100%">
-					<s:Form width="719" height="501">
-						<s:Label fontSize="18" fontWeight="bold" text="LOGIN"/>
-						<s:FormItem width="248" label="URL">
-							<s:TextInput width="144" text="http://www.buckscore.com"/>
-						</s:FormItem>
-						<s:FormItem label="UserName">
-							<s:TextInput id="txtusername" width="142"/>
-						</s:FormItem>
-						<s:FormItem width="248" label="Paswoord">
-							<s:TextInput id="txtpasswoord" width="143" displayAsPassword="true"/>
-						</s:FormItem>
-						<s:FormItem width="248">
-							<s:Button label="Validate" click="ws.SignAndRegister(txtusername.text,txtpasswoord.text)"/>
-						</s:FormItem>
-					</s:Form>
-				</s:VGroup>
 				
-				<s:VGroup includeIn="ExpandDeerName,PanelScoreState,ScoringFinalBuck,ScoringFinalBuckView,editAlbum,editphoto,stateMain,updatephotodata"
+				
+				<s:VGroup includeIn="ExpandDeerName,PanelScoreState,ScoringFinalBuck,ScoringFinalBuckView,editAlbum,editphoto,stateMain,updatephotodata,stateLogin,stateUpdateLicense"
 						  width="100%" height="100%" gap="0" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6">
 					<s:SkinnableContainer width="100%" height="56" backgroundColor="#323232" skinClass="com.complexless.skins.spark.TitleMainSkin">
 						<s:HGroup id="titleMain" width="100%" height="100%" gap="0" paddingLeft="5"
 								  paddingRight="5">
 							<s:Label width="265" height="100%" fontSize="24"
 									 text=" What's your buckscore?" verticalAlign="middle"
-									 />
+									 text.updatephotodata=" What's your Buckscore?"/>
 							<s:Label width="100%" height="100%" fontFamily="Arial" fontSize="24"
 									 fontWeight="normal" text="Powered by the MSU Deer Lab "
 									 textAlign="right" verticalAlign="middle"
@@ -1382,7 +1407,8 @@
 					<s:HGroup width="100%" verticalAlign="middle" height="34">
 						<bs:MenuBar id="myMenuBar" width="100%" height="24"
 									itemClick="menuHandler(event)" labelField="@label"
-									>
+									enabled.stateUpdateLicense="false"
+									enabled.stateLogin="false">
 							<fx:XMLList>
 								<menuitem label="New">
 									<menuitem label="Album"/>
@@ -1396,8 +1422,8 @@
 								<menuitem label="Help">
 									<menuitem label="View Help"/>
 									<menuitem label="Update License"/>
-									<menuitem label="Synchronization"/>
-									<menuitem label="About Buckscoreâ„¢"/>
+									<menuitem label="Syncronization"/>
+									<menuitem label="About BuckScore Application"/>
 								</menuitem>
 							</fx:XMLList>
 						</bs:MenuBar>
@@ -1406,8 +1432,8 @@
 							  verticalAlign="middle">
 						<s:Label width="93%" color="#FDFBFB" fontSize="22" fontWeight="bold"
 								 text="Deer Data"/>
-						<s:Button width="7%" label="Back" chromeColor="#155FE8"
-								  click="img_ExpandDeerName.visible=false; lblAlbumnameexpand.text=''; lbldeernameexpand.text='';  currentState='stateMain';" color="#F5F5F9"/>
+						<s:Button width="7%" label="Back" 
+								  click="img_ExpandDeerName.visible=false; lblAlbumnameexpand.text=''; lbldeernameexpand.text='';  currentState='stateMain';"/>
 					</s:HGroup>
 					<mx:HDividedBox id="mainPanel" width="100%" height="100%" focusEnabled="true"
 									hasFocusableChildren="true">
@@ -1427,7 +1453,7 @@
 							</s:SkinnableContainer>
 							<s:Group includeIn="ExpandDeerName" width="100%" height="100%">
 								<mx:VBox width="100%"/>
-								<s:DataGrid id="myGridExpand" width="100%" height="338"
+								<s:DataGrid id="myGridExpand" width="100%" height="100%"
 											borderColor="#898585"  color="#FBFAFA"
 											contentBackgroundColor="#787474"
 											dataProvider="{array2}"  rowHeight="60"
@@ -1457,7 +1483,61 @@
 								</s:DataGrid>
 							</s:Group>
 						</s:VGroup>
-						<s:BorderContainer width="320" height="100%" borderColor="0x000000" borderAlpha="1.0" borderWeight="1" minWidth="320">
+						<s:BorderContainer width="320" height="100%" minWidth="320" borderAlpha="1.0"
+										   borderColor="0x000000" borderWeight="1"
+										   backgroundColor.stateMain="#323232"
+										   backgroundColor.stateUpdateLicense="#323232"
+										   backgroundColor.stateLogin="#323232">
+							<s:VGroup includeIn="stateLogin,stateUpdateLicense" width="100%"
+									  height="100%" horizontalAlign="center" verticalAlign="middle"
+									  blendMode.stateLogin="luminosity">
+								<s:BorderContainer includeIn="stateLogin,stateUpdateLicense" x="183"
+												   y="77" width="340" height="262"
+												   backgroundColor="#323232"
+												   borderColor="#FCF9F9"
+												   cornerRadius="15">
+									<s:Form x="11" y="11" width="318" height="239"
+											backgroundColor="#323232">
+										<s:Label fontSize="18" fontWeight="bold" text="LOGIN"/>
+										<s:FormItem width="248" label="URL"
+													width.stateLogin="306"
+													width.stateUpdateLicense="306">
+											<s:TextInput width="144" text="http://www.buckscore.com"
+														 width.stateLogin="203"
+														 width.stateUpdateLicense="204"
+														 text.stateUpdateLicense="http://www.buckscore.com:8043"/>
+										</s:FormItem>
+										<s:FormItem width="247" label="UserName"
+													width.stateLogin="306"
+													width.stateUpdateLicense="306">
+											<s:TextInput id="txtusername" width="142"
+														 width.stateLogin="203"
+														 width.stateUpdateLicense="204"/>
+										</s:FormItem>
+										<s:FormItem width="248" label="Paswoord"
+													width.stateLogin="306"
+													width.stateUpdateLicense="306">
+											<s:TextInput id="txtpasswoord" width="143"
+														 displayAsPassword="true"
+														 width.stateLogin="203"
+														 width.stateUpdateLicense="204"/>
+										</s:FormItem>
+										<s:FormItem width="248"
+													width.stateLogin="306"
+													width.stateUpdateLicense="306">
+											<s:HGroup width="181" height="30" horizontalAlign="center"
+													  width.stateLogin="203"
+													  width.stateUpdateLicense="204">
+												<s:Button includeIn="stateUpdateLicense" label="Close"
+														  click="currentState='stateMain'"/>
+												<s:Button label="Update"
+														  click="ws.SignAndRegister(txtusername.text,txtpasswoord.text)"
+														  label.stateLogin="Validate"/>
+											</s:HGroup>
+										</s:FormItem>
+									</s:Form>
+								</s:BorderContainer>
+							</s:VGroup>
 							<ns1:PanelScore id="panelscoreproccess" includeIn="PanelScoreState"
 											width="100%" height="100%">
 								
@@ -1467,22 +1547,26 @@
 									  width="100%" height="100%" gap="0">								
 								<s:SkinnableContainer width="100%" height="45"
 													  skinClass="com.complexless.skins.spark.ToolbarSkin"
-													  textAlign="left">
+													  textAlign="left"
+													  width.editphoto="318"
+													  width.ScoringFinalBuck="100%">
 									<s:HGroup width="100%" height="100%" paddingLeft="6"
-											  paddingRight="6" verticalAlign="middle">
+											  paddingRight="6" verticalAlign="middle"
+											  width.editphoto="319"
+											  horizontalAlign.ScoringFinalBuck="right">
 										<s:Label id="txtNamepaneltitle"
 												 includeIn="ScoringFinalBuck,ScoringFinalBuckView,editAlbum,editphoto,stateMain,updatephotodata"
-												 width="100%"
-												 fontSize="20"
-												 text = " Name"
+												 width="100%" fontSize="20" text=" Name"
+												 width.ScoringFinalBuck="100%"
 												 text.ScoringFinalBuck=" "
 												 text.ScoringFinalBuckView=" "/>
 										<s:Label includeIn="ExpandDeerName" width="209"
 												 color="#FCF9F9" fontSize="20" fontWeight="bold"
 												 text="Deer Statistic"/>
 										<s:Button includeIn="stateMain" label="Delete" click="deletephoto_clickHandler(event)"/>
-										<s:HGroup includeIn="ScoringFinalBuck,ScoringFinalBuckView" y="10" width="470"
-												  height="26">
+										<s:HGroup includeIn="ScoringFinalBuck,ScoringFinalBuckView"
+												  width="470" height="26"
+												 >
 											<s:Button label="Facebook" alpha="8"
 													  chromeColor="#323232" cornerRadius="6"/>
 											<s:Button label="Twitter" alpha="8"
@@ -1504,15 +1588,17 @@
 								</s:SkinnableContainer>
 								<s:SkinnableContainer width="100%" height="100%"
 													  skinClass="com.complexless.skins.spark.ContentCropperSkin">
-									<s:HGroup includeIn="ExpandDeerName,stateMain" x="0" y="0"
-											  width="100%" paddingLeft="6" paddingRight="6"
+									<s:HGroup includeIn="ExpandDeerName,stateMain" width="100%"
+											  paddingLeft="6" paddingRight="6"
+											  x.ExpandDeerName="0" y.ExpandDeerName="0"
 											  height.ExpandDeerName="82"
 											  accentColor.ExpandDeerName="#3F8AF0"
 											  height.stateMain="95" accentColor.stateMain="#3F8AF0">
-										<s:VGroup includeIn="stateMain" width="130"
-												  height="92">
-											<s:Image id="imageforedition" width="128"
-													 height="89"/>
+										<s:VGroup includeIn="stateMain" width="100%"
+												  height="100%">
+											<s:Image id="imageforedition" width="100%" height="100%"
+													 cacheAsBitmap="true" fillMode="scale"
+													 verticalAlign="bottom"/>
 										</s:VGroup>
 										<s:VGroup width="168" height="93"
 												  width.ExpandDeerName="304"
@@ -1528,25 +1614,25 @@
 														 color="#F7F5F5" fontStyle="normal"
 														 fontWeight="bold" text="Deer Name"/>
 												<s:Label id="lblAlbumnameexpand"
-														 includeIn="ExpandDeerName" x="0"
-														 y="18" color="#F7F5F5"
+														 includeIn="ExpandDeerName" color="#F7F5F5"
 														 fontSize="18" fontStyle="normal"
-														 fontWeight="normal"
-														 text="Album Name"/>
+														 fontWeight="normal" text="Album Name"
+														 textAlign="left"/>
 												<s:Label id="lbldeeralbumstate"
 														 includeIn="stateMain" x="0" y="67"
 														 color="#F7F5F5" fontStyle="normal"
 														 fontWeight="bold" text="Album Name"/>
-												<s:HGroup includeIn="stateMain" width="482"
-														  height="13">
+												<s:HGroup includeIn="stateMain" width="166"
+														  height="17">
 												</s:HGroup>
-												<s:Image includeIn="ExpandDeerName" id="img_ExpandDeerName" x="200"
-														 y="0" width="100%" height="78"/>
+												<s:Image id="img_ExpandDeerName"
+														 includeIn="ExpandDeerName" width="105"
+														 height="78" horizontalCenter="100"/>
 												<s:Label id="lbldeernameexpand"
-														 includeIn="ExpandDeerName" x="3"
-														 y="57" fontSize="14"
-														 fontStyle="normal"
-														 fontWeight="bold"/>
+														 includeIn="ExpandDeerName" fontSize="14"
+														 fontStyle="normal" fontWeight="bold"
+														 textAlign="left" verticalAlign="bottom"
+														 verticalCenter="30"/>
 												<s:Label includeIn="stateMain" x="0" y="48"
 														 fontWeight="bold" text="Album Name"/>
 											</s:Group>
@@ -1558,34 +1644,46 @@
 											  height="100%"
 											  horizontalAlign="center">
 										
-										<s:BorderContainer includeIn="editphoto,updatephotodata" width="98"
-														   height="62" backgroundColor="#131212"
-														   id="imageuploadfile"
+										
+										<s:Label includeIn="editphoto,updatephotodata" x="20"
+												 text="Add Deer"
+												 y.updatephotodata="5"/>
+										<s:BorderContainer id="imageuploadfile"
+														   includeIn="editphoto,updatephotodata"
+														   width="98" height="62"
+														   backgroundColor="#131212"
 														   horizontalCenter="-6"
-														   verticalCenter="-150">
+														   verticalCenter="-150"
+														   width.editphoto="105"
+														   height.editphoto="68"
+														   horizontalCenter.editphoto="0"
+														   verticalCenter.editphoto="-152">
 											<s:Button id="btnbrowsetoadd" includeIn="editphoto"
-													  x="-4" y="-2" width="105" height="65"
-													  label="Browse to add "
-													  chromeColor="#131212" click="uploadfile()"
-													  color="#FAF5F5" cornerRadius="5"
-													  focusColor="#3F3636" focusEnabled="true"
+													  width="105" height="68" label="Browse to add "
+													  click="uploadfile()"
+													  cornerRadius="5"
 													  fontSize="10" textAlignLast="center"
 													  textAlpha="2" textDecoration="none"
 													  textJustify="distribute"/>
-											<s:Image id="imgupload" x="0" y="0" width="96" height="60" visible="false"
-													 click="uploadfile2()"/>
+											<s:Image id="imgupload" visible="false" x="0" y="0"
+													 width="96" height="60" click="uploadfile2()"
+													 width.editphoto="105" height.editphoto="68"
+													 cacheAsBitmap.editphoto="true"
+													 width.updatephotodata="98"
+													 height.updatephotodata="62"
+													 cacheAsBitmap.updatephotodata="true"/>
 											
 										</s:BorderContainer>
 										
-										<s:Label x="20" y="2" text="Add Deer"
+										<s:Label includeIn="editAlbum,updatephotodata" x="20" y="2"
+												 text="Add Deer"
 												 text.editAlbum="Album"
-												 x.editphoto="20" y.editphoto="5"
-												 x.updatephotodata="20"
-												 y.updatephotodata="5"/>
+												 x.updatephotodata="20" y.updatephotodata="5"/>
 										<s:Label includeIn="editAlbum" width="100%" text="Add Album"/>
 										<mx:HRule includeIn="editAlbum" width="100%"/>
-										<s:VGroup width.editAlbum="100%"
-												  height.editAlbum="282">
+										<s:VGroup width.editAlbum="100%" height.editAlbum="282"
+												  x.editphoto="8" width.editphoto="309"
+												  horizontalAlign.editphoto="center">
 											<s:Label includeIn="editphoto,updatephotodata" text="Deer Name"/>
 											
 											<s:TextInput id="txtdeernamesave"
@@ -1644,9 +1742,10 @@
 														  name="btnadd"
 														  label.updatephotodata="Done"
 														  click.updatephotodata="updatesavephotoedition()" />
-												<s:Button includeIn="editphoto" width="80"
+												<s:Button includeIn="editphoto,updatephotodata" width="80"
 														  label="Cancel"
 														  click="button1_canceluploadphot(event)"
+														  click.updatephotodata="currentState='stateMain'"
 														  name="btncancel"/>
 											</s:HGroup>
 											<mx:HRule includeIn="editAlbum" width="200"/>
@@ -1656,59 +1755,33 @@
 											</s:HGroup>
 											<s:Group includeIn="editAlbum" width="200"
 													 height="17">
-												<s:Button x="130" y="7" label="Delete" click="DeleteAlbum_clickHandler(event)"/>
+												<s:Button label="Delete"
+														  click="DeleteAlbum_clickHandler(event)"
+														  horizontalCenter="65"/>
 											</s:Group>
 											<mx:HRule includeIn="editAlbum" width="200"
 													  height="0"/>
 											<s:Group includeIn="editAlbum" width="200"
 													 height="15">
-												<s:Button x="132" y="4" label="Close"
-														  click="currentState='stateMain'"  />
+												<s:Button label="Close"
+														  click="currentState='stateMain'"
+														  horizontalCenter="65"/>
 											</s:Group>
 										</s:VGroup>
 									</s:VGroup>
 									
 									<s:SkinnableContainer includeIn="ExpandDeerName,stateMain"
 														  width="307" height="105"
+														  width.ExpandDeerName="315"
 														  height.ExpandDeerName="200"
 														  fontStyle.stateMain="normal">
-										<s:Button id="btndeerinfo" includeIn="stateMain" x="46" y="3"
-												  label="Deer Info" alpha="4"
-												  click="btnupdatedeername_clickHandler(event)"
-												  enabled="false"/>
-										<s:Button includeIn="stateMain" id="btndeerscoresheet" x="187" y="3"
-												  label="Score Sheet" alpha="4"
-												  click="btn_scoringreview(event)" enabled="false"/>
-										<s:Button id="btnScoreProccess" includeIn="stateMain" x="86"
-												  y="31" width="126" height="28" label="SCORE"
-												  alpha="4" click="btnScoreProccess_clickHandler(event)"
-												  enabled="false"/>
-										<s:ComboBox id="combophoto" includeIn="stateMain" x="7"
-													y="76" alpha="4"
-													change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo'){currentState='editphoto';  imgupload.source='';};   "
-													cornerRadius="5"
-													doubleClick="currentState='editphoto'; imgupload.source=''; "
-													labelField="Add Photo" selectedIndex="0">
-											<s:dataProvider>
-												<mx:ArrayList>
-													<fx:String>Add new item</fx:String>
-													<fx:String>Album</fx:String>
-													<fx:String>Photo</fx:String>
-													<fx:String>Map</fx:String>
-												</mx:ArrayList>
-											</s:dataProvider>	 
-											
-										</s:ComboBox>
-										<s:Label includeIn="stateMain" x="9" y="55"
-												 text="Create Item"/>
 										<s:Label includeIn="ExpandDeerName" x="10" y="10"
 												 color="#FEFCFC" text="Score Distributions"/>
 										<s:Group includeIn="ExpandDeerName" x="10" y="29" width="230"
 												 height="161">
-											<mx:ColumnChart id="scoreChart" x="6" y="4" width="218"
-															height="147" chromeColor="#FBFAFA"
-															color="#FEFEFE" showDataTips="true"
-															>
+											<mx:ColumnChart id="scoreChart" width="218" height="147"
+															chromeColor="#FBFAFA" color="#FEFEFE"
+															showDataTips="true">
 												
 												<mx:horizontalAxis>
 													<mx:CategoryAxis categoryField="score"/>
@@ -1721,10 +1794,56 @@
 													   color="#FEFDFD" dataProvider="{scoreChart}"
 													   fontWeight="bold"/>
 										</s:Group>
+										<s:VGroup includeIn="stateMain" x="2" y="0" width="305"
+												  height="102" horizontalAlign="center">
+											<s:HGroup width="304" height="24"
+													  horizontalAlign="center">
+												<s:Button id="btndeerinfo" label="Deer Info"
+														  alpha="4"
+														  click="btnupdatedeername_clickHandler(event)"
+														  enabled="false"/>
+												<s:Spacer width="88" height="21"/>
+												<s:Button id="btndeerscoresheet" label="Score Sheet"
+														  alpha="4" click="btn_scoringreview(event)"
+														  enabled="false"/>
+											</s:HGroup>
+											<s:Button id="btnScoreProccess" width="126" height="28"
+													  label="SCORE" alpha="4"
+													  click="btnScoreProccess_clickHandler(event)"
+													  enabled="false"/>
+											<s:Spacer width="10" height="10"/>
+											<s:HGroup x="0" width="306" height="34">
+												
+												
+												<s:Label text="Create Item"/>
+												<s:Spacer width="18" height="10"/>
+												<s:DropDownList id="combophoto" width="126" alpha="4"
+																change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo'){currentState='editphoto';  imgupload.source='';};   "
+																cornerRadius="5"
+																doubleClick="currentState='editphoto'; imgupload.source=''; "
+																labelField="Add Photo"
+																selectedIndex="0">
+													<s:dataProvider>
+														<mx:ArrayList>
+															<fx:String>Add new item</fx:String>
+															<fx:String>Album</fx:String>
+															<fx:String>Photo</fx:String>
+															<fx:String>Map</fx:String>
+														</mx:ArrayList>
+													</s:dataProvider>	 
+													
+												</s:DropDownList>
+											</s:HGroup>
+											<s:Spacer x="116" width="74" height="13"/>
+											
+											
+										</s:VGroup>
 									</s:SkinnableContainer>
 									<s:SkinnableContainer includeIn="ExpandDeerName,stateMain"
-														  width="304" height="175"
-														  height.ExpandDeerName="100%">
+														  width="304"
+														  width.ExpandDeerName="312"
+														  height.ExpandDeerName="100%"
+														  height.stateMain="100%">
 										<s:Label includeIn="stateMain" x="10" y="10" color="#F9F9F9"
 												 text="Choose Deer To Star Scoring (number)"/>
 										<s:Button includeIn="stateMain" x="235" y="4" label="Expand"
@@ -1737,8 +1856,8 @@
 										<s:Label includeIn="stateMain" x="10" y="37" color="#FCFAFA"
 												 text="Filter"/>
 										<s:DataGrid id="datagridalbumname" includeIn="stateMain"
-													x="10" y="56" width="290" height="102"
-													dataProvider="{array}"
+													x="10" y="56" width="290" height="100%"
+													borderVisible="true" dataProvider="{array}"
 													selectionChange="datagrid1_selectionChangeHandler(event)">
 											<s:columns>
 												<s:ArrayList>
@@ -1750,9 +1869,8 @@
 											</s:columns>
 											
 										</s:DataGrid>
-										<s:BorderContainer includeIn="ExpandDeerName" x="10" y="4"
-														   width="284" height="100%"
-														   backgroundColor="#A3AEB0">
+										<s:BorderContainer includeIn="ExpandDeerName" width="312"
+														   height="100%" backgroundColor="#A3AEB0">
 											<s:Label x="24" y="3" color="#040404" text="0-100"/>
 											<s:Label x="118" y="3" color="#030303" text="100-200"/>
 											<s:Label x="220" y="2" color="#070707" text="200 +"/>
@@ -1824,9 +1942,9 @@
 														</s:HGroup>
 														<s:Image width="207" height="203"
 																 source="Image/logo.png"
-																 x.ScoringFinalBuck="31"
 																 y.ScoringFinalBuck="103"
 																 width.ScoringFinalBuck="186"
+																 horizontalAlign.ScoringFinalBuck="center"
 																 x.ScoringFinalBuckView="10"
 																 y.ScoringFinalBuckView="106"/>
 														

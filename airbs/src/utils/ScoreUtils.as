@@ -241,7 +241,7 @@ package utils
 			return suma;
 		}
 		
-		public static function roundDecimals(value:Number, decimals:int):Number
+		public function roundDecimals(value:Number, decimals:int):Number
 		{
 			var multiple:String = "1";
 			for( var i:int = 0; i<decimals; i++)
