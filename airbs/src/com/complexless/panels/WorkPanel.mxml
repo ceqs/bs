@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:bs="library://ns.adobe.com/flex/mx"
+					   xmlns:net="flash.net.*"
+					   xmlns:imagecropper="com.flexblocks.imagecropper.*"
+					   xmlns:utils="utils.*"
+					   xmlns:ns1="*"
+					   gap="0"
+					   width="100%" height="100%" xmlns:panels="com.complexless.panels.*" xmlns:dialogs="com.complexless.dialogs.*" >
+	<fx:Style source="assets/css/airbs.css"/>
+	<s:states>
+		<s:State name="statePrincipal">
+		</s:State>
+		<s:State name="stateExpand">
+		</s:State>
+		<s:State name="stateScoring">
+		</s:State>
+	</s:states>
+		
+	<s:SkinnableContainer id="mainBox" width="100%" height="100%">
+		<s:VGroup width="100%" height="100%" gap="0">
+			<mx:HDividedBox id="mainPanel" width="100%" height="100%" focusEnabled="true"
+							hasFocusableChildren="true">		
+				<panels:PrincipalPanel id="panelprincipal" includeIn="statePrincipal" width="100%" height="100%">
+				</panels:PrincipalPanel>
+				<panels:ExpandPanel id="expandpanel" includeIn="stateExpand" width="100%" height="100%">							
+				</panels:ExpandPanel>						
+				<panels:ScoringPanel  id="scoringpanel" includeIn="stateScoring" width="100%" height="100%">							
+				</panels:ScoringPanel>		
+			</mx:HDividedBox>
+		</s:VGroup>
+	</s:SkinnableContainer>
+
+</s:HGroup>
+

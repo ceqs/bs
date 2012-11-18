@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="480" height="326"
+		 title="About Buckscore"
+		 skinClass="com.complexless.skins.spark.TitleWindowSkin">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			import mx.utils.OnDemandEventDispatcher;
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				
+			}
+			
+			public function close():void {
+				if(this.isPopUp) {
+					PopUpManager.removePopUp(this);                    
+				}
+			}
+		]]>
+	</fx:Script>
+	
+
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:VGroup width="100%" paddingLeft="6" paddingRight="6" paddingTop="6">
+		<s:HGroup width="100%" height="124">
+			<s:VGroup width="117" height="122">
+				<s:Spacer width="10" height="10"/>
+				<s:Label width="117" text="Licensed To " textAlign="center"/>
+				<s:Label width="111" text="John Doe" textAlign="center" fontWeight="bold"/>
+				<s:Spacer width="10" height="40"/>
+				<s:Label width="115" text="Lite Version" textAlign="center"/>
+			</s:VGroup>
+			<s:TextArea width="100%" height="122" borderVisible="false"
+						editable="false"
+						text="Buckscore™ is an educational and data collection tool for biologists and deer hunters. Developed by scientists and biologists with Mississippi State University's Deer Ecology and Management Lab, the software allows users to estimate antler size of photographed white-tailed deer. The program uses a unique set of physical features, as well as statistically-derived, models to achieve accurate estimates."
+						textAlign="justify" textAlignLast="start"/>
+		</s:HGroup>
+		<s:TextArea width="100%" height="119" editable="false"
+					text="Serial      &#xd;                    4545PNWE23DWEDWD--     &#xd;                &#xd;Coupons"
+					verticalAlign="top"/>
+		<s:HGroup width="100%" horizontalAlign="center">
+			<s:Button label="Close" click="close()"/>
+		</s:HGroup>
+	</s:VGroup>
+
+</s:TitleWindow>

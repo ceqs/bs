@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:bs="library://ns.adobe.com/flex/mx"
+					   xmlns:net="flash.net.*"
+					   width="100%" height="100%" >
+	
+	<fx:Style source="assets/css/airbs.css"/>
+	
+	<fx:Script>
+		
+		<![CDATA[
+			import air.update.ApplicationUpdaterUI;
+			import air.update.events.UpdateEvent;
+			import flash.filters.DropShadowFilter;
+			import flash.sampler.NewObjectSample;
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Image;
+			import mx.core.IFlexDisplayObject;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.events.MenuEvent;
+			import mx.graphics.codec.PNGEncoder;
+			import mx.managers.PopUpManager;
+			import mx.messaging.messages.ErrorMessage;
+			import mx.printing.FlexPrintJob;
+			import mx.printing.FlexPrintJobScaleType;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.Base64Decoder;
+			import mx.utils.Base64Encoder;
+			import mx.utils.ObjectUtil;
+			import mx.utils.StringUtil;
+			import spark.events.GridSelectionEvent;
+			import spark.events.IndexChangeEvent;
+			import com.complexless.utils.albumbuckscore;
+			[Bindable]
+			public var array2:ArrayCollection=new ArrayCollection;
+			private var firstTime:Boolean = true;
+			private var firstTime2:Boolean = true;
+			private function filter2():void {
+				array2.filterFunction = filterMyArrayCollection2;
+				array2.refresh();
+			}
+			private function filterMyArrayCollection2(item:Object):Boolean {
+				var searchString:String = txtexpandfilter.text.toLowerCase();
+				var itemName:String = (item.name as String).toLowerCase();
+				return itemName.indexOf(searchString) > -1;
+			}
+			private function clearMyTextInput2():void {
+				if (firstTime2 == true )
+				{
+					txtexpandfilter.text = "";
+					firstTime2 = false;
+				}
+			}		
+			protected function mygridexpand_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				img_ExpandDeerName.visible=true;
+				lblAlbumnameexpand.text=myGridExpand.selectedItem.type;
+				lbldeernameexpand.text=myGridExpand.selectedItem.name;
+				img_ExpandDeerName.source=myGridExpand.selectedItem.image;
+			}
+			public function llenarTabla():void
+			{   
+				var app:airbs=this.parentApplication as airbs;
+				array2.removeAll();
+				var albumphoto:ArrayCollection=new ArrayCollection();
+				albumphoto=app.sqlscore.resault();
+				for(var i:int = 0;i<albumphoto.length;i++)
+				{	
+					var photoItem:Object = albumphoto[i];
+					var _deername:String= photoItem.deername as String;
+					var _albumname:String= photoItem.albumname as String;
+					var _images:String=photoItem.image as String;
+					var byteArray:ByteArray;
+					if(_images!=""){
+						var encodedBytes:String = _images;		
+						var baseDecoder:Base64Decoder = new Base64Decoder();
+						baseDecoder.decode(encodedBytes);
+						byteArray= baseDecoder.toByteArray();
+					}else{
+						byteArray=null;
+					}
+					var _score:String = photoItem.score as String;
+					array2.addItem({image:byteArray ,name:_deername,type:_albumname,score:_score});
+				}
+				stateMain_clickHandler();
+			}	
+			protected function stateMain_clickHandler():void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				var scoregraff:ArrayCollection=app.sqlscore.resault();
+				var scoreprinting:ArrayCollection=new ArrayCollection();
+				var counterscoremin:int;
+				var counterscoremed:int;
+				var counterscoremax:int;
+				var scoremin:ArrayCollection= new ArrayCollection();
+				var scoremedium:ArrayCollection= new ArrayCollection();
+				var scoremax:ArrayCollection= new ArrayCollection();
+				for(var i:int = 0;i<scoregraff.length;i++)
+				{	
+					var photoItem:Object = scoregraff[i];
+					var _deername:String= photoItem.deername as String;
+					var _albumname:String= photoItem.albumname as String;
+					var _images:String=photoItem.image as String;
+					var _score:String=photoItem.score as String;
+					if(parseFloat(_score)<=100){
+						counterscoremin++;
+						scoremin.addItem({deername:_deername+"-"+_albumname});
+					}else if(parseFloat(_score)>100 && parseFloat(_score)<=200){
+						counterscoremed++;
+						scoremedium.addItem({deername:_deername+"-"+_albumname});
+					}else if(parseFloat(_score)>200){
+						counterscoremax++;
+						scoremax.addItem({deername:_deername+"-"+_albumname});
+					}
+				}
+				listscoremin.dataProvider=scoremin;
+				listscoremedium.dataProvider=scoremedium;
+				listscoremax.dataProvider=scoremax;
+				scoreprinting.addItem({Score:counterscoremin,score:"0-100"});
+				scoreprinting.addItem({Score:counterscoremed,score:"100-200"});
+				scoreprinting.addItem({Score:counterscoremax,score:"200+"});
+				scoreChart.dataProvider=scoreprinting;
+			}
+			protected function listscoremin_changeHandler(event:Event):void
+			{
+				listscoremax.selectedIndex=-1;
+				listscoremedium.selectedIndex=-1;
+				var filter:Object=listscoremin.selectedItem;
+				trace(filter.deername);
+				var filtername:String=filter.deername;	
+				if(filter!=null){
+					trace(filtername.length);
+					for(var i:int=0;i<filtername.length;i++){
+						trace(filtername.charAt(i).toString());
+						if(filtername.charAt(i)=="-"){
+							txtexpandfilter.text=filtername.substring(0,i);
+							filter2();
+							break;
+						}
+					}
+				}
+			}
+			
+			protected function listscoremedium_changeHandler(event:IndexChangeEvent):void
+			{
+				listscoremax.selectedIndex=-1;
+				listscoremin.selectedIndex=-1;
+				var filter:Object=listscoremedium.selectedItem;
+				trace(filter.deername);
+				var filtername:String=filter.deername;	
+				if(filter!=null){
+					trace(filtername.length);
+					for(var i:int=0;i<filtername.length;i++){
+						trace(filtername.charAt(i).toString());
+						if(filtername.charAt(i)=="-"){
+							txtexpandfilter.text=filtername.substring(0,i);
+							filter2();
+							break;
+						}
+					}
+				}
+			}
+			
+			protected function listscoremax_changeHandler(event:IndexChangeEvent):void
+			{
+				listscoremin.selectedIndex=-1;
+				listscoremedium.selectedIndex=-1;
+				var filter:Object=listscoremax.selectedItem;
+				trace(filter.deername);
+				var filtername:String=filter.deername;	
+				if(filter!=null){
+					trace(filtername.length);
+					for(var i:int=0;i<filtername.length;i++){
+						trace(filtername.charAt(i).toString());
+						if(filtername.charAt(i)=="-"){
+							txtexpandfilter.text=filtername.substring(0,i);
+							filter2();
+							break;
+						}
+					}					
+				}				
+			}
+			protected function backExpand_clickHandler(event:MouseEvent):void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				img_ExpandDeerName.visible=false; 
+				lblAlbumnameexpand.text=''; 
+				lbldeernameexpand.text='';  
+				app.workpanel.currentState='statePrincipal';
+			}
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="ExpandDeerName"/>
+	</s:states>
+	<s:VGroup width="100%" height="100%" gap="0" paddingBottom="6" paddingLeft="6"
+			  paddingRight="6" paddingTop="6">
+		<s:HGroup width="100%" height="40">
+			<s:SkinnableContainer width="100%" height="35" skinClass="com.complexless.skins.spark.TitleMainSkin">
+				<s:HGroup width="100%" height="100%" verticalAlign="middle" paddingLeft="6" paddingRight="6">
+					<s:Label fontSize="22" fontWeight="bold" text="Deer Data"/>
+					<s:Spacer width="40"/>
+					
+					<s:Label text="Filter"/>
+					<s:TextInput id="txtexpandfilter"
+								 width="225"
+								 change="filter2()" 
+								 focusIn="clearMyTextInput2()"/>
+					
+					<s:Spacer width="100%"/>
+					<s:Button label="Back" 
+							  click="backExpand_clickHandler(event)"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+		</s:HGroup>
+		
+		<mx:HDividedBox id="mainPanel" width="100%" height="100%" focusEnabled="true"
+						hasFocusableChildren="true">
+			
+			<s:VGroup minWidth="230" width="100%" height="100%">
+
+				<s:Group width="100%" height="100%">
+					<mx:VBox width="100%"/>
+					<s:DataGrid id="myGridExpand" width="100%" height="100%"
+								dataProvider="{array2}"  rowHeight="60"
+								variableRowHeight="true"
+								
+								selectionChange="mygridexpand_selectionChangeHandler(event)"
+								skinClass="com.complexless.skins.spark.DataGridExpandSkin">
+						<s:columns>
+							<s:ArrayList>
+								<s:GridColumn headerText="Image">
+									<s:itemRenderer>
+										<fx:Component>
+											<s:GridItemRenderer>
+												<s:Image source="{data.image}" width="75" height="100"/>
+											</s:GridItemRenderer>
+										</fx:Component>
+									</s:itemRenderer>	   
+								</s:GridColumn>
+								<s:GridColumn 
+									dataField="name"
+									headerText="Deer Name"/>
+								<s:GridColumn 
+									dataField="type"
+									headerText="Album Name"/>	 	
+								<s:GridColumn 
+									dataField="score" headerText="Score#"/>
+							</s:ArrayList>
+						</s:columns>
+					</s:DataGrid>
+				</s:Group>
+			</s:VGroup>
+			<s:BorderContainer width="320" height="100%" minWidth="320" borderAlpha="1.0"
+							   borderColor="0x000000" borderWeight="1">
+				
+				<s:VGroup id="holder" width="100%" height="100%" gap="0">								
+					<s:SkinnableContainer width="100%" height="45"
+										  skinClass="com.complexless.skins.spark.ToolbarSkin"
+										  textAlign="left">
+						<s:HGroup width="100%" height="100%" paddingLeft="6"
+								  paddingRight="6" verticalAlign="middle">
+							<s:Label width="209" color="#FCF9F9" fontSize="20"
+									 fontWeight="bold" text="Deer Statistic"/>
+						</s:HGroup>
+					</s:SkinnableContainer>
+					<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
+						<s:HGroup width="100%" height="82" accentColor="#3F8AF0"
+								  paddingLeft="6" paddingRight="6" paddingTop="6">
+							<s:HGroup width="304">
+								<s:VGroup width="100%">
+									<s:Label id="lblAlbumnameexpand"
+											 fontSize="18" fontStyle="normal"
+											 fontWeight="normal" text="Album Name"
+											 textAlign="left"/>
+									<s:Label id="lbldeernameexpand"
+											 fontSize="14"
+											 fontStyle="normal" fontWeight="bold"
+											 textAlign="left" verticalAlign="bottom"
+											 verticalCenter="30"/>
+								</s:VGroup>
+								<s:Image id="img_ExpandDeerName" width="105" height="78"
+										 cacheAsBitmap="true" horizontalCenter="100"/>
+							</s:HGroup>
+						</s:HGroup>
+						
+						<s:SkinnableContainer width="307">
+							<s:VGroup paddingLeft="6">
+								<s:Label text="Score Distributions"/>
+								<s:HGroup>
+									<mx:ColumnChart id="scoreChart"
+													width="218"
+													height="147"
+													chromeColor="#FBFAFA"
+													color="#FEFEFE"
+													showDataTips="true">
+										
+										<mx:horizontalAxis>
+											<mx:CategoryAxis categoryField="score"/>
+										</mx:horizontalAxis>
+										<mx:series>
+											<mx:ColumnSeries displayName="Score" yField="Score" xField="score"/>
+										</mx:series>
+									</mx:ColumnChart>
+									
+									<mx:Legend width="58" height="113"
+											   color="#FEFDFD"
+											   dataProvider="{scoreChart}"
+											   fontWeight="bold"/>
+								</s:HGroup>
+							</s:VGroup>
+						</s:SkinnableContainer>
+						
+						<s:SkinnableContainer width="304" height="100%">
+							
+							<s:BorderContainer width="312" height="100%"
+											   backgroundColor="#A3AEB0">
+								<s:HGroup paddingLeft="6">
+									<s:VGroup>
+										<s:Label text="0-100"/>
+										<s:List id="listscoremin" width="80" labelField="deername" change="listscoremin_changeHandler(event)"/>
+									</s:VGroup>
+									<s:VGroup>
+										<s:Label text="100-200"/>
+										<s:List id="listscoremedium" width="80" labelField="deername" change="listscoremedium_changeHandler(event)"/>
+									</s:VGroup>
+									<s:VGroup>
+										<s:Label text="200 +"/>
+										<s:List id="listscoremax" width="80" labelField="deername" change="listscoremax_changeHandler(event)"/>
+									</s:VGroup>
+								</s:HGroup>
+							</s:BorderContainer>
+						</s:SkinnableContainer>
+					</s:SkinnableContainer>
+				</s:VGroup>
+			</s:BorderContainer>
+		</mx:HDividedBox>
+	</s:VGroup>
+	
+	<s:transitions>
+		<s:Transition id="t1" autoReverse="true">
+			<s:CrossFade
+				target="{holder}" 
+				duration="50" />
+		</s:Transition>
+	</s:transitions>
+</s:SkinnableContainer>
+
+

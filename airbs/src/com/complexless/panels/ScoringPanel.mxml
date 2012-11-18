@@ -1,0 +1,1685 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:bs="library://ns.adobe.com/flex/mx"
+					   xmlns:net="flash.net.*"
+					   xmlns:imagecropper="com.flexblocks.imagecropper.*"
+					   xmlns:utils="utils.*"
+					   xmlns:ns1="*"
+					   width="100%" height="100%" >
+	
+	<fx:Style source="assets/css/airbs.css"/>
+	
+	<fx:Script>
+		<![CDATA[
+			import air.update.ApplicationUpdaterUI;
+			import air.update.events.UpdateEvent;
+			import flash.filters.DropShadowFilter;
+			import flash.sampler.NewObjectSample;
+			import flashx.textLayout.formats.Float;
+			import flashx.textLayout.tlf_internal;
+			import mx.collections.ArrayCollection;
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			import mx.core.IFlexDisplayObject;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.events.MenuEvent;
+			import mx.graphics.codec.PNGEncoder;
+			import mx.managers.PopUpManager;
+			import mx.messaging.messages.ErrorMessage;
+			import mx.printing.FlexPrintJob;
+			import mx.printing.FlexPrintJobScaleType;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.Base64Decoder;
+			import mx.utils.Base64Encoder;
+			import mx.utils.ObjectUtil;
+			import mx.utils.StringUtil;
+			import spark.events.GridSelectionEvent;
+			import spark.events.IndexChangeEvent;
+			import com.complexless.utils.SQLbuckscore;
+			import com.complexless.utils.ScoreUtils;
+			import com.complexless.utils.albumbuckscore;
+			import com.complexless.utils.albumitembuck;
+			private var gVersion:String;
+			private var shadowFilter:DropShadowFilter;
+			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
+			private var albumphoto:ArrayCollection= new ArrayCollection();
+			private var createalbum:ArrayCollection = new ArrayCollection();
+			private var fr:FileReference;
+			private var prefsXML:XML;
+			private var sqlscore:SQLbuckscore = new SQLbuckscore();
+			public var scoreutils:ScoreUtils=new ScoreUtils();			
+			public var grade:String="";
+			public var cancel:String;
+			public var si:String;
+			public function alertListenerScoringFinal(eventObj:CloseEvent):void
+			{
+				//scoreutils=panelscoreproccess.scoreutils;
+				var app:airbs=this.parentApplication as airbs;
+				if (eventObj.detail==Alert.CANCEL) {
+					cancel='1';
+					app.workpanel.currentState='statePrincipal';
+				}else{
+					scoreutils=app.workpanel.panelprincipal.panelscoreproccess.scoreutils;
+					if (eventObj.detail==Alert.YES) {
+						
+						//var adjustement:String=panelscoreproccess.adjustement;
+						var adjustement:String=app.workpanel.panelprincipal.panelscoreproccess.adjustement;
+						if(scoreutils.Circumferenceleft1!="0")	scoreutils.Circumferenceleft1=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft1)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferenceleft2!="0")	scoreutils.Circumferenceleft2=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft2)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferenceleft3!="0")	scoreutils.Circumferenceleft3=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft3)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferenceleft4!="0")	scoreutils.Circumferenceleft4=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft4)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferencerigth1!="0")	scoreutils.Circumferencerigth1=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth1)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferencerigth2!="0")	scoreutils.Circumferencerigth2=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth2)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferencerigth3!="0")	scoreutils.Circumferencerigth3=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth3)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferencerigth4!="0")	scoreutils.Circumferencerigth4=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth4)*Number(adjustement)),4).toString();
+						trace("entre si")
+					}
+					else{
+						trace("nada ajuste");
+					}
+					currentState='ScoringFinalBuck';
+					deernamefinishscore=app.workpanel.panelprincipal.deernamefinishscore;
+					txtDeerNickName.text=deernamefinishscore;
+					txtLocationDeer.text=app.workpanel.panelprincipal.panelscoreproccess.location; //location
+					var someBirthday:Date = new Date();
+					txtdatedeer.text=someBirthday.toDateString();
+					imageforedition0.source=app.workpanel.panelprincipal.arraybyte;
+					numberleftponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbletftypical.selectedItem;
+					numberrigthponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbrigthtypical.selectedItem;
+					insidespread.text=scoreutils.insidespread;
+					mainbeamleftgrid.text=scoreutils.mainbeamleft;
+					mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
+					mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),4).toString();
+					t1l.text=scoreutils.Typicalpointleft1;
+					t1r.text=scoreutils.Typicalpointrigth1;
+					t1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))),4).toString();
+					t2l.text=scoreutils.Typicalpointleft2;
+					t2r.text=scoreutils.Typicalpointrigth2;
+					t2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))),4).toString();
+					t3l.text=scoreutils.Typicalpointleft3;
+					t3r.text=scoreutils.Typicalpointrigth3;
+					t3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))),4).toString();
+					t4l.text=scoreutils.Typicalpointleft4;
+					t4r.text=scoreutils.Typicalpointrigth4;
+					t4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))),4).toString();
+					t5l.text=scoreutils.Typicalpointleft5;
+					t5r.text=scoreutils.Typicalpointrigth5;
+					t5d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))),4).toString();
+					t6l.text=scoreutils.Typicalpointleft6;
+					t6r.text=scoreutils.Typicalpointrigth6;
+					t6d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))),4).toString();
+					t7l.text=scoreutils.Typicalpointleft7;
+					t7r.text=scoreutils.Typicalpointrigth7;
+					t7d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))),4).toString();
+					t8l.text=scoreutils.Typicalpointleft8;
+					t8r.text=scoreutils.Typicalpointrigth8;
+					t8d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))),4).toString();
+					t9l.text=scoreutils.Typicalpointleft9;
+					t9r.text=scoreutils.Typicalpointrigth9;
+					t9d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))),4).toString();
+					t10l.text=scoreutils.Typicalpointleft10;
+					t10r.text=scoreutils.Typicalpointrigth10;
+					t10d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))),4).toString();
+					c1l.text=scoreutils.Circumferenceleft1;
+					c1r.text=scoreutils.Circumferencerigth1;
+					c1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))),4).toString();
+					c2l.text=scoreutils.Circumferenceleft2;
+					c2r.text=scoreutils.Circumferencerigth2;
+					c2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))),4).toString();
+					c3l.text=scoreutils.Circumferenceleft3;
+					c3r.text=scoreutils.Circumferencerigth3;
+					c3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))),4).toString();
+					c4l.text=scoreutils.Circumferenceleft4;
+					c4r.text=scoreutils.Circumferencerigth4;
+					c4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))),4).toString();
+					a1.text=scoreutils.Abnormalpointleft1;
+					ar1.text=scoreutils.Abnormalpointrigth1;
+					a2.text=scoreutils.Abnormalpointleft2;
+					ar2.text=scoreutils.Abnormalpointrigth2;
+					a3.text=scoreutils.Abnormalpointleft3;
+					ar3.text=scoreutils.Abnormalpointrigth3;
+					a4.text=scoreutils.Abnormalpointleft4;
+					ar4.text=scoreutils.Abnormalpointrigth4;
+					a5.text=scoreutils.Abnormalpointleft5;
+					ar5.text=scoreutils.Abnormalpointrigth5;
+					a6.text=scoreutils.Abnormalpointleft6;
+					ar6.text=scoreutils.Abnormalpointrigth6;
+					a7.text=scoreutils.Abnormalpointleft7;
+					ar7.text=scoreutils.Abnormalpointrigth7;
+					a8.text=scoreutils.Abnormalpointleft8;
+					ar8.text=scoreutils.Abnormalpointrigth8;
+					a9.text=scoreutils.Abnormalpointleft9;
+					ar9.text=scoreutils.Abnormalpointrigth9;
+					a10.text=scoreutils.Abnormalpointleft10;
+					ar10.text=scoreutils.Abnormalpointrigth10;
+					a11.text=scoreutils.Abnormalpointleft11;
+					ar11.text=scoreutils.Abnormalpointrigth11;
+					a12.text=scoreutils.Abnormalpointleft12;
+					ar12.text=scoreutils.Abnormalpointrigth12;
+					a13.text=scoreutils.Abnormalpointleft13;
+					ar13.text=scoreutils.Abnormalpointrigth13;
+					a14.text=scoreutils.Abnormalpointleft14;
+					ar14.text=scoreutils.Abnormalpointrigth14;
+					a15.text=scoreutils.Abnormalpointleft15;
+					ar15.text=scoreutils.Abnormalpointrigth15;
+					a16.text=scoreutils.Abnormalpointleft16;
+					ar16.text=scoreutils.Abnormalpointrigth16;
+					a17.text=scoreutils.Abnormalpointleft17;
+					ar17.text=scoreutils.Abnormalpointrigth17;
+					a18.text=scoreutils.Abnormalpointleft18;
+					ar18.text=scoreutils.Abnormalpointrigth18;
+					a19.text=scoreutils.Abnormalpointleft19;
+					ar19.text=scoreutils.Abnormalpointrigth19;
+					a20.text=scoreutils.Abnormalpointleft20;
+					ar20.text=scoreutils.Abnormalpointrigth20;
+					var totalleft:Number=scoreutils.calculateleft();
+					var totalrigth:Number=scoreutils.calculaterigth();
+					var totalabnormal:Number=scoreutils.calculateabnormal();
+					var totaldiference:Number=scoreutils.roundDecimals(Math.abs(totalleft-totalrigth),4);
+					tleft.text=totalleft.toString();
+					trigth.text=totalrigth.toString();
+					tdiference.text=totaldiference.toString();
+					grossscore.text=(totalleft+ totalrigth+ totalabnormal).toString();
+					totaldiferencefinal.text=totaldiference.toString();
+				}
+			}
+			public function ScoringDeer_btn():void
+			{
+				Alert.show("Is this deer in velvet", "Velvet Adjustement",
+					Alert.YES | Alert.NO | Alert.CANCEL, this, alertListenerScoringFinal)
+			}
+			public var statescoringview:String;
+			public var deernamefinishscore:String;
+			public function btn_scoring():void{
+				btn_scoringreview();
+			}
+			public function btn_scoringreview():void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				deernamefinishscore=app.workpanel.panelprincipal.deernamefinishscore;
+				var scoresheet:ArrayCollection=new ArrayCollection();
+				scoresheet=app.sqlscore.resaultscore(deernamefinishscore);
+				trace("tamaño:"+scoresheet.length)
+				if(scoresheet.length==1){
+					var photoItem:Object =scoresheet[0];
+					statescoringview=currentState;
+					trace(statescoringview.toString());
+					currentState='ScoringFinalBuck';
+					txtDeerNickName.text= photoItem.deername as String;
+					txtLocationDeer.text= photoItem.location as String;
+					txtdatedeer.text=photoItem.date as String;
+					if(app.workpanel.panelprincipal.arraybyte!=null){
+						imageforedition0.source=app.workpanel.panelprincipal.arraybyte;
+					}
+					var sumleft:Number=0;
+					var sumrigth:Number=0;
+					var diference:Number=0;
+					txtcommentsdeer.text=photoItem.comments as String;
+					numberleftponitsgrid.text=photoItem.leftpoints as String;
+					numberrigthponitsgrid.text=photoItem.rigthpoints as String;
+					insidespread.text=photoItem.insidespread as String;
+					mainbeamleftgrid.text=photoItem.mainbeamleft as String;
+					mainbeamrigthgrid.text=photoItem.mainbeamrigth as String;
+					mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.mainbeamleft as String)-Number(photoItem.mainbeamrigth as String))),4).toString();				
+					sumleft=sumleft+Number(mainbeamleftgrid.text);
+					sumrigth=sumrigth+Number(mainbeamrigthgrid.text);
+					diference=diference+Number(mainbeamdiferene.text);
+					t1l.text=photoItem.Typicalpointleft1 as String;
+					t1r.text=photoItem.Typicalpointrigth1 as String;
+					t1d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft1 as String)-Number(photoItem.Typicalpointrigth1 as String))),4).toString();
+					sumleft=sumleft+Number(t1l.text);
+					sumrigth=sumrigth+Number(t1r.text);
+					diference=diference+Number(t1d.text);
+					t2l.text=photoItem.Typicalpointleft2 as String;
+					t2r.text=photoItem.Typicalpointrigth2 as String;
+					t2d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft2 as String)-Number(photoItem.Typicalpointrigth2 as String))),4).toString();
+					sumleft=sumleft+Number(t2l.text);
+					sumrigth=sumrigth+Number(t2r.text);
+					diference=diference+Number(t2d.text);
+					t3l.text=photoItem.Typicalpointleft3 as String;
+					t3r.text=photoItem.Typicalpointrigth3 as String;
+					t3d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft3 as String)-Number(photoItem.Typicalpointrigth3 as String))),4).toString();
+					
+					sumleft=sumleft+Number(t3l.text);
+					sumrigth=sumrigth+Number(t3r.text);
+					diference=diference+Number(t3d.text);
+										
+					t4l.text=photoItem.Typicalpointleft4 as String;
+					t4r.text=photoItem.Typicalpointrigth4 as String;
+					t4d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft4 as String)-Number(photoItem.Typicalpointrigth4 as String))),4).toString();
+					
+					sumleft=sumleft+Number(t4l.text);
+					sumrigth=sumrigth+Number(t4r.text);
+					diference=diference+Number(t4d.text);
+					
+					t5l.text=photoItem.Typicalpointleft5 as String;
+					t5r.text=photoItem.Typicalpointrigth5 as String;
+					t5d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft5 as String)-Number(photoItem.Typicalpointrigth5 as String))),4).toString();
+					
+					sumleft=sumleft+Number(t5l.text);
+					sumrigth=sumrigth+Number(t5r.text);
+					diference=diference+Number(t5d.text);
+					
+					t6l.text=photoItem.Typicalpointleft6 as String;
+					t6r.text=photoItem.Typicalpointrigth6 as String;
+					t6d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft6 as String)-Number(photoItem.Typicalpointrigth6 as String))),4).toString();
+					
+					sumleft=sumleft+Number(t6l.text);
+					sumrigth=sumrigth+Number(t6r.text);
+					diference=diference+Number(t6d.text);
+					
+					t7l.text=photoItem.Typicalpointleft7 as String;
+					t7r.text=photoItem.Typicalpointrigth7 as String;
+					t7d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft7 as String)-Number(photoItem.Typicalpointrigth7 as String))),4).toString();
+										
+					sumleft=sumleft+Number(t7l.text);
+					sumrigth=sumrigth+Number(t7r.text);
+					diference=diference+Number(t7d.text);
+					
+					t8l.text=photoItem.Typicalpointleft8 as String;
+					t8r.text=photoItem.Typicalpointrigth8 as String;
+					t8d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft8 as String)-Number(photoItem.Typicalpointrigth8 as String))),4).toString();
+					
+					sumleft=sumleft+Number(t8l.text);
+					sumrigth=sumrigth+Number(t8r.text);
+					diference=diference+Number(t8d.text);
+										
+					t9l.text=photoItem.Typicalpointleft9 as String;
+					t9r.text=photoItem.Typicalpointrigth9 as String;
+					t9d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft9 as String)-Number(photoItem.Typicalpointrigth9 as String))),4).toString();
+					
+					sumleft=sumleft+Number(t9l.text);
+					sumrigth=sumrigth+Number(t9r.text);
+					diference=diference+Number(t9d.text);
+					
+					t10l.text=photoItem.Typicalpointleft10 as String;
+					t10r.text=photoItem.Typicalpointrigth10 as String;
+					t10d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft10 as String)-Number(photoItem.Typicalpointrigth10 as String))),4).toString();
+					
+					sumleft=sumleft+Number(t10l.text);
+					sumrigth=sumrigth+Number(t10r.text);
+					diference=diference+Number(t10d.text);
+										
+					c1l.text=photoItem.Circumferenceleft1 as String;
+					c1r.text=photoItem.Circumferencerigth1 as String;
+					c1d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft1 as String)-Number(photoItem.Circumferencerigth1 as String))),4).toString();
+					
+					sumleft=sumleft+Number(c1l.text);
+					sumrigth=sumrigth+Number(c1r.text);
+					diference=diference+Number(c1d.text);
+					
+					c2l.text=photoItem.Circumferenceleft2 as String;
+					c2r.text=photoItem.Circumferencerigth2 as String;
+					c2d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft2 as String)-Number(photoItem.Circumferencerigth2 as String))),4).toString();
+					
+					sumleft=sumleft+Number(c2l.text);
+					sumrigth=sumrigth+Number(c2r.text);
+					diference=diference+Number(c2d.text);
+										
+					c3l.text=photoItem.Circumferenceleft3 as String;
+					c3r.text=photoItem.Circumferencerigth3 as String;
+					c3d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft3 as String)-Number(photoItem.Circumferencerigth3 as String))),4).toString();
+					
+					sumleft=sumleft+Number(c3l.text);
+					sumrigth=sumrigth+Number(c3r.text);
+					diference=diference+Number(c3d.text);
+					
+					c4l.text=photoItem.Circumferenceleft4 as String;
+					c4r.text=photoItem.Circumferencerigth4 as String;
+					c4d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft4 as String)-Number(photoItem.Circumferencerigth4 as String))),4).toString();
+					
+					sumleft=sumleft+Number(c4l.text);
+					sumrigth=sumrigth+Number(c4r.text);
+					diference=diference+Number(c4d.text);
+					
+					a1.text=photoItem.Abnormalpointleft1 as String;
+					ar1.text=photoItem.Abnormalpointrigth1 as String;	
+					a2.text=photoItem.Abnormalpointleft2 as String;
+					ar2.text=photoItem.Abnormalpointrigth2 as String;
+					a3.text=photoItem.Abnormalpointleft3 as String;
+					ar3.text=photoItem.Abnormalpointrigth3 as String;
+					a4.text=photoItem.Abnormalpointleft4 as String;
+					ar4.text=photoItem.Abnormalpointrigth4 as String;
+					a5.text=photoItem.Abnormalpointleft5 as String;
+					ar5.text=photoItem.Abnormalpointrigth5 as String;
+					a6.text=photoItem.Abnormalpointleft6 as String;
+					ar6.text=photoItem.Abnormalpointrigth6 as String;
+					a7.text=photoItem.Abnormalpointleft7 as String;
+					ar7.text=photoItem.Abnormalpointrigth7 as String;
+					a8.text=photoItem.Abnormalpointleft8 as String;
+					ar8.text=photoItem.Abnormalpointrigth8 as String;
+					a9.text=photoItem.Abnormalpointleft9 as String;
+					ar9.text=photoItem.Abnormalpointrigth9 as String;
+					a10.text=photoItem.Abnormalpointleft10 as String;
+					ar10.text=photoItem.Abnormalpointrigth10 as String;
+					a11.text=photoItem.Abnormalpointleft11 as String;
+					ar11.text=photoItem.Abnormalpointrigth11 as String;
+					a12.text=photoItem.Abnormalpointleft12 as String;
+					ar12.text=photoItem.Abnormalpointrigth12 as String;
+					a13.text=photoItem.Abnormalpointleft13 as String;
+					ar13.text=photoItem.Abnormalpointrigth13 as String;
+					a14.text=photoItem.Abnormalpointleft14 as String;
+					ar14.text=photoItem.Abnormalpointrigth14 as String;
+					a15.text=photoItem.Abnormalpointleft15 as String;
+					ar15.text=photoItem.Abnormalpointrigth15 as String;
+					a16.text=photoItem.Abnormalpointleft16 as String;
+					ar16.text=photoItem.Abnormalpointrigth16 as String;
+					a17.text=photoItem.Abnormalpointleft17 as String;
+					ar17.text=photoItem.Abnormalpointrigth17 as String;
+					a18.text=photoItem.Abnormalpointleft18 as String;
+					ar18.text=photoItem.Abnormalpointrigth18 as String;
+					a19.text=photoItem.Abnormalpointleft19 as String;
+					ar19.text=photoItem.Abnormalpointrigth19 as String;
+					a20.text=photoItem.Abnormalpointleft20 as String;
+					ar20.text=photoItem.Abnormalpointrigth20 as String;
+					
+					tleft.text=scoreutils.roundDecimals(sumleft,4).toString();
+					trigth.text=scoreutils.roundDecimals(sumrigth,4).toString();
+					tdiference.text=scoreutils.roundDecimals(diference,4).toString();
+					
+					grossscore.text=photoItem.socorefinal as String;
+					totaldiferencefinal.text=tdiference.text;
+				}else{
+					//app.workpanel.panelprincipal.currentState='stateMain';
+					Alert.show("No data found deer","Buckscore");
+				}	
+			}
+			protected function printingscore_clickHandler(event:MouseEvent):void
+			{
+				// Create an instance of the FlexPrintJob class.
+				var printJob:FlexPrintJob = new FlexPrintJob();
+				// Start the print job.
+				if (printJob.start() != true) return;
+				// Add the object to print. Do not scale it.
+				//printJob.p
+				printJob.addObject(printingbody, FlexPrintJobScaleType.SHOW_ALL);
+				printJob.send();
+			}
+			public var state:String;
+			public function ViewScoreNoFinish_clickHandler():void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				currentState='ScoringFinalBuckView';
+				scoreutils=app.workpanel.panelprincipal.panelscoreproccess.scoreutils;
+				deernamefinishscore=app.workpanel.panelprincipal.deernamefinishscore;
+				trace(deernamefinishscore);
+				txtDeerNickName.text=deernamefinishscore;
+				txtLocationDeer.text=app.workpanel.panelprincipal.panelscoreproccess.location; //location
+				var someBirthday:Date = new Date();
+				txtdatedeer.text=someBirthday.toDateString();
+				imageforedition0.source=app.workpanel.panelprincipal.arraybyte;
+				numberleftponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbletftypical.selectedItem;
+				numberrigthponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbrigthtypical.selectedItem;
+				insidespread.text=scoreutils.insidespread;
+				mainbeamleftgrid.text=scoreutils.mainbeamleft;
+				mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
+				mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),4).toString();
+				t1l.text=scoreutils.Typicalpointleft1;
+				t1r.text=scoreutils.Typicalpointrigth1;
+				t1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))),4).toString();
+				t2l.text=scoreutils.Typicalpointleft2;
+				t2r.text=scoreutils.Typicalpointrigth2;
+				t2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))),4).toString();
+				t3l.text=scoreutils.Typicalpointleft3;
+				t3r.text=scoreutils.Typicalpointrigth3;
+				t3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))),4).toString();
+				t4l.text=scoreutils.Typicalpointleft4;
+				t4r.text=scoreutils.Typicalpointrigth4;
+				t4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))),4).toString();
+				t5l.text=scoreutils.Typicalpointleft5;
+				t5r.text=scoreutils.Typicalpointrigth5;
+				t5d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))),4).toString();
+				t6l.text=scoreutils.Typicalpointleft6;
+				t6r.text=scoreutils.Typicalpointrigth6;
+				t6d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))),4).toString();
+				t7l.text=scoreutils.Typicalpointleft7;
+				t7r.text=scoreutils.Typicalpointrigth7;
+				t7d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))),4).toString();
+				t8l.text=scoreutils.Typicalpointleft8;
+				t8r.text=scoreutils.Typicalpointrigth8;
+				t8d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))),4).toString();
+				t9l.text=scoreutils.Typicalpointleft9;
+				t9r.text=scoreutils.Typicalpointrigth9;
+				t9d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))),4).toString();
+				t10l.text=scoreutils.Typicalpointleft10;
+				t10r.text=scoreutils.Typicalpointrigth10;
+				t10d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))),4).toString();
+				c1l.text=scoreutils.Circumferenceleft1;
+				c1r.text=scoreutils.Circumferencerigth1;
+				c1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))),4).toString();
+				c2l.text=scoreutils.Circumferenceleft2;
+				c2r.text=scoreutils.Circumferencerigth2;
+				c2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))),4).toString();
+				c3l.text=scoreutils.Circumferenceleft3;
+				c3r.text=scoreutils.Circumferencerigth3;
+				c3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))),4).toString();
+				c4l.text=scoreutils.Circumferenceleft4;
+				c4r.text=scoreutils.Circumferencerigth4;
+				c4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))),4).toString();
+				a1.text=scoreutils.Abnormalpointleft1;
+				ar1.text=scoreutils.Abnormalpointrigth1;
+				a2.text=scoreutils.Abnormalpointleft2;
+				ar2.text=scoreutils.Abnormalpointrigth2;
+				a3.text=scoreutils.Abnormalpointleft3;
+				ar3.text=scoreutils.Abnormalpointrigth3;
+				a4.text=scoreutils.Abnormalpointleft4;
+				ar4.text=scoreutils.Abnormalpointrigth4;
+				a5.text=scoreutils.Abnormalpointleft5;
+				ar5.text=scoreutils.Abnormalpointrigth5;
+				a6.text=scoreutils.Abnormalpointleft6;
+				ar6.text=scoreutils.Abnormalpointrigth6;
+				a7.text=scoreutils.Abnormalpointleft7;
+				ar7.text=scoreutils.Abnormalpointrigth7;
+				a8.text=scoreutils.Abnormalpointleft8;
+				ar8.text=scoreutils.Abnormalpointrigth8;
+				a9.text=scoreutils.Abnormalpointleft9;
+				ar9.text=scoreutils.Abnormalpointrigth9;
+				a10.text=scoreutils.Abnormalpointleft10;
+				ar10.text=scoreutils.Abnormalpointrigth10;
+				a11.text=scoreutils.Abnormalpointleft11;
+				ar11.text=scoreutils.Abnormalpointrigth11;
+				a12.text=scoreutils.Abnormalpointleft12;
+				ar12.text=scoreutils.Abnormalpointrigth12;
+				a13.text=scoreutils.Abnormalpointleft13;
+				ar13.text=scoreutils.Abnormalpointrigth13;
+				a14.text=scoreutils.Abnormalpointleft14;
+				ar14.text=scoreutils.Abnormalpointrigth14;
+				a15.text=scoreutils.Abnormalpointleft15;
+				ar15.text=scoreutils.Abnormalpointrigth15;
+				a16.text=scoreutils.Abnormalpointleft16;
+				ar16.text=scoreutils.Abnormalpointrigth16;
+				a17.text=scoreutils.Abnormalpointleft17;
+				ar17.text=scoreutils.Abnormalpointrigth17;
+				a18.text=scoreutils.Abnormalpointleft18;
+				ar18.text=scoreutils.Abnormalpointrigth18;
+				a19.text=scoreutils.Abnormalpointleft19;
+				ar19.text=scoreutils.Abnormalpointrigth19;
+				a20.text=scoreutils.Abnormalpointleft20;
+				ar20.text=scoreutils.Abnormalpointrigth20;
+				var totalleft:Number=scoreutils.calculateleft();
+				var totalrigth:Number=scoreutils.calculaterigth();
+				var totalabnormal:Number=scoreutils.calculateabnormal();
+				var totaldiference:Number=scoreutils.roundDecimals(Math.abs(totalleft-totalrigth),4);
+				tleft.text=totalleft.toString();
+				trigth.text=totalrigth.toString();
+				tdiference.text=totaldiference.toString();
+				grossscore.text=String (totalleft+ totalrigth+ totalabnormal);
+				totaldiferencefinal.text=totaldiference.toString();
+			}
+			////////////////////////////////////////////////////////back SCORE //////////////////////////////			
+			protected function ScoringFinalBuckView_clickHandler(event:MouseEvent):void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				app.workpanel.currentState='statePrincipal';		
+			}
+			protected function ScoringFinalBuck_clickHandler(event:MouseEvent):void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				
+				if(app.workpanel.panelprincipal.statescoringview!="stateMain"){
+					scoreutils=app.workpanel.panelprincipal.panelscoreproccess.scoreutils;
+					var  verificatescore:ArrayCollection=app.sqlscore.resaultscore(txtDeerNickName.text);
+					if(verificatescore.length>=1) app.sqlscore.removescore(txtDeerNickName.text);
+					var typeerror:String=app.sqlscore.addItemscore(txtDeerNickName.text,app.workpanel.panelprincipal.panelscoreproccess.location,txtdatedeer.text,txtcommentsdeer.text,"",scoreutils.insidespread,
+						scoreutils.mainbeamleft,
+						scoreutils.mainbeamrigth,
+						scoreutils.Typicalpointleft1,
+						scoreutils.Typicalpointrigth1,
+						scoreutils.Typicalpointleft2,
+						scoreutils.Typicalpointrigth2,
+						scoreutils.Typicalpointleft3,
+						scoreutils.Typicalpointrigth3,
+						scoreutils.Typicalpointleft4,
+						scoreutils.Typicalpointrigth4,
+						scoreutils.Typicalpointleft5,
+						scoreutils.Typicalpointrigth5,
+						scoreutils.Typicalpointleft6,
+						scoreutils.Typicalpointrigth6,
+						scoreutils.Typicalpointleft7,
+						scoreutils.Typicalpointrigth7,
+						scoreutils.Typicalpointleft8,
+						scoreutils.Typicalpointrigth8,
+						scoreutils.Typicalpointleft9,
+						scoreutils.Typicalpointrigth9,
+						scoreutils.Typicalpointleft10,
+						scoreutils.Typicalpointrigth10,
+						scoreutils.Circumferenceleft1,
+						scoreutils.Circumferencerigth1,
+						scoreutils.Circumferenceleft2,
+						scoreutils.Circumferencerigth2,
+						scoreutils.Circumferenceleft3,
+						scoreutils.Circumferencerigth3,
+						scoreutils.Circumferenceleft4,
+						scoreutils.Circumferencerigth4,
+						scoreutils.Abnormalpointleft1,
+						scoreutils.Abnormalpointrigth1,
+						scoreutils.Abnormalpointleft2,
+						scoreutils.Abnormalpointrigth2,
+						scoreutils.Abnormalpointleft3,
+						scoreutils.Abnormalpointrigth3,
+						scoreutils.Abnormalpointleft4,
+						scoreutils.Abnormalpointrigth4,
+						scoreutils.Abnormalpointleft5,
+						scoreutils.Abnormalpointrigth5,
+						scoreutils.Abnormalpointleft6,
+						scoreutils.Abnormalpointrigth6,
+						scoreutils.Abnormalpointleft7,
+						scoreutils.Abnormalpointrigth7,
+						scoreutils.Abnormalpointleft8,
+						scoreutils.Abnormalpointrigth8,
+						scoreutils.Abnormalpointleft9,
+						scoreutils.Abnormalpointrigth9,
+						scoreutils.Abnormalpointleft10,
+						scoreutils.Abnormalpointrigth10,
+						scoreutils.Abnormalpointleft11,
+						scoreutils.Abnormalpointrigth11,
+						scoreutils.Abnormalpointleft12,
+						scoreutils.Abnormalpointrigth12,
+						scoreutils.Abnormalpointleft13,
+						scoreutils.Abnormalpointrigth13,
+						scoreutils.Abnormalpointleft14,
+						scoreutils.Abnormalpointrigth14,
+						scoreutils.Abnormalpointleft15,
+						scoreutils.Abnormalpointrigth15,
+						scoreutils.Abnormalpointleft16,
+						scoreutils.Abnormalpointrigth16,
+						scoreutils.Abnormalpointleft17,
+						scoreutils.Abnormalpointrigth17,
+						scoreutils.Abnormalpointleft18,
+						scoreutils.Abnormalpointrigth18,
+						scoreutils.Abnormalpointleft19,
+						scoreutils.Abnormalpointrigth19,
+						scoreutils.Abnormalpointleft20,
+						scoreutils.Abnormalpointrigth20,
+						app.workpanel.panelprincipal.panelscoreproccess.cmbletftypical.selectedItem,
+						app.workpanel.panelprincipal.panelscoreproccess.cmbrigthtypical.selectedItem,
+						grossscore.text);
+					app.sqlscore.updatephotoscore(txtDeerNickName.text,grossscore.text);
+					
+					if(typeerror=="1"){
+						app.workpanel.currentState='statePrincipal'; 
+						app.workpanel.panelprincipal.currentState='stateMain';
+					}else Alert.show("No insert data","Buckscore");
+					app.workpanel.panelprincipal.panelscoreproccess.scoreutils=new ScoreUtils();
+					app.workpanel.panelprincipal.array2refresh();
+				}
+				else {
+					txtcommentsdeer.text='';
+					scoreutils=new ScoreUtils();
+					app.workpanel.panelprincipal.statescoringview="";
+					app.workpanel.currentState='statePrincipal';
+				}
+			}			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="ScoringFinalBuck"/>
+		<s:State name="ScoringFinalBuckView"/>
+	</s:states>
+	<s:VGroup width="100%" height="100%" gap="0">								
+		<s:SkinnableContainer width="100%" height="45"
+							  skinClass="com.complexless.skins.spark.ToolbarSkin"
+							  textAlign="left">
+			<s:HGroup width="100%" height="100%" paddingLeft="6"
+					  paddingRight="6" verticalAlign="middle"
+					  horizontalAlign="right">
+				
+				<s:Label width="100%" fontSize="20"
+						 text=" "/>
+				
+				<s:HGroup width="470" height="26">
+					<s:Button label="Facebook"/>
+					<s:Button label="Twitter"/>
+					<s:Button label="Email"/>
+					<s:Button label="Save"/>
+					<s:Button label="Print" click="printingscore_clickHandler(event)"/>
+					<s:Button label="Finish" click="ScoringFinalBuck_clickHandler(event)"
+							  label.ScoringFinalBuckView="Close"
+							  click.ScoringFinalBuckView="ScoringFinalBuckView_clickHandler(event)"/>
+				</s:HGroup>
+			</s:HGroup>
+		</s:SkinnableContainer>
+		
+		<s:SkinnableContainer id="skinablesocreprinting" width="100%" height="100%">
+		
+			<s:VGroup  width="100%" height="100%" id="printingtotalscore">
+				
+				<s:Scroller y="81" width="100%" height="100%">
+					<s:VGroup width="100%">
+						<s:SkinnableContainer id="printingbody" width="100%" backgroundColor="0xFFFFFF">
+							<s:VGroup width="100%" paddingLeft="6" paddingRight="6" paddingTop="6" paddingBottom="6">	
+								
+								<s:HGroup width="100%" height="95">
+									<s:SkinnableContainer id="printinghead" width="698">
+										<s:HGroup>
+											
+											<s:VGroup width="130" height="92">
+												<s:Image id="imageforedition0" width="128"
+														 height="89" source="c:/tmp/22_L.png"
+														 cacheAsBitmap.ScoringFinalBuck="true"
+														 cacheAsBitmap.ScoringFinalBuckView="true"/>
+											</s:VGroup>
+											<s:VGroup width="100%" height="93">
+												
+												<s:HGroup width="482"
+														  height="15">
+													<s:Label color="#323232"
+															 text="Deer NickName"/>
+													<s:Label id="txtDeerNickName"
+															 color="#323232"
+															 text="Name"/>
+												</s:HGroup>
+												<s:HGroup width="482"
+														  height="13">
+													<s:Label color="#323232"
+															 text="Location"/>
+													<s:Label id="txtLocationDeer"
+															 color="#323232"
+															 text="0006"/>
+												</s:HGroup>
+												<s:HGroup width="482" verticalAlign="middle">
+													<s:Label color="#323232"
+															 text="Comments"/>
+													<s:TextInput id="txtcommentsdeer"
+																 width="342"/>
+												</s:HGroup>
+												<s:HGroup width="482"
+														  height="13"
+														  color="#323232">
+													<s:Label text="Date"/>
+													<s:Label id="txtdatedeer"
+															 text="10/3/2012 11:10:58 AM"/>
+												</s:HGroup>
+												
+											</s:VGroup>
+										</s:HGroup>
+									</s:SkinnableContainer>	
+								</s:HGroup>
+								
+								
+								<s:HGroup width="100%">
+									<s:Image width="207" height="203" source="Image/logo.png" horizontalAlign="center"/>
+									
+									<mx:Grid id="myGrid" width="100%"
+											 height="285" borderAlpha="5">
+										
+										<!-- Define Row 0. -->
+										<mx:GridRow id="row0" width="100%"
+													borderColor="#0B0A0A"
+													borderStyle="solid">
+											<!-- Define the first cell of Row 1. -->
+											<mx:GridItem width="100%" colSpan="4"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												
+												
+												<s:Label paddingTop="3"
+														 text="ABNORMAL POINTS"
+														 verticalAlign="middle"/>	
+											</mx:GridItem>
+										</mx:GridRow>
+										
+										<!-- Define Row 1. -->
+										<mx:GridRow id="row1" width="100%">
+											<!-- Define the first cell of Row 1. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 colSpan="2"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label paddingTop="3"
+														 text="LEFT"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<!-- Define the second cell of Row 1. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 colSpan="2"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label paddingTop="3"
+														 text="RIGTH"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<!-- Define the third cell of Row 1. -->
+											
+										</mx:GridRow>
+										
+										<!-- Define Row 2. -->
+										<mx:GridRow id="row2" width="100%">
+											<!-- Define a single cell to span three columns of Row 2. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label id="a1" paddingTop="3"
+														 text="1"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="a11" paddingTop="3"
+														 text="11"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar1" paddingTop="3"
+														 text="1"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar11" paddingTop="3"
+														 text="11"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										
+										<!-- Define Row 3. -->
+										<mx:GridRow id="row3" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label id="a2" paddingTop="3"
+														 text="2"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a12" paddingTop="3"
+														 text="12"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar2" paddingTop="3"
+														 text="2"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar12" paddingTop="3"
+														 text="12"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow id="row4" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label id="a3" paddingTop="3"
+														 text="3"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a13" paddingTop="3"
+														 text="13"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar3" paddingTop="3"
+														 text="3"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar13" paddingTop="3"
+														 text="13"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow id="row5" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label id="a4" paddingTop="3"
+														 text="4"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a14" paddingTop="3"
+														 text="14"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar4" paddingTop="3"
+														 text="4"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar14" paddingTop="3"
+														 text="14"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow id="row6" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label id="a5" paddingTop="3"
+														 text="5"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a15" paddingTop="3"
+														 text="15"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar5" paddingTop="3"
+														 text="5"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar15" paddingTop="3"
+														 text="15"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow id="row7" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label id="a6" paddingTop="3"
+														 text="6"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a16" paddingTop="3"
+														 text="16"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar6" paddingTop="3"
+														 text="6"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar16" paddingTop="3"
+														 text="16"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow id="row8" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label id="a7" paddingTop="3"
+														 text="7"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a17" paddingTop="3"
+														 text="17"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar7" paddingTop="3"
+														 text="7"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar17" paddingTop="3"
+														 text="17"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow id="row9" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"
+														 borderColor="#0B0A0A"
+														 borderStyle="solid"
+														 horizontalAlign="center"
+														 verticalAlign="bottom">
+												<s:Label id="a8" paddingTop="3"
+														 text="8"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a18" paddingTop="3"
+														 text="18"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar8" paddingTop="3"
+														 text="8"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar18" paddingTop="3"
+														 text="18"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow id="row10" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="a9" paddingTop="3"
+														 text="9"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a19" paddingTop="3"
+														 text="19"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar9" paddingTop="3"
+														 text="9"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar19" paddingTop="3"
+														 text="19"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow id="row11" width="100%">
+											<!-- Define an empty first cell of Row 3. -->
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="a10" paddingTop="3"
+														 text="10"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+												<s:Label id="a20" paddingTop="3"
+														 text="20"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar10" paddingTop="3"
+														 text="10"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+											<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+												<s:Label id="ar20" paddingTop="3"
+														 text="20"
+														 verticalAlign="middle"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										
+									</mx:Grid>
+								</s:HGroup>
+								
+								<mx:Grid id="myGridResult" width="100%"
+										 height="100%" borderAlpha="5"
+										 color="#323232">
+									<mx:GridRow id="Rrow0" width="100%">
+										<!-- Define the first cell of Row 1. -->
+										<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+											
+											
+											<s:Label paddingTop="3"
+													 text="NO. POINTS LEFT"
+													 verticalAlign="middle"/>	
+										</mx:GridItem>
+										<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+											
+											
+											<s:Label id="numberleftponitsgrid" paddingTop="3" text="3"
+													 verticalAlign="middle"/>	
+										</mx:GridItem>
+										<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+											
+											
+											<s:Label paddingTop="3"
+													 text="NO. POINTS RIGHT"
+													 verticalAlign="middle"/>	
+										</mx:GridItem>
+										<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
+											
+											
+											<s:Label id="numberrigthponitsgrid" paddingTop="3" text="5"
+													 verticalAlign="middle"/>	
+										</mx:GridItem>
+										<mx:GridItem width="100%" colSpan="3"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											
+											
+											<s:Label paddingTop="3" text=""
+													 verticalAlign="middle"/>	
+										</mx:GridItem>
+										
+									</mx:GridRow>
+									
+									<!-- Define Row 1. -->
+									<mx:GridRow id="Rrow1" width="100%">
+										<!-- Define the first cell of Row 1. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="ANTLER CHARACTERISTICS"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<!-- Define the second cell of Row 1. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="1"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3" text="LEFT"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<!-- Define the third cell of Row 1. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="1"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3" text="RIGTH"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="1"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="DIFFERENCE"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										
+									</mx:GridRow>
+									
+									<!-- Define Row 2. -->
+									<mx:GridRow id="Rrow2" width="100%">
+										<!-- Define a single cell to span three columns of Row 2. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="INSIDE SPREAD"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="1"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label id="insidespread"
+													 paddingTop="3"
+													 text="13.8192"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3" text=""
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									
+									<!-- Define Row 3. -->
+									<mx:GridRow id="Rrow3" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="MAIN BEAM LENGTH"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="mainbeamleftgrid"
+													 paddingTop="3"
+													 text="18.1636"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label  id="mainbeamrigthgrid"  paddingTop="3"
+													  text="25.0055"
+													  verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label   id="mainbeamdiferene"  paddingTop="3" text="6.84"
+													   verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow4" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 1"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t1l" paddingTop="3" text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t1r" paddingTop="3" text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t1d" paddingTop="3" text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow5" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 2"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t2l" paddingTop="3" text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t2r" paddingTop="3" text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t2d" paddingTop="3" text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow6" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 3"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t3l" paddingTop="3" text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t3r" paddingTop="3" text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t3d" paddingTop="3" text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow7" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 4"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t4l" paddingTop="3" text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t4r" paddingTop="3" text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t4d" paddingTop="3" text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow8" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 5"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t5l" paddingTop="3" text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t5r" paddingTop="3" text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t5d" paddingTop="3" text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow9" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 6"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t6l" paddingTop="3" text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t6r" paddingTop="3" text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t6d" paddingTop="3" text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow10" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 7"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t7l" paddingTop="3" text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t7r" paddingTop="3" text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t7d" paddingTop="3" text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow11" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 8"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t8l" paddingTop="3" text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t8r" paddingTop="3" text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t8d" paddingTop="3" text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									
+									<mx:GridRow id="Rrow12" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 9"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t9l" paddingTop="3"
+													 text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t9r" paddingTop="3"
+													 text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t9d" paddingTop="3"
+													 text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow13" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TYPICAL POINT 10"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="t10l" paddingTop="3"
+													 text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t10r" paddingTop="3"
+													 text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="t10d" paddingTop="3"
+													 text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow14" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="CIRCUMFERENCE 1"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="c1l" paddingTop="3"
+													 text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="c1r" paddingTop="3"
+													 text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="c1d" paddingTop="3"
+													 text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									
+									<mx:GridRow id="Rrow15" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="CIRCUMFERENCE 2"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="c2l" paddingTop="3"
+													 text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="c2r" paddingTop="3"
+													 text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="c2d" paddingTop="3"
+													 text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow16" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="CIRCUMFERENCE 3"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="c3l" paddingTop="3"
+													 text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="c3r" paddingTop="3"
+													 text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="c3d" paddingTop="3"
+													 text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									
+									<mx:GridRow id="Rrow17" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="CIRCUMFERENCE 4"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="c4l" paddingTop="3"
+													 text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="c4r" paddingTop="3"
+													 text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="c4d" paddingTop="3"
+													 text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow18" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="center"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TOTALS"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">	
+											<s:Label id="tleft" paddingTop="3"
+													 text="5.6967"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="trigth" paddingTop="3"
+													 text="6.4259"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"  horizontalAlign="center" verticalAlign="bottom"  borderColor="#0B0A0A" borderStyle="solid">
+											<s:Label id="tdiference" paddingTop="3"
+													 text="0.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									
+									
+									<mx:GridRow id="Rrow19" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="BUCKSCORE RESULTS"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">	
+											<s:Label paddingTop="3" text=""
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										
+									</mx:GridRow>
+									
+									<mx:GridRow id="Rrow20" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="GROSS SCORE"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">	
+											<s:Label id="grossscore" paddingTop="3"
+													 text="156.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									
+									<mx:GridRow id="Rrow21" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="TOTAL DIFFERENCES"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">	
+											<s:Label id="totaldiferencefinal" paddingTop="3"
+													 text="31.91"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									
+									<mx:GridRow id="Rrow22" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3" text=""
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">	
+											<s:Label paddingTop="3" text=""
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+								</mx:Grid>
+							</s:VGroup>
+						</s:SkinnableContainer>
+					</s:VGroup>
+				</s:Scroller>
+				
+			</s:VGroup>
+		</s:SkinnableContainer>
+	</s:VGroup>
+	
+
+		
+</s:BorderContainer>

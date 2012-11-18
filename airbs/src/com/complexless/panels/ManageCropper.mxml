@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:c="com.flexblocks.imagecropper.*"
+		   width="670" height="516" creationComplete="init()"
+		   currentState="init"
+		   horizontalScrollPolicy="off"
+		   verticalScrollPolicy="off">
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.complexless.utils.GraphicsUtils;
+			
+			import flash.utils.setTimeout;
+			
+			import mx.binding.utils.ChangeWatcher;
+			import mx.controls.Alert;
+			import mx.graphics.ImageSnapshot;
+			import mx.graphics.Stroke;
+			import mx.managers.CursorManager;
+			
+			import spark.components.Image;
+			
+			private var newImage:BitmapData;
+			private var originalImage:BitmapData;
+			private var points:Array = [];
+			private var zoomArray:Array = [];
+			private var border:int = 30;
+			private var cursorID:Number = 0;
+			
+			private var widthWatch:ChangeWatcher;
+			private var heightWatch:ChangeWatcher;
+			
+			private var maxPixelAdobe:Number = 16777215;
+			private var zoomIndex:Number = 0;
+			private var fitIndex:Number = 0;
+			private var drawing:Boolean = false;
+			
+			[Embed(source="assets/cursors/cursor_win_crosshair.png")]
+			private var crosshairCursor:Class;
+			
+			private function init():void {
+				imageCropper.outlineColor = 0xffffff;  	
+				imageCropper.outlineAlpha = 1;
+				imageCropper.handleColor = 0xff00ff;
+				imageCropper.handleAlpha = 0.5;
+				imageCropper.maskColor = 0x660066;
+				imageCropper.maskAlpha = 0.4;
+				imageCropper.backgroundColor = 0x000000;
+				imageCropper.backgroundAlpha = 1;
+				imageCropper.handleSize = 10;
+				imageCropper.constrainToAspectRatio = false;
+				imageCropper.setCropRect();
+				imageCropper.enabled = false;
+				
+				widthWatch = ChangeWatcher.watch(cropperPanel,'width',onSizeChange);
+				heightWatch = ChangeWatcher.watch(cropperPanel,'height',onSizeChange);
+				
+				canvas.addEventListener(MouseEvent.RIGHT_CLICK, rightClick);
+				canvas.addEventListener(MouseEvent.MOUSE_DOWN, addPoint);
+			}
+			
+			private function onSizeChange(event:Event):void
+			{
+				
+			}
+			
+			private function rightClick(e:Event):void {
+				drawing = false;
+			}
+			
+			public function setImage(bitmapData:BitmapData):void {
+				currentState = "process";
+				setTimeout(function():void {
+					imageCropper.visible = true;
+					_setImage(bitmapData);
+				}, 100);
+			}
+			
+			public function clearImage():void {
+				imageCropper.height = 0;
+				imageCropper.width = 0;
+				imageCropper.visible = false;
+				currentState = "init";
+			}
+			
+			private function save():void {
+				if(imageCropper.visible) { 
+					newImage = imageCropper.croppedBitmapData;
+					originalImage = newImage;
+					_setImage(newImage, false);
+				}
+			}
+			
+			private  function imageready():void
+			{
+				imageCropper.setCropRect();				
+				imageCropper.enabled = false;
+			}
+			
+			private function calculateZoom(bmData:BitmapData):void {
+				var maxZoom:Number = Math.floor(Math.sqrt((maxPixelAdobe / (bmData.width * bmData.height))) * 10);
+				
+				zoomArray = [];
+				for(var i:int = 1; i <= maxZoom; i++) {
+					zoomArray.push(i * 0.10);
+				}
+				
+				if(maxZoom > 1) zoomIndex = 10;
+				else zoomIndex = maxZoom;
+				
+				fitIndex = zoomIndex;
+			}
+			
+			private function _setImage(bitmapData:BitmapData, recorder:Boolean = true):void {
+				newImage = bitmapData;
+				
+				if(recorder) {
+					originalImage = newImage;
+					calculateZoom(originalImage);
+				}
+				
+				zoomFit();
+			}
+
+			public function beginDraw():void {
+				//cursorID = CursorManager.setCursor(crosshairCursor);
+				erase();
+				drawing = true;
+				
+				
+				var rc:Rectangle = imageCropper.getVisibleRect();
+				
+				canvas.x = imageCropper.x;
+				canvas.y = imageCropper.y;
+				canvas.height = rc.height;
+				canvas.width = rc.width;
+				canvas.visible = true;
+				
+				drawLine(points);
+			}
+			
+			public function endDraw():void {
+				//CursorManager.removeCursor(cursorID);
+				drawing = false;
+				canvas.visible = false;
+			}
+			
+			public function erase(): void {
+				points.length = 0;
+				drawLine(points);
+			}
+			
+			public function getPoints():Array {
+				return points;
+			}
+			
+			private function addPoint(event:MouseEvent):void
+			{
+				if(drawing && event.buttonDown) {
+					var imageScaleFactor:Number = zoomArray[zoomIndex];
+					trace("Punto real --> " + canvas.mouseX + ", " + canvas.mouseY);
+					var x:Number = (canvas.mouseX / imageScaleFactor);
+					var y:Number = (canvas.mouseY / imageScaleFactor);
+					points.push({x: x, y: y});
+					drawLine(points);
+				}
+			}
+			
+			private function rubberBand():void
+			{
+				if(drawing) {
+					var tmp:Array = points.concat();
+					var imageScaleFactor:Number = zoomArray[zoomIndex];
+					var x:Number = (canvas.mouseX / imageScaleFactor);
+					var y:Number = (canvas.mouseY / imageScaleFactor);
+					tmp.push({x: x,y: y});
+					drawLine(tmp);
+				}
+			}
+			
+			private function drawLine(points:Array):void
+			{
+				canvas.graphics.clear();
+				canvas.graphics.beginFill(0x83F52C,0.0);
+				canvas.graphics.drawRect(0, 0, canvas.width, canvas.height);
+				canvas.graphics.endFill();
+				
+				var tmp:Array = [];
+				var imageScaleFactor:Number = zoomArray[zoomIndex];
+				for(var i:int = 0; i < points.length; i++) {
+					var pos:Object = points[i] ;
+					trace("Punto guardado[" + i + "] --> " + pos.x + ", " + pos.y);
+					var x:Number = (pos.x * imageScaleFactor);
+					var y:Number = (pos.y * imageScaleFactor);
+					trace("Punto pintado[" + i + "] --> " + pos.x + ", " + pos.y);
+					tmp.push({x:x, y:y});
+				}
+				
+				GraphicsUtils.drawDashedPolyLine(canvas, new Stroke(0xFF0000, 1, 1, false, "normal", CapsStyle.NONE), tmp);
+			}
+			
+			public function zoomIn():void {
+				if((zoomIndex + 1) < zoomArray.length) {
+					zoomIndex++;
+					var imageScaleFactor:Number = zoomArray[zoomIndex];
+					var imageScaledWidth:Number = originalImage.width * imageScaleFactor;
+					var imageScaledHeight:Number = originalImage.height * imageScaleFactor;
+					
+					imageCropper.width = imageScaledWidth;
+					imageCropper.height = imageScaledHeight;
+					
+					imageCropper.enabled = true;
+					imageCropper.sourceImage = _scaleImage(imageScaledWidth, imageScaledHeight, imageScaleFactor);
+					
+					updateDraw();
+				}
+			}
+			
+			public function zoomOut():void {
+				if((zoomIndex - 1) >= 0) {
+					zoomIndex--;
+					var imageScaleFactor:Number = zoomArray[zoomIndex];
+					var imageScaledWidth:Number = originalImage.width * imageScaleFactor;
+					var imageScaledHeight:Number = originalImage.height * imageScaleFactor;
+					
+					imageCropper.width = imageScaledWidth;
+					imageCropper.height = imageScaledHeight;
+					
+					imageCropper.enabled = true;
+					imageCropper.sourceImage = _scaleImage(imageScaledWidth, imageScaledHeight, imageScaleFactor);
+					
+					updateDraw();
+				}
+			}
+			
+			public function pointer():void {
+				Alert.show("Arrow");
+			}
+			
+			public function zoomFit():void {
+				var rc:Rectangle = cropperPanel.getVisibleRect();
+				var margen:Number = 30;
+				var pHeight:Number = rc.height - margen;
+				var pWidth:Number = rc.width - margen;
+				
+				trace("Panel Alto = " + pHeight + ", Ancho = " + pWidth);
+				
+				var tHeight:Number = originalImage.height;
+				var tWidth:Number = originalImage.width ;
+				var found:Boolean = false;
+				zoomIndex = fitIndex;
+				
+				if(tHeight > pHeight || tWidth > pWidth) {
+					trace("La imagen en mayor, hay que reducirla");
+					while(!found) {
+						if((zoomIndex - 1) >= 0) {
+							zoomIndex--;
+							tHeight = (originalImage.height * zoomArray[zoomIndex]);
+							tWidth = (originalImage.width * zoomArray[zoomIndex]);
+							
+							if(tHeight > pHeight || tWidth > pWidth) {
+								continue;
+							}
+							else {
+								found = true;
+							}
+						}
+						else {
+							found = true;
+						}
+					}
+					trace("El factor es : " + zoomArray[zoomIndex]);
+				}
+				else {
+					trace("La imagen es menor, hay que agrandarla");
+					while(!found) {
+						if((zoomIndex + 1) < zoomArray.length) {
+							tHeight = (originalImage.height * zoomArray[zoomIndex + 1]);
+							tWidth = (originalImage.width * zoomArray[zoomIndex + 1]);
+							
+							if(tHeight < pHeight && tWidth < pWidth) {
+								zoomIndex++;
+								continue;
+							}
+							else {
+								found = true;
+							}
+						}
+						else {
+							found = true;
+						}
+					}
+					trace("El factor es : " + zoomArray[zoomIndex]);
+				}
+				
+				
+				var imageScaleFactor:Number = zoomArray[zoomIndex];
+				var imageScaledWidth:Number = originalImage.width * imageScaleFactor;
+				var imageScaledHeight:Number = originalImage.height * imageScaleFactor;
+				
+				trace("Real Alto = " + imageScaledHeight + ", Ancho = " + imageScaledWidth);	
+				trace("Imagen Alto = " + originalImage.height + ", Ancho = " + originalImage.width);
+				
+				imageCropper.width = imageScaledWidth;
+				imageCropper.height = imageScaledHeight;
+				
+				imageCropper.enabled = true;
+				imageCropper.sourceImage = _scaleImage(imageScaledWidth, imageScaledHeight, imageScaleFactor);
+				
+				updateDraw();
+			}
+			
+			public function zoomActual():void {
+				if(originalImage != null) {
+					zoomIndex = fitIndex;
+					var imageScaleFactor:Number = zoomArray[zoomIndex];
+					var imageScaledWidth:Number = originalImage.width * imageScaleFactor;
+					var imageScaledHeight:Number = originalImage.height * imageScaleFactor;
+					
+					imageCropper.width = imageScaledWidth;
+					imageCropper.height = imageScaledHeight;
+					
+					imageCropper.enabled = true;
+					imageCropper.sourceImage = _scaleImage(imageScaledWidth, imageScaledHeight, imageScaleFactor);
+					
+					updateDraw();	
+				}
+			}
+			
+			private function updateDraw():void {
+				if(canvas.visible) {
+					var rc:Rectangle = imageCropper.getVisibleRect();
+					
+					canvas.x = imageCropper.x;
+					canvas.y = imageCropper.y;
+					canvas.height = rc.height;
+					canvas.width = rc.width;
+					
+					drawLine(points);
+				}
+			}
+			
+			private function _scaleImage(imageScaledWidth:Number, imageScaledHeight:Number, imageScaleFactor:Number):BitmapData {
+				var bkgndColor:uint = 0xFF000000;
+				
+				var scaleMatrix:Matrix = new Matrix();
+				scaleMatrix.scale(imageScaleFactor, imageScaleFactor);
+				
+				var scaledImageBitmapData:BitmapData = new BitmapData(imageScaledWidth, imageScaledHeight, true, bkgndColor);
+				scaledImageBitmapData.draw(originalImage, scaleMatrix, null, null, null, true);
+				
+
+				return scaledImageBitmapData;
+			}
+			
+			private function cropper():void {
+				if(canvas.visible) {
+					endDraw();
+				}
+				
+				imageCropper.enabled = true;
+			}
+			
+			/**
+			 * zoomIn()
+			 * zoomOut()
+			 * draw()
+			 * getData()
+			 * setImage()
+			 * */
+			
+		]]>
+	</fx:Script>
+	
+	<mx:states>
+		<s:State name="init"/>
+		<s:State name="process"/>
+	</mx:states>
+	
+	<s:BorderContainer x="0" y="0" width="100%" height="100%" borderColor="0x000000" borderAlpha="1.0" borderWeight="1">
+		<s:VGroup width="100%" height="100%" gap="0">
+			<s:SkinnableContainer id="toolbar" width="100%" height="25" 
+								  skinClass="com.complexless.skins.spark.ToolbarSkin"
+								  includeIn="process">
+				<s:HGroup width="100%" height="100%" gap="0" verticalAlign="middle">
+					<mx:LinkButton icon="@Embed('assets/images/select16x16.png')" click="pointer()" toolTip="Select"/>
+					<mx:LinkButton icon="@Embed('assets/images/save16x16.png')" click="save()" toolTip="Save"/>
+					<mx:LinkButton icon="@Embed('assets/images/crop16x16.png')" click="cropper()" toolTip="Crop"/>
+					<mx:LinkButton icon="@Embed('assets/images/zoom_in16x16.png')" click="zoomIn()" toolTip="Zoom In"/>
+					<mx:LinkButton icon="@Embed('assets/images/zoom_out16x16.png')" click="zoomOut()" toolTip="Zoom out"/>
+					<mx:LinkButton icon="@Embed('assets/images/zoom_fit16x16.png')" click="zoomFit()" toolTip="Zoom Fit"/>
+					<mx:LinkButton icon="@Embed('assets/images/zoom_actualsize16x16.png')" click="zoomActual()" toolTip="Zoom Actual"/>
+				</s:HGroup>
+			</s:SkinnableContainer>
+			<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
+				<mx:Canvas id="cropperPanel" width="100%" height="100%" verticalScrollPolicy="auto" horizontalScrollPolicy="auto" >
+					<c:ImageCropper id="imageCropper"
+									width="0"
+									height="0"
+									enabled="false"
+									visible="false"
+									cropConstraintDisabled="false"
+									sourceImageReady="imageready();"
+									sourceImageLoadError="trace('Error while loading image')"
+									cropRectChanged="trace('Crop Rect changed');"
+									cropConstraintChanged="trace('Crop constraint changed');"
+									cropDimensionsChanged="trace('Crop dimensions changed');"
+									cropPositionChanged="trace('Crop position changed');"/>
+					
+					<mx:UIComponent id="canvas" visible="false"
+									mouseMove="rubberBand()" rollOut="drawLine(points);"/>			
+				</mx:Canvas>
+			</s:SkinnableContainer>
+		</s:VGroup>
+	</s:BorderContainer>
+	
+</mx:Canvas>

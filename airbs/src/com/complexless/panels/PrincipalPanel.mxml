@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:bs="library://ns.adobe.com/flex/mx"
+					   xmlns:net="flash.net.*"
+					   xmlns:imagecropper="com.flexblocks.imagecropper.*"
+					   xmlns:utils="utils.*"
+					   xmlns:ns1="*"
+					   width="100%" height="100%" xmlns:panels="com.complexless.panels.*">
+	
+	<fx:Style source="assets/css/airbs.css"/>
+	
+	<fx:Script>
+		
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			import mx.core.IFlexDisplayObject;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.events.MenuEvent;
+			import mx.graphics.codec.PNGEncoder;
+			import mx.managers.PopUpManager;
+			import mx.messaging.messages.ErrorMessage;
+			import mx.printing.FlexPrintJob;
+			import mx.printing.FlexPrintJobScaleType;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.Base64Decoder;
+			import mx.utils.Base64Encoder;
+			import mx.utils.ObjectUtil;
+			import mx.utils.StringUtil;
+			import spark.events.GridSelectionEvent;
+			import spark.events.IndexChangeEvent;
+			import com.complexless.utils.SQLbuckscore;
+			import com.complexless.utils.ScoreUtils;
+			import com.complexless.utils.albumbuckscore;
+			import com.complexless.utils.albumitembuck;
+			private var gVersion:String;
+			private var albumphoto:ArrayCollection= new ArrayCollection();
+			private var createalbum:ArrayCollection = new ArrayCollection();
+			private var fr:FileReference;
+			private var prefsXML:XML;
+			[Bindable]
+			public var array:ArrayCollection=new ArrayCollection;
+			[Bindable]
+			public var array2:ArrayCollection=new ArrayCollection;
+			[Bindable]
+			public var combo:ArrayCollection=new ArrayCollection();			
+			[Bindable]
+			private var competencyListData:XMLListCollection;			
+			[Bindable]
+			private var competencyListDatAAge:XMLListCollection;			
+			private var coleccionpositionphoto:XMLListCollection;			
+			[Bindable]
+			private var xmlURL:String;								
+			private var bandera:String; 
+			public static var textList:Array=new Array();
+			public var arraybyte:ByteArray=new ByteArray();
+			public var scoreutils:ScoreUtils=new ScoreUtils();			
+			//////////////////////////////SCORE VARIABLE//////////////////////////////////////////////////////			
+			public var scoredeerage:String;
+			public var scorestate:String;
+			public var referencetype:String;
+			public var inchvalue:Number;
+			public var myangleoptions:XMLList;
+			public var deernamefinishscore:String;
+			
+			///////////////////////////////////////////////////////////////////////////////////////////////			
+			
+			
+			public function array2refresh():void
+			{ 
+				var app:airbs=this.parentApplication as airbs;
+				albumphoto=app.sqlscore.resault();
+				array2.removeAll();
+				array.removeAll();
+				for(var i:int = 0;i<albumphoto.length;i++)
+				{	
+					var photoItem:Object = albumphoto[i];					
+					var _deername:String= photoItem.deername as String;
+					var _albumname:String= photoItem.albumname as String;
+					var _images:String=photoItem.image as String;
+					var byteArray:ByteArray;
+					if(_images!=""){
+						var encodedBytes:String = _images;
+						var baseDecoder:Base64Decoder = new Base64Decoder();
+						baseDecoder.decode(encodedBytes);
+						byteArray= baseDecoder.toByteArray();
+						trace("entre jiji");
+					}else{
+						byteArray=null;
+					}
+					var _score:String = photoItem.score as String;
+					array.addItem({name:_deername,type:_albumname});
+					array2.addItem({image:byteArray ,name:_deername,type:_albumname,score:_score});					
+				}
+			}
+			private var firstTime:Boolean = true;
+			private function filter():void {
+				array.filterFunction = filterMyArrayCollection;
+				array.refresh();
+			}
+			private function filterMyArrayCollection(item:Object):Boolean {
+				var searchString:String = txtfilterdatagrid.text.toLowerCase();
+				var itemName:String = (item.name as String).toLowerCase();
+				return itemName.indexOf(searchString) > -1;
+			}
+			
+			private function clearMyTextInput():void {
+				if (firstTime == true )
+				{
+					txtfilterdatagrid.text = "";
+					firstTime = false;
+				}
+			}	
+			protected function button1_canceluploadphot(event:MouseEvent):void
+			{
+				if(banderadeer=="1") fileReference.data.clear();
+				currentState='stateMain';
+				imgupload.visible=false;
+				btnbrowsetoadd.visible=true;
+				combophoto.selectedIndex=0;
+				banderadeer="0";
+				
+			}
+			protected function button3_backeditphoto(event:MouseEvent):void
+			{
+				currentState='scorephoto';		
+			}
+			protected function button3_backscorephoto(event:MouseEvent):void
+			{
+				currentState='stateMain';	
+			}
+			protected function button3_referenceFeature(event:MouseEvent):void
+			{
+				currentState='positionphoto';
+			}
+			protected function editAlbum_clickHandler(event:MouseEvent):void
+			{	
+				if(txtalbumname.text!=""){
+					var banderaalbum:String="1";
+					var itemalbum:albumitembuck = new albumitembuck();
+					itemalbum.namealbum= txtalbumname.text;
+					itemalbum.description=txtdescriptionalbum.text;
+					var app:airbs=this.parentApplication as airbs;
+					var uniquealbum:ArrayCollection=app.sqlscore.resaulta();
+					trace(uniquealbum);
+					for(var i:int=0;i<uniquealbum.length;i++){
+						var albumItem:Object = uniquealbum[i];
+						if(albumItem.albumname as String==txtalbumname.text){
+							
+							banderaalbum="0";
+						}
+					}
+					if( banderaalbum=="1"){
+						var typeerror:String=app.sqlscore.addItemalbum(itemalbum.namealbum,itemalbum.description);	
+						if(typeerror=="1"){
+							combo.addItem(itemalbum.namealbum);
+							txtalbumname.text='';
+							txtdescriptionalbum.text="";
+							combophoto.selectedIndex=0;
+							currentState='stateMain';
+						}
+					}else Alert.show("Album Name Duplicate","Buckscore");
+				}else Alert.show("Insert value for Album","Buckscore");
+			}
+			
+			protected function DeleteAlbum_clickHandler(event:MouseEvent):void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				createalbum= app.sqlscore.resaulta();
+				var albumdelete:String=combodeletealbum.selectedItem;
+				
+				for(var i:int=0;i<createalbum.length;i++){
+					var albumItem:Object = createalbum[i];
+					var __albumname:String= albumItem.albumname as String;
+					if(albumdelete==__albumname){
+						combo.removeItemAt(i);
+						app.sqlscore.removea(__albumname);
+					}
+				}
+				txtalbumname.text='';
+				txtdescriptionalbum.text="";
+				combophoto.selectedIndex=0;
+				//combophoto.selectedIndex=0;
+				currentState='stateMain';
+			}
+			public var banderadeer:String="0";
+			protected function uploadfile():void{
+				var arr:Array = [];
+				arr.push(new FileFilter("Images Buckscore", ".gif;*.jpeg;*.jpg;*.png"));
+				fileReference.browse(arr);
+			}
+			
+			protected function uploadfile2():void{
+				var arr:Array = [];
+				arr.push(new FileFilter("Images Buckscore", ".gif;*.jpeg;*.jpg;*.png"));
+				fileReferenceupdate.browse(arr);
+				bandera="1";
+			}
+			
+			private function fileReference_select(evt:Event):void {
+				fileReference.load();
+			}
+			
+			private function fileReference_complete(evt:Event):void {
+				banderadeer="1";
+				imgupload.source = fileReference.data;
+				//if(fileReference.data==null) banderadeer="0";
+				imgupload.visible=true;
+				if(bandera=="0")
+					btnbrowsetoadd.visible=false;
+			}
+			
+			private function fileReference_selectupdate(evt:Event):void {
+				fileReferenceupdate.load();
+			}
+			
+			private function fileReference_completeupdate(evt:Event):void {
+				
+				imgupload.source = fileReferenceupdate.data;
+				//if(fileReference.data==null) banderadeer="0";
+				imgupload.visible=true;
+				if(bandera=="0")
+					btnbrowsetoadd.visible=false;
+				//Alert.show(ObjectUtil.toString(fileReference));
+			}
+			private  function savephotoedition():void
+			{
+				if(txtdeernamesave.text!="" &&	cmbalbumnameselection.selectedItem!=null && banderadeer=="1")
+				{	
+					var itemalbumphoto:albumbuckscore = new albumbuckscore();
+					var banderaphoto:String="1";
+					itemalbumphoto.deername=txtdeernamesave.text;
+					itemalbumphoto.albumname=cmbalbumnameselection.selectedItem;
+					itemalbumphoto.tagnumber=txttagnumbersave.text;
+					itemalbumphoto.ranchname=txtranchnamesave.text;
+					itemalbumphoto.posturename=txtposturenamesave.text;
+					itemalbumphoto.score="0";
+					var encodedBytes:String="";
+					var byaarrayaux:ByteArray=null;
+					if(fileReference.data!=null){
+						var imageByteArray:ByteArray=fileReference.data;
+						byaarrayaux=imageByteArray;
+						var baseEncoder:Base64Encoder = new Base64Encoder();
+						baseEncoder.encodeBytes(imageByteArray);
+						encodedBytes= baseEncoder.toString();
+					}
+					var typeerror:String;
+					var app:airbs=this.parentApplication as airbs;
+					var uniquealbum:ArrayCollection=app.sqlscore.resault();
+					trace(uniquealbum);
+					for(var i:int=0;i<uniquealbum.length;i++){
+						var albumItem:Object = uniquealbum[i];
+						if(albumItem.deername as String==itemalbumphoto.deername){
+							
+							banderaphoto="0";
+						}
+					}
+					if( banderaphoto=="1"){	
+						typeerror=app.sqlscore.addItemphoto(itemalbumphoto.deername,itemalbumphoto.albumname,itemalbumphoto.tagnumber,itemalbumphoto.ranchname,itemalbumphoto.posturename,encodedBytes,itemalbumphoto.score);
+						trace("codigo error:"+typeerror);
+						if(typeerror=="1"){				
+							array2refresh();
+							currentState='stateMain';
+							txtdeernamesave.text="";
+							txttagnumbersave.text="";
+							txtranchnamesave.text="";
+							txtposturenamesave.text="";
+							imgupload.visible=false;
+							btnbrowsetoadd.visible=true;
+							combophoto.selectedIndex=0;
+							banderadeer="0";
+							fileReference.data.clear();
+						}
+					}else{
+						Alert.show("Name Duplicate");
+					}
+				}else{
+					Alert.show("Insert Value for Deer");
+				}				
+			}
+			protected function datagrid1_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				albumphoto=app.sqlscore.resault();
+				trace(datagridalbumname.selectedItem.name);
+				var croper:ManageCropper;
+				var byteArray:ByteArray;
+				var images:String;
+				for(var i:int;i<albumphoto.length;i++){
+					var photoItem:Object = albumphoto[i];
+					var __deername:String= photoItem.deername as String;
+					
+					if(datagridalbumname.selectedItem.name==__deername){						
+						deernamefinishscore=datagridalbumname.selectedItem.name; 
+						images=photoItem.image as String;
+						trace("image code"+images);
+						if(images!=""){
+							var encodedBytes:String = images;
+							var baseDecoder:Base64Decoder = new Base64Decoder();
+							baseDecoder.decode(encodedBytes);
+							byteArray= baseDecoder.toByteArray();
+						}
+						else{
+							byteArray=null;
+						}
+					}
+				}
+				imageforedition.source=byteArray;
+				arraybyte=byteArray;
+				var loader:Loader = new Loader;
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_COMPLETE);
+				loader.loadBytes(byteArray);
+				btndeerscoresheet.enabled=true;
+				btnScoreProccess.enabled=true;
+				btndeerinfo.enabled=true;
+				lbldeernastate.text=datagridalbumname.selectedItem.name;
+				lbldeeralbumstate.text=datagridalbumname.selectedItem.type;
+				txtNamepaneltitle.text=datagridalbumname.selectedItem.name;
+			}
+			public var bitmapstate:Bitmap;
+			private function loader_COMPLETE(event:Event):void
+			{
+				var bitmap:Bitmap = event.target.content;
+				manageCropper.setImage(bitmap.bitmapData);
+				bitmapstate=event.target.content;
+				
+			}
+			/////////////////////////////////////////////update data statemain/////////////////////////////////////////////////
+			private var idupdatedeername:int;
+			protected function btnupdatedeername_clickHandler(event:MouseEvent):void
+			{
+				var namephoto:String=txtNamepaneltitle.text;
+				var app:airbs=this.parentApplication as airbs;
+				albumphoto=app.sqlscore.resault();
+				if(albumphoto.length!=0){
+					currentState="updatephotodata";	
+					imgupload.visible=true;
+					txtdeernamesave.text=namephoto;
+					txtNamepaneltitle.text=namephoto;				
+					for(var i:int =0;i<albumphoto.length;i++){
+						var photoItem:Object = albumphoto[i];					
+						var _deername:String= photoItem.deername as String;					
+						if(_deername==txtdeernamesave.text){
+							idupdatedeername=photoItem.id as int;
+							var _albumname:String= photoItem.albumname as String;
+							var _tagnumber:String= photoItem.tagnumber as String;
+							var _ranchname:String= photoItem.ranchname as String;
+							var _posturename:String= photoItem.posturename as String;
+							var _images:String=photoItem.image as String;
+							var byteArray:ByteArray;
+							if(_images!=""){
+								var encodedBytes:String = _images;							
+								var baseDecoder:Base64Decoder = new Base64Decoder();
+								baseDecoder.decode(encodedBytes);
+								byteArray= baseDecoder.toByteArray();
+							}else{
+								byteArray=null;
+							}
+							imgupload.source=byteArray;
+							cmbalbumnameselection.selectedItem= _albumname;
+							txttagnumbersave.text= _tagnumber;
+							txtranchnamesave.text=_ranchname;
+							txtposturenamesave.text=_posturename;
+						}
+					}				
+				}else Alert.show("No data ","Buckscore");	
+			}
+			private var index:int;
+			protected function updatesavephotoedition():void
+			{
+				var arrayauximage:ByteArray;
+				var imageByteArray:ByteArray;
+				var deernameaux:String;
+				var albumnameaux:String;
+				var banderaphoto:String="1";
+				var app:airbs=this.parentApplication as airbs;
+				var uniquealbum:ArrayCollection=app.sqlscore.resault();
+				
+				if(txtdeernamesave.text!=""){
+					trace(uniquealbum);
+					if(txtNamepaneltitle.text!=txtdeernamesave.text){
+						for(var j:int=0;j<uniquealbum.length;j++){
+							var albumItem:Object = uniquealbum[j];
+							if(albumItem.deername as String==txtdeernamesave.text ){
+								banderaphoto="0";
+							}
+						}
+					}
+					if(banderaphoto=="1"){
+						var albumphotoaux:ArrayCollection=new ArrayCollection();
+						albumphoto=app.sqlscore.resault();
+						for(var i:int=0;i<albumphoto.length;i++){
+							var photoItem:Object = albumphoto[i];
+							var _deername:String= photoItem.deername as String;
+							if(_deername==txtNamepaneltitle.text){
+								var _id:int=photoItem.id as int;
+								var _albumname:String= photoItem.albumname as String;
+								var _images:String=photoItem.image as String;
+								var __score:String = photoItem.score as String;	
+								var __deername:String=txtdeernamesave.text;
+								deernameaux=__deername;
+								var __albumname:String=cmbalbumnameselection.selectedItem;
+								albumnameaux=__albumname;
+								var __tagnumber:String=txttagnumbersave.text;
+								var __ranchname:String=txtranchnamesave.text;
+								var __posturename:String=txtposturenamesave.text;
+								var encodedBytes:String="";
+								if(bandera=="1"){
+									if(fileReferenceupdate.data!=null){
+										imageByteArray=fileReferenceupdate.data;
+										var baseEncoder:Base64Encoder = new Base64Encoder();
+										baseEncoder.encodeBytes(imageByteArray);
+										encodedBytes= baseEncoder.toString();
+									}
+								}
+								if(encodedBytes!="") _images=encodedBytes; 
+								app.sqlscore.updatephoto(idupdatedeername,__deername, __albumname,__tagnumber,__ranchname,__posturename,_images,__score);
+								var uniquefinishscore:ArrayCollection=app.sqlscore.resaultscore(_deername);
+								trace(uniquefinishscore.length);
+								if(uniquefinishscore.length!=0){	
+									var ScoreItem:Object = uniquefinishscore[0];
+									var _idfinishscore:int= ScoreItem.id as int;
+									app.sqlscore.updatebuckscorefinish(_idfinishscore,__deername);
+								}
+								index=i;
+								array2refresh();
+							}
+						}
+						txtdeernamesave.text="";
+						txttagnumbersave.text="";
+						txtranchnamesave.text="";
+						txtposturenamesave.text="";
+						imgupload.visible=false;
+						currentState="stateMain";
+						if(bandera=="1"){
+							for(i=0;i<array2.length;i++){
+								var objectaux:Object=array2[i];
+								if(objectaux.name==deernameaux){
+									imageforedition.source=objectaux.image;
+									var loader:Loader = new Loader;
+									loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loader_COMPLETE);
+									loader.loadBytes(objectaux.image);
+								}
+							}
+						}
+						txtNamepaneltitle.text=deernameaux;
+						lbldeernastate.text=deernameaux;
+						lbldeeralbumstate.text=albumnameaux;
+						bandera="0";
+						combophoto.selectedIndex=0;
+					}else Alert.show("Name Duplicate");
+				}else Alert.show("Insert value for deer","Buckscore");
+			}
+			
+			public var grade:String="";
+			public var cancel:String;
+			public var si:String;
+			protected function deletephoto_clickHandler(event:MouseEvent):void
+			{
+				var deletename:String=txtNamepaneltitle.text;
+				if(deletename.toLowerCase()==""){
+					Alert.show("Selection DeerName","Buckscore");
+					trace("no entro");
+					
+				}else{
+					var app:airbs=this.parentApplication as airbs;
+					app.sqlscore.remove(deletename);
+					app.sqlscore.removescore(deletename);
+					array2refresh();
+					txtNamepaneltitle.text="Name";
+					imageforedition.source="";
+					lbldeernastate.text="";
+					lbldeeralbumstate.text="";
+					btnScoreProccess.enabled=false;
+					manageCropper.clearImage();  
+					btndeerscoresheet.enabled=false;
+					btndeerinfo.enabled=false;
+					trace("entro");
+				}	
+			}
+			////////////////////////////////////////////////////////back SCORE //////////////////////////////			
+			protected function ScoringFinalBuckView_clickHandler(event:MouseEvent):void
+			{
+				currentState='PanelScoreState';	
+			}
+			protected function btnScoreProccess_clickHandler(event:MouseEvent):void
+			{
+				currentState='PanelScoreState';
+				panelscoreproccess.currentState='scorephoto';
+				//panelscoreproccess.currentState='scorephoto';
+				panelscoreproccess.txtNamepaneltitle.text=txtNamepaneltitle.text;
+			}
+			
+			public function closebutton():void
+			{
+				trace("close button");
+				currentState='stateMain';
+			}
+			public var statescoringview:String;
+			protected function btn_scoringreviewPrincipalPanel(event:MouseEvent):void
+			{
+				var app:airbs=this.parentApplication as airbs;
+				
+				var scoresheet:ArrayCollection=new ArrayCollection();
+				scoresheet=app.sqlscore.resaultscore(deernamefinishscore);
+				trace("tamaño:"+scoresheet.length)
+				if(scoresheet.length==1){
+					
+					app.workpanel.currentState='stateScoring';
+					statescoringview="stateMain";
+					app.workpanel.scoringpanel.btn_scoring();
+					
+					
+				}else{
+					//app.workpanel.panelprincipal.currentState='stateMain';
+					Alert.show("No data found deer","Buckscore");
+					
+				}
+				
+			}
+			
+			protected function ExpandPanel_clickHandler(event:MouseEvent):void
+			{
+				var app:airbs=this.parentApplication as airbs;				
+				app.workpanel.currentState='stateExpand';
+				//app.workpanel.expandpanel.array2=array2;
+				app.workpanel.expandpanel.llenarTabla();				
+			}			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="stateMain">
+		</s:State>
+		<s:State name="editphoto"/>
+		<s:State name="editAlbum"/>
+		<s:State name="updatephotodata"/>
+		<s:State name="PanelScoreState"/>
+	</s:states>
+
+	
+	<fx:Declarations>
+		<net:FileReference id="fileReference"
+						   select="fileReference_select(event);"
+						   complete="fileReference_complete(event);" />
+		<net:FileReference id="fileReferenceupdate"
+						   select="fileReference_selectupdate(event);"
+						   complete="fileReference_completeupdate(event);" />		
+	</fx:Declarations>
+	<mx:HDividedBox id="mainPanel" width="100%" height="100%" focusEnabled="true"
+					hasFocusableChildren="true">
+		
+		<s:VGroup minWidth="230" width="100%" height="100%">
+			
+			<panels:ManageCropper id="manageCropper" width="100%" height="100%"/>
+		</s:VGroup>
+		<s:BorderContainer width="320" height="100%" minWidth="320" borderAlpha="1.0"
+						   borderColor="0x000000" borderWeight="1">
+			
+			<panels:PanelScore includeIn="PanelScoreState" id="panelscoreproccess"
+							width="100%" height="100%"/>
+			
+			<s:VGroup includeIn="editAlbum,editphoto,stateMain,updatephotodata" id="holder" width="100%" height="100%" gap="0">								
+				<s:SkinnableContainer width="100%" height="45"
+									  skinClass="com.complexless.skins.spark.ToolbarSkin"
+									  textAlign="left" width.editphoto="318">
+					<s:HGroup width="100%" height="100%" paddingLeft="6"
+							  paddingRight="6" verticalAlign="middle"
+							  width.editphoto="319">
+						<s:Label id="txtNamepaneltitle" width="100%" fontSize="20"
+								 text=" Name"/>
+						<s:Button includeIn="updatephotodata, editphoto" label="Close" click="currentState='stateMain'"/>
+						<s:Button includeIn="stateMain" label="Delete" click="deletephoto_clickHandler(event)"/>
+					</s:HGroup>
+				</s:SkinnableContainer>
+				<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
+					<s:HGroup includeIn="stateMain" width="100%" height="95"
+							  accentColor="#3F8AF0" paddingLeft="6" paddingRight="6"
+							  paddingTop="6">
+						<s:VGroup width="130" height="92">
+							<s:Image id="imageforedition" width="128" height="89"
+									 cacheAsBitmap="true"/>
+						</s:VGroup>
+						<s:VGroup width="168">
+							<s:Label fontStyle="normal" text="Name"/>
+							<s:Label id="lbldeernastate" fontStyle="normal" fontWeight="bold" text=""/>
+							
+							<s:Spacer height="17"/>
+							
+							<s:Label text="Album Name"/>
+							<s:Label id="lbldeeralbumstate" fontStyle="normal" fontWeight="bold" text=""/>
+						</s:VGroup>
+					</s:HGroup>
+					
+					<s:VGroup paddingLeft="6" paddingRight="6" paddingTop="6" includeIn="editAlbum,editphoto,updatephotodata"
+							  width="100%"
+							  height="100%"
+							  horizontalAlign="center">
+						
+						<s:Label includeIn="editphoto,updatephotodata"
+								 text="Add Deer"
+								 height.updatephotodata="12"
+								 text.updatephotodata="Update Deer"/>
+						<s:BorderContainer id="imageuploadfile" includeIn="editphoto,updatephotodata"
+										   width="98" height="62" backgroundColor="#131212"
+										   horizontalCenter="-6" verticalCenter="-150"
+										   width.editphoto="105" height.editphoto="68"
+										   horizontalCenter.editphoto="0"
+										   verticalCenter.editphoto="-152"
+										   cacheAsBitmap.updatephotodata="true">
+							<s:Button id="btnbrowsetoadd" includeIn="editphoto"
+									  width="105" height="68" label="Browse to add "
+									  click="uploadfile()"
+									  cornerRadius="5"
+									  fontSize="10" textAlignLast="center"
+									  textAlpha="2" textDecoration="none"
+									  textJustify="distribute"/>
+							<s:Image id="imgupload" visible="false" x="0" y="0" width="96"
+									 height="60" click="uploadfile2()"
+									 cacheAsBitmap.editphoto="true"/>
+							
+						</s:BorderContainer>
+						<s:Label includeIn="editAlbum" width="100%" text="Add Album"/>
+						<mx:HRule includeIn="editAlbum" width="100%" height="1"/>
+						<s:VGroup height.editAlbum="282"
+								  x.editphoto="8" horizontalAlign.editphoto="center">
+							<mx:HRule includeIn="editphoto,updatephotodata"
+									  width="100%" height="1"/>
+							<s:Label includeIn="editphoto,updatephotodata" text="Deer Name"/>
+							
+							<s:TextInput id="txtdeernamesave"
+										 includeIn="editphoto,updatephotodata"
+										 width="164" name="txtdeernamesave"
+										 editable.updatephotodata="true"/>
+							<s:HGroup includeIn="editAlbum" verticalAlign="middle">
+								<s:Label width="100" text=" Album Name"/>
+								<s:TextInput id="txtalbumname" width="133"
+											 name="txtalbumname"/>
+							</s:HGroup>
+							<s:HGroup includeIn="editAlbum">
+								<s:Label width="100" text="Description"/>
+								<s:TextArea id="txtdescriptionalbum" width="133"
+											height="86"
+											name="txtdescriptionalbum"
+											textAlign="left"
+											verticalAlign="top"/>
+							</s:HGroup>
+							<s:Label includeIn="editphoto,updatephotodata" text="Album Name"/>
+							<s:DropDownList id="cmbalbumnameselection"
+											includeIn="editphoto,updatephotodata"
+											width="164" dataProvider="{combo}"
+											>
+								
+								
+							</s:DropDownList>
+							
+							<s:HGroup includeIn="editAlbum" width="100%"
+									  horizontalAlign="right">
+								<s:Button label="Add"
+										  click="editAlbum_clickHandler(event)"/>
+							</s:HGroup>
+							<s:Label includeIn="editphoto,updatephotodata" text="Tag Number"/>
+							<s:TextInput includeIn="editphoto,updatephotodata"
+										 width="164" name="txttagnumbersave" id="txttagnumbersave"/>
+							<s:Label includeIn="editAlbum" text="Delete Album"/>
+							<s:Label includeIn="editphoto,updatephotodata" text="Ranch Name"/>
+							<s:TextInput includeIn="editphoto,updatephotodata" width="164" name="txtranchnamesave" id="txtranchnamesave"/>
+							<s:Label includeIn="editphoto,updatephotodata" text="Posture Name"/>	
+							<s:TextInput includeIn="editphoto,updatephotodata"
+										 width="164" name="txtposturenamesave" id="txtposturenamesave"/>
+							<mx:HRule includeIn="editphoto,updatephotodata"
+									  width="100%" height="1"/>
+							<s:HGroup includeIn="editphoto,updatephotodata"
+									  width.updatephotodata="100%"
+									  horizontalAlign.updatephotodata="center">
+								<s:Button width="80" label="Add"
+										  click="savephotoedition()"
+										  name="btnadd"
+										  label.updatephotodata="Done"
+										  click.updatephotodata="updatesavephotoedition()" />
+								<s:Button includeIn="editphoto" width="80"
+										  label="Cancel"
+										  click="button1_canceluploadphot(event)"
+										  name="btncancel"/>
+							</s:HGroup>
+							<mx:HRule includeIn="editAlbum" width="100%" height="1"/>
+							<s:HGroup includeIn="editAlbum" verticalAlign="middle">
+								<s:Label width="100" text="Album Name"/>
+								<s:ComboBox id="combodeletealbum" dataProvider="{combo}" width="133"/>
+							</s:HGroup>
+							<s:HGroup includeIn="editAlbum" width="100%"
+									  horizontalAlign="right" gap="15">
+								<s:Button label="Delete"
+										  click="DeleteAlbum_clickHandler(event)"/>
+								<s:Button label="Close"
+										  click="currentState='stateMain'"
+										  />
+							</s:HGroup>
+						</s:VGroup>
+					</s:VGroup>
+					
+					<s:SkinnableContainer includeIn="stateMain" width="307">
+						<s:VGroup horizontalAlign="center" paddingLeft="6">
+							<s:HGroup width="304" height="30"
+									  horizontalAlign="center" verticalAlign="middle">
+								<s:Button id="btndeerinfo" label="Deer Info"
+										  alpha="4"
+										  click="btnupdatedeername_clickHandler(event)"
+										  enabled="false"/>
+								<s:Spacer width="88" height="21"/>
+								<s:Button id="btndeerscoresheet" label="Score Sheet"
+										  alpha="4" click="btn_scoringreviewPrincipalPanel(event)"
+										  enabled="false"/>
+							</s:HGroup>
+							<s:Button id="btnScoreProccess" width="126" height="28"
+									  label="SCORE" alpha="4"
+									  click="btnScoreProccess_clickHandler(event)"
+									  enabled="false"/>
+							<s:Spacer height="10"/>
+							<s:HGroup width="306" height="30" 
+									  verticalAlign="middle">
+								<s:Label text="Create Item"/>
+								<s:Spacer width="18"/>
+								<s:DropDownList id="combophoto" width="126" alpha="4"
+												change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo'){currentState='editphoto';  imgupload.source='';};"
+												doubleClick="currentState='editphoto'; imgupload.source=''; "
+												labelField="Add Photo"
+												selectedIndex="0">
+									<s:dataProvider>
+										<mx:ArrayList>
+											<fx:String>Add new item</fx:String>
+											<fx:String>Album</fx:String>
+											<fx:String>Photo</fx:String>
+											<fx:String>Map</fx:String>
+										</mx:ArrayList>
+									</s:dataProvider>	 
+									
+								</s:DropDownList>
+							</s:HGroup>
+						</s:VGroup>
+					</s:SkinnableContainer>
+					
+					<s:SkinnableContainer includeIn="stateMain"
+										  width="304"
+										  height="100%">
+						
+						<s:VGroup paddingLeft="6">
+							<s:HGroup verticalAlign="middle" height="30">
+								<s:Label text="Choose Deer To Start Scoring"/>
+								<s:Button label="Expand" click="ExpandPanel_clickHandler(event)"/>
+							</s:HGroup>
+							
+							<s:HGroup verticalAlign="middle" height="30">
+								<s:Label text="Filter"/>
+								
+								<s:TextInput id="txtfilterdatagrid"
+											 width="184"
+											 change="filter()" 
+											 focusIn="clearMyTextInput()"/>
+							</s:HGroup>
+							
+							<s:DataGrid id="datagridalbumname"
+										width="290" height="100%"
+										borderVisible="true" dataProvider="{array}"
+										selectionChange="datagrid1_selectionChangeHandler(event)"
+										skinClass="com.complexless.skins.spark.DataGridSkin">
+								
+								<s:columns>
+									<s:ArrayList>
+										<s:GridColumn width="120" dataField="name" headerText="Name"/>
+										<s:GridColumn dataField="type" headerText="Type"/>
+									</s:ArrayList>
+								</s:columns>
+							</s:DataGrid>
+						</s:VGroup>
+					</s:SkinnableContainer>
+				</s:SkinnableContainer>
+			</s:VGroup>
+		</s:BorderContainer>
+	</mx:HDividedBox>
+</s:SkinnableContainer>
+

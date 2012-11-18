@@ -7,7 +7,7 @@ global
 {
 	vertical-align: middle;
 	font-size: 13;
-	font-family: "Calibri";
+	font-family: "Arial, Calibri";
 	
 	chrome-color: #303030;
 	content-background-color: #323232;
@@ -16,6 +16,9 @@ global
 	color: #cecece;
 	text-roll-over-color: #cecece;
 	text-selected-color: #cecece;
+	
+	roll-over-color: #666666;
+	selection-color: #aeaeae;
 }
 
 bs|MenuBar
@@ -33,7 +36,7 @@ bs|MenuBar
 	color: #ffffff;
 	
 	roll-over-color: #666666;
-	selection-color: #000000;
+	selection-color: #aeaeae;
 }
 
 bs|Menu
@@ -87,3 +90,4 @@ mx|Alert{
 	theme-color: #323232;
 	color: red;
 }
+
