@@ -13,15 +13,19 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.complexless.utils.BitmapEncoder;
 			import com.complexless.utils.GraphicsUtils;
 			
 			import flash.utils.setTimeout;
 			
 			import mx.binding.utils.ChangeWatcher;
 			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
 			import mx.graphics.ImageSnapshot;
 			import mx.graphics.Stroke;
+			import mx.graphics.codec.JPEGEncoder;
 			import mx.managers.CursorManager;
+			import mx.utils.Base64Encoder;
 			
 			import spark.components.Image;
 			
@@ -93,6 +97,16 @@
 					newImage = imageCropper.croppedBitmapData;
 					originalImage = newImage;
 					_setImage(newImage, false);
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.imageforedition.source=newImage;
+						
+						
+					//var encode:String = BitmapEncoder.encodeBase64(newImage);
+					
+					//trace(encode.toString());
+					
+					
+					
+					FlexGlobals.topLevelApplication.updatephotocrop(newImage);
 				}
 			}
 			

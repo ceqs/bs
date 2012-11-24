@@ -17,6 +17,8 @@
 			import air.update.events.UpdateEvent;
 			
 			import com.complexless.dialogs.ComponentsSerials;
+			import com.complexless.utils.SQLbuckscore;
+			import com.complexless.utils.ScoreUtils;
 			
 			import flash.filters.DropShadowFilter;
 			import flash.sampler.NewObjectSample;
@@ -28,12 +30,14 @@
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
 			import mx.controls.Image;
+			import mx.core.FlexGlobals;
 			import mx.core.IFlexDisplayObject;
 			import mx.events.CloseEvent;
 			import mx.events.FlexEvent;
 			import mx.events.IndexChangedEvent;
 			import mx.events.ListEvent;
 			import mx.events.MenuEvent;
+			import mx.graphics.codec.JPEGEncoder;
 			import mx.graphics.codec.PNGEncoder;
 			import mx.managers.PopUpManager;
 			import mx.messaging.messages.ErrorMessage;
@@ -48,9 +52,6 @@
 			
 			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
-			
-			import com.complexless.utils.SQLbuckscore;
-			import com.complexless.utils.ScoreUtils;
 			private var gVersion:String;
 			private var shadowFilter:DropShadowFilter;
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
@@ -188,16 +189,17 @@
 					currentState='PanelScoreState';
 				}
 			}
-			public function updatephotocrop(image:String):void
+			public function updatephotocrop(image:BitmapData):void
 			{
 				
 				if(workpanel.panelprincipal.deernamefinishscore!=""){
-					sqlscore.updatephotoscorecrop(workpanel.panelprincipal.deernamefinishscore,image);
-					var baseDecoder:Base64Decoder = new Base64Decoder();
-					var byteArray:ByteArray;
-					baseDecoder.decode(image);
-					byteArray= baseDecoder.toByteArray();
-					workpanel.panelprincipal.imageforedition.source=byteArray;
+					var encoder:JPEGEncoder = new JPEGEncoder(75);  //quality of compression. 75 is a good compromise
+					var baseEncoder:Base64Encoder = new Base64Encoder();
+					var imageByteArray:ByteArray = encoder.encode(image);
+					baseEncoder.encodeBytes(imageByteArray);
+					var encodedBytes:String=baseEncoder.toString();
+					sqlscore.updatephotoscorecrop(workpanel.panelprincipal.deernamefinishscore,encodedBytes);
+					
 				}
 				else Alert.show("Choose Photo Please","BuckScore");
 			}
