@@ -14,6 +14,11 @@
 		
 		<![CDATA[
 			import com.complexless.dialogs.Window;
+			import com.complexless.utils.SQLbuckscore;
+			import com.complexless.utils.ScoreUtils;
+			import com.complexless.utils.albumbuckscore;
+			import com.complexless.utils.albumitembuck;
+			
 			import mx.collections.ArrayCollection;
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
@@ -34,12 +39,9 @@
 			import mx.utils.Base64Encoder;
 			import mx.utils.ObjectUtil;
 			import mx.utils.StringUtil;
+			
 			import spark.events.GridSelectionEvent;
-			import spark.events.IndexChangeEvent;
-			import com.complexless.utils.SQLbuckscore;
-			import com.complexless.utils.ScoreUtils;
-			import com.complexless.utils.albumbuckscore;
-			import com.complexless.utils.albumitembuck;		
+			import spark.events.IndexChangeEvent;		
 			private var albumphoto:ArrayCollection= new ArrayCollection();
 			private var createalbum:ArrayCollection = new ArrayCollection();
 			private var fr:FileReference;
@@ -65,6 +67,7 @@
 			public var referencetype:String;
 			public var inchvalue:Number;
 			public var myangleoptions:XMLList;
+			public var distancerect:Number=0;
 			///////////////////////////////////////////////////////////////////////////////////////////////			
 			protected function init():void
 			{
@@ -551,6 +554,23 @@
 			{
 				currentState='NumberTypicalPoints';
 				lbllasmeasurement.text="Inside Spread: To Be Determined";
+				var options:XMLList;
+				
+				options=prefsXML.child("Equations").child("Equation");
+				
+				var j:int=0;
+				for(var i:int=0;options.length();i++){
+					if(options[i].attribute("ImageOrientation")==grade){
+						myangleoptions=options[i].child("Entity");
+						j=i;
+						trace(j);
+						trace(myangleoptions.toString());
+						break;
+					}
+				}
+				
+				trace(myangleoptions.toString());
+				
 			}
 			
 			protected function RecordLeftMainBeamLine_clickHandler(event:MouseEvent):void
@@ -584,7 +604,7 @@
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
 						
-					}else{
+					}else{	
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
 					}
@@ -635,9 +655,19 @@
 						ISP=Number(myangleoptions[2].attribute("A"))*ldistance+Number(myangleoptions[2].attribute("B"))+
 							Number(myangleoptions[2].attribute("C"))*Number(cmbrigthtypical.selectedItem);
 					}
+					if(grade='90'){
+						if(ISP>=Number(scoreutils.mainbeamleft)) scoreutils.insidespread=(Number(myangleoptions[0].attribute("A"))*ISP+Number(myangleoptions[0].attribute("B"))).toString();
+						else scoreutils.insidespread=(Number(myangleoptions[0].attribute("A"))*(Number(scoreutils.mainbeamleft))+Number(myangleoptions[0].attribute("B"))).toString();
+						scoreutils.insidespread=scoreutils.roundDecimals(Number(scoreutils.insidespread),4).toString();
+							
+					}
+						
+					
 					ISP=scoreutils.roundDecimals(ISP,4);
 					scoreutils.mainbeamrigth=ISP.toString();
-					currentState='MeasureLeftTine';
+					if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)>=1) currentState='MeasureRigthTine'; 
+					else if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)<=1)currentState='MeasureLeftCircunference';
+					else if(parseInt(cmbletftypical.selectedItem)>1) currentState='MeasureLeftTine';
 					lbllasmeasurement.text="Rigth Main Beam="+scoreutils.mainbeamrigth.toString();
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}
@@ -679,7 +709,7 @@
 					//distance=distance/72;
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
-					if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)){
+					if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)-1){
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
@@ -786,7 +816,8 @@
 							scoreutils.Typicalpointleft10=ISP.toString();
 							if(scoreutils.Typicalpointrigth10=="1") scoreutils.Typicalpointrigth10=scoreutils.Typicalpointleft10;
 						}	
-						currentState='MeasureRigthTine';
+						if(parseInt(cmbrigthtypical.selectedItem)>1)currentState='MeasureRigthTine';
+						else currentState='MeasureLeftCircunference';
 						lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"="+ISP.toString();
 						numbertypicalleft=1;
 						cont=0;
@@ -836,7 +867,7 @@
 					//distance=distance/72;
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
-					if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)){
+					if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)-1){
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
@@ -1493,7 +1524,7 @@
 			protected function RecordLeftTineLineMirror_clickHandler(event:MouseEvent):void
 			{
 				
-				if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)){
+				if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)-1){
 					cont++;
 					if(numbertypicalleft==1)
 						scoreutils.Typicalpointleft1="1";
@@ -1558,7 +1589,7 @@
 			protected function RecordRigthTineLineMirror_clickHandler(event:MouseEvent):void
 			{
 				
-				if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)){
+				if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)-1){
 					cont++;
 					if(numbertypicalrigth==1){
 						scoreutils.Typicalpointrigth1="0";
@@ -1907,9 +1938,11 @@
 			protected function MeasureRigthTineBack_clickHandler(event:MouseEvent):void
 			{
 				if(numbertypicalrigth==1){
-					currentState='RecordLeftTineLine';
-					numbertypicalleft=parseInt(cmbletftypical.selectedItem);
-					btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+					if(parseInt(cmbletftypical.selectedItem)<=1)  currentState='RecordRigthMainBeam';
+					else{ currentState='RecordLeftTineLine';
+						numbertypicalleft=parseInt(cmbletftypical.selectedItem)-1;
+						btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+					}
 				}else{
 					numbertypicalrigth--;
 					cont--;
@@ -1966,10 +1999,14 @@
 			
 			protected function MeasureLeftCircunferenceBack_clickHandler(event:MouseEvent):void
 			{
+				
 				if(numbercincumferenceleft==1){
-					currentState='RecordRigthTineLine';
-					numbertypicalrigth=parseInt(cmbrigthtypical.selectedItem);
-					btnRecordLeftTine.label="Recorder Rigth Tine "+numbertypicalrigth;
+					
+					if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)<=1)  currentState='RecordRigthMainBeam';		
+					else if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)>1){ currentState='RecordRigthTineLine'; numbertypicalrigth=parseInt(cmbrigthtypical.selectedItem)-1;  btnRecordLeftTine.label="Recorder Rigth Tine "+numbertypicalrigth;}
+					else if(parseInt(cmbletftypical.selectedItem)>1 && parseInt(cmbrigthtypical.selectedItem)<=1){ currentState='RecordLeftTineLine'; numbertypicalrigth=parseInt(cmbletftypical.selectedItem)-1;  btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;}
+					else {currentState='RecordRigthTineLine'; numbertypicalrigth=parseInt(cmbrigthtypical.selectedItem)-1;  btnRecordLeftTine.label="Recorder Rigth Tine "+numbertypicalrigth;}
+				
 				}else{
 					numbercincumferenceleft--;
 					cont--;

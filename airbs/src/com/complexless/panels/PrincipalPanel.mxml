@@ -124,7 +124,13 @@
 				currentState='stateMain';
 				imgupload.visible=false;
 				btnbrowsetoadd.visible=true;
-				combophoto.selectedIndex=0;
+				combophoto.selectedIndex=-1;
+				txtdeernamesave.text="";
+				txttagnumbersave.text="";
+				txtranchnamesave.text="";
+				txtposturenamesave.text="";
+				imgupload.visible=false;
+				btnbrowsetoadd.visible=true;
 				banderadeer="0";
 				
 			}
@@ -232,12 +238,13 @@
 			}
 			private  function savephotoedition():void
 			{
-				if(txtdeernamesave.text!="" &&	cmbalbumnameselection.selectedItem!=null && banderadeer=="1")
+				if(txtdeernamesave.text!="" && banderadeer=="1")
 				{	
 					var itemalbumphoto:albumbuckscore = new albumbuckscore();
 					var banderaphoto:String="1";
 					itemalbumphoto.deername=txtdeernamesave.text;
 					itemalbumphoto.albumname=cmbalbumnameselection.selectedItem;
+					if(itemalbumphoto.albumname==null) itemalbumphoto.albumname="";
 					itemalbumphoto.tagnumber=txttagnumbersave.text;
 					itemalbumphoto.ranchname=txtranchnamesave.text;
 					itemalbumphoto.posturename=txtposturenamesave.text;
@@ -576,7 +583,13 @@
 							  width.editphoto="319">
 						<s:Label id="txtNamepaneltitle" width="100%" fontSize="20"
 								 text=" Name"/>
-						<s:Button includeIn="updatephotodata, editphoto" label="Close" click="currentState='stateMain'"/>
+						<s:Button includeIn="updatephotodata, editphoto" label="Close" click="currentState='stateMain'; 	txtdeernamesave.text='';
+								  txttagnumbersave.text='';
+								  txtranchnamesave.text='';
+								  txtposturenamesave.text='';
+								  imgupload.visible=false;
+								  btnbrowsetoadd.visible=true;
+								  combophoto.selectedIndex= -1"/>
 						<s:Button includeIn="stateMain" label="Delete" click="deletephoto_clickHandler(event)"/>
 					</s:HGroup>
 				</s:SkinnableContainer>
