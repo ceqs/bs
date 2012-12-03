@@ -116,7 +116,41 @@ package com.complexless.utils
 			suma=roundDecimals(suma,4);
 			return suma;
 		}
-		
+		public function Tdiference():Number
+		{
+			var diference:Number=(Math.abs((Number(mainbeamleft)-Number(mainbeamrigth)))+
+				Math.abs((Number(Typicalpointleft1)	-	Number(Typicalpointrigth1)))+
+				
+				Math.abs((Number(Typicalpointleft2)	-	Number(Typicalpointrigth2)))+
+				
+				Math.abs((Number(Typicalpointleft3)	-	Number(Typicalpointrigth3)))+
+				
+				Math.abs((Number(Typicalpointleft4)	-	Number(Typicalpointrigth4)))+
+				
+				Math.abs((Number(Typicalpointleft5)	-	Number(Typicalpointrigth5)))+
+				
+				Math.abs((Number(Typicalpointleft6)	-	Number(Typicalpointrigth6)))+
+				
+				Math.abs((Number(Typicalpointleft7)	-	Number(Typicalpointrigth7)))+
+				
+				Math.abs((Number(Typicalpointleft8)	-	Number(Typicalpointrigth8)))+
+				
+				Math.abs((Number(Typicalpointleft9)	-	Number(Typicalpointrigth9)))+
+				
+				Math.abs((Number(Typicalpointleft10)	-	Number(Typicalpointrigth10)))+
+				
+				Math.abs((Number(Circumferenceleft1)	-	Number(Circumferencerigth1)))+
+				
+				Math.abs((Number(Circumferenceleft2)	-	Number(Circumferencerigth2)))+
+				
+				Math.abs((Number(Circumferenceleft3)	-	Number(Circumferencerigth3)))+
+				
+				Math.abs((Number(Circumferenceleft4)	-	Number(Circumferencerigth4))));
+			
+			diference=roundDecimals(diference,4);
+			return diference;
+			
+		}
 		public  function calculaterigth():Number
 		{
 			var totalrigth:String="";

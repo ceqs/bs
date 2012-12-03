@@ -15,10 +15,18 @@
 		<![CDATA[
 			import air.update.ApplicationUpdaterUI;
 			import air.update.events.UpdateEvent;
+			
+			import com.complexless.utils.SQLbuckscore;
+			import com.complexless.utils.ScoreUtils;
+			import com.complexless.utils.albumbuckscore;
+			import com.complexless.utils.albumitembuck;
+			
 			import flash.filters.DropShadowFilter;
 			import flash.sampler.NewObjectSample;
+			
 			import flashx.textLayout.formats.Float;
 			import flashx.textLayout.tlf_internal;
+			
 			import mx.collections.ArrayCollection;
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
@@ -39,12 +47,9 @@
 			import mx.utils.Base64Encoder;
 			import mx.utils.ObjectUtil;
 			import mx.utils.StringUtil;
+			
 			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
-			import com.complexless.utils.SQLbuckscore;
-			import com.complexless.utils.ScoreUtils;
-			import com.complexless.utils.albumbuckscore;
-			import com.complexless.utils.albumitembuck;
 			private var gVersion:String;
 			private var shadowFilter:DropShadowFilter;
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
@@ -181,12 +186,17 @@
 					var totalleft:Number=scoreutils.calculateleft();
 					var totalrigth:Number=scoreutils.calculaterigth();
 					var totalabnormal:Number=scoreutils.calculateabnormal();
-					var totaldiference:Number=scoreutils.roundDecimals(Math.abs(totalleft-totalrigth),4);
+					var totaldiference:Number=scoreutils.Tdiference();
 					tleft.text=totalleft.toString();
 					trigth.text=totalrigth.toString();
 					tdiference.text=totaldiference.toString();
-					grossscore.text=(totalleft+ totalrigth+ totalabnormal).toString();
+					
+					grossscore.text=(totalleft+ totalrigth).toString();
+					NTgrossscore.text=(totalleft+ totalrigth+ totalabnormal).toString();
 					totaldiferencefinal.text=totaldiference.toString();
+					netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-totaldiference),4).toString();
+					netnonTypicalscore.text=(Number(NTgrossscore.text)-totaldiference).toString();
+					
 				}
 			}
 			public function ScoringDeer_btn():void
@@ -338,46 +348,88 @@
 					sumrigth=sumrigth+Number(c4r.text);
 					diference=diference+Number(c4d.text);
 					
+					var adnormalpoint:Number=0;
+					
 					a1.text=photoItem.Abnormalpointleft1 as String;
+					adnormalpoint=adnormalpoint+Number(a1.text);
 					ar1.text=photoItem.Abnormalpointrigth1 as String;	
+					adnormalpoint=adnormalpoint+Number(ar1.text);
 					a2.text=photoItem.Abnormalpointleft2 as String;
+					adnormalpoint=adnormalpoint+Number(a2.text);
 					ar2.text=photoItem.Abnormalpointrigth2 as String;
+					adnormalpoint=adnormalpoint+Number(ar2.text);
 					a3.text=photoItem.Abnormalpointleft3 as String;
+					adnormalpoint=adnormalpoint+Number(a3.text);
 					ar3.text=photoItem.Abnormalpointrigth3 as String;
+					adnormalpoint=adnormalpoint+Number(ar3.text);
 					a4.text=photoItem.Abnormalpointleft4 as String;
+					adnormalpoint=adnormalpoint+Number(a4.text);
 					ar4.text=photoItem.Abnormalpointrigth4 as String;
+					adnormalpoint=adnormalpoint+Number(ar4.text);
 					a5.text=photoItem.Abnormalpointleft5 as String;
+					adnormalpoint=adnormalpoint+Number(a5.text);
 					ar5.text=photoItem.Abnormalpointrigth5 as String;
+					adnormalpoint=adnormalpoint+Number(ar5.text);
 					a6.text=photoItem.Abnormalpointleft6 as String;
+					adnormalpoint=adnormalpoint+Number(a6.text);
 					ar6.text=photoItem.Abnormalpointrigth6 as String;
+					adnormalpoint=adnormalpoint+Number(ar6.text);
 					a7.text=photoItem.Abnormalpointleft7 as String;
+					adnormalpoint=adnormalpoint+Number(a7.text);
 					ar7.text=photoItem.Abnormalpointrigth7 as String;
+					adnormalpoint=adnormalpoint+Number(ar7.text);
 					a8.text=photoItem.Abnormalpointleft8 as String;
+					adnormalpoint=adnormalpoint+Number(a8.text);
 					ar8.text=photoItem.Abnormalpointrigth8 as String;
+					adnormalpoint=adnormalpoint+Number(ar8.text);
 					a9.text=photoItem.Abnormalpointleft9 as String;
+					adnormalpoint=adnormalpoint+Number(a9.text);
 					ar9.text=photoItem.Abnormalpointrigth9 as String;
+					adnormalpoint=adnormalpoint+Number(ar9.text);
 					a10.text=photoItem.Abnormalpointleft10 as String;
+					adnormalpoint=adnormalpoint+Number(a10.text);
 					ar10.text=photoItem.Abnormalpointrigth10 as String;
+					adnormalpoint=adnormalpoint+Number(ar10.text);
 					a11.text=photoItem.Abnormalpointleft11 as String;
+					adnormalpoint=adnormalpoint+Number(a11.text);
 					ar11.text=photoItem.Abnormalpointrigth11 as String;
+					adnormalpoint=adnormalpoint+Number(ar11.text);
 					a12.text=photoItem.Abnormalpointleft12 as String;
+					adnormalpoint=adnormalpoint+Number(a12.text);
 					ar12.text=photoItem.Abnormalpointrigth12 as String;
+					adnormalpoint=adnormalpoint+Number(ar12.text);
 					a13.text=photoItem.Abnormalpointleft13 as String;
+					adnormalpoint=adnormalpoint+Number(a13.text);
 					ar13.text=photoItem.Abnormalpointrigth13 as String;
+					adnormalpoint=adnormalpoint+Number(ar13.text);
 					a14.text=photoItem.Abnormalpointleft14 as String;
+					adnormalpoint=adnormalpoint+Number(a14.text);
 					ar14.text=photoItem.Abnormalpointrigth14 as String;
+					adnormalpoint=adnormalpoint+Number(ar14.text);
 					a15.text=photoItem.Abnormalpointleft15 as String;
+					adnormalpoint=adnormalpoint+Number(a15.text);
 					ar15.text=photoItem.Abnormalpointrigth15 as String;
+					adnormalpoint=adnormalpoint+Number(ar15.text);
 					a16.text=photoItem.Abnormalpointleft16 as String;
+					adnormalpoint=adnormalpoint+Number(a16.text);
 					ar16.text=photoItem.Abnormalpointrigth16 as String;
+					adnormalpoint=adnormalpoint+Number(ar16.text);
 					a17.text=photoItem.Abnormalpointleft17 as String;
+					adnormalpoint=adnormalpoint+Number(a17.text);
 					ar17.text=photoItem.Abnormalpointrigth17 as String;
+					adnormalpoint=adnormalpoint+Number(ar17.text);
 					a18.text=photoItem.Abnormalpointleft18 as String;
+					adnormalpoint=adnormalpoint+Number(a18.text);
 					ar18.text=photoItem.Abnormalpointrigth18 as String;
+					adnormalpoint=adnormalpoint+Number(ar18.text);
 					a19.text=photoItem.Abnormalpointleft19 as String;
+					adnormalpoint=adnormalpoint+Number(a19.text);
 					ar19.text=photoItem.Abnormalpointrigth19 as String;
+					adnormalpoint=adnormalpoint+Number(ar19.text);
 					a20.text=photoItem.Abnormalpointleft20 as String;
+					adnormalpoint=adnormalpoint+Number(a20.text);
 					ar20.text=photoItem.Abnormalpointrigth20 as String;
+					adnormalpoint=adnormalpoint+Number(ar20.text);
 					
 					tleft.text=scoreutils.roundDecimals(sumleft,4).toString();
 					trigth.text=scoreutils.roundDecimals(sumrigth,4).toString();
@@ -385,6 +437,10 @@
 					
 					grossscore.text=photoItem.socorefinal as String;
 					totaldiferencefinal.text=tdiference.text;
+					NTgrossscore.text=(Number(grossscore.text)+adnormalpoint).toString();
+					netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-Number(tdiference.text)),4).toString();
+					netnonTypicalscore.text=(Number(NTgrossscore.text)-Number(tdiference.text)).toString();
+					
 				}else{
 					//app.workpanel.panelprincipal.currentState='stateMain';
 					Alert.show("No data found deer","Buckscore");
@@ -505,12 +561,15 @@
 				var totalleft:Number=scoreutils.calculateleft();
 				var totalrigth:Number=scoreutils.calculaterigth();
 				var totalabnormal:Number=scoreutils.calculateabnormal();
-				var totaldiference:Number=scoreutils.roundDecimals(Math.abs(totalleft-totalrigth),4);
+				var totaldiference:Number=scoreutils.Tdiference();
 				tleft.text=totalleft.toString();
 				trigth.text=totalrigth.toString();
 				tdiference.text=totaldiference.toString();
-				grossscore.text=String (totalleft+ totalrigth+ totalabnormal);
+				grossscore.text=(totalleft+ totalrigth).toString();
+				NTgrossscore.text=(totalleft+ totalrigth+ totalabnormal).toString();
 				totaldiferencefinal.text=totaldiference.toString();
+				netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-Number(totaldiference)),4).toString();
+				netnonTypicalscore.text=(Number(NTgrossscore.text)-Number(totaldiference)).toString();
 			}
 			////////////////////////////////////////////////////////back SCORE //////////////////////////////			
 			protected function ScoringFinalBuckView_clickHandler(event:MouseEvent):void
@@ -651,7 +710,8 @@
 		
 			<s:VGroup  width="100%" height="100%" id="printingtotalscore">
 				
-				<s:Scroller y="81" width="100%" height="100%">
+				<s:Scroller width="100%" height="100%"
+							y.ScoringFinalBuck="81">
 					<s:VGroup width="100%">
 						<s:SkinnableContainer id="printingbody" width="100%" backgroundColor="0xFFFFFF">
 							<s:VGroup width="100%" paddingLeft="6" paddingRight="6" paddingTop="6" paddingBottom="6">	
@@ -1610,7 +1670,7 @@
 													 horizontalAlign="left"
 													 verticalAlign="bottom">
 											<s:Label paddingTop="3"
-													 text="GROSS SCORE"
+													 text="Typical Gross Score"
 													 verticalAlign="middle"/>
 										</mx:GridItem>
 										<mx:GridItem width="100%"
@@ -1624,7 +1684,6 @@
 													 verticalAlign="middle"/>
 										</mx:GridItem>
 									</mx:GridRow>
-									
 									<mx:GridRow id="Rrow21" width="100%">
 										<!-- Define an empty first cell of Row 3. -->
 										<mx:GridItem width="100%"
@@ -1634,7 +1693,31 @@
 													 horizontalAlign="left"
 													 verticalAlign="bottom">
 											<s:Label paddingTop="3"
-													 text="TOTAL DIFFERENCES"
+													 text="Non-typical Gross Score"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">	
+											<s:Label id="NTgrossscore" paddingTop="3"
+													 text="156.73"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									
+									<mx:GridRow id="Rrow22" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3"
+													 text="Total Differences"
 													 verticalAlign="middle"/>
 										</mx:GridItem>
 										<mx:GridItem width="100%"
@@ -1649,7 +1732,51 @@
 										</mx:GridItem>
 									</mx:GridRow>
 									
-									<mx:GridRow id="Rrow22" width="100%">
+									<mx:GridRow id="Rrow23" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3" text="Net Typical Score"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">	
+											<s:Label paddingTop="3" text=""
+													 id="netTypicalscore"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow24" width="100%">
+										<!-- Define an empty first cell of Row 3. -->
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="4"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">
+											<s:Label paddingTop="3" text="Net Non-Typical Score"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+										<mx:GridItem width="100%"
+													 borderColor="#0B0A0A"
+													 borderStyle="solid"
+													 colSpan="3"
+													 horizontalAlign="left"
+													 verticalAlign="bottom">	
+											<s:Label paddingTop="3" text=""
+													 id="netnonTypicalscore"
+													 verticalAlign="middle"/>
+										</mx:GridItem>
+									</mx:GridRow>
+									<mx:GridRow id="Rrow25" width="100%">
 										<!-- Define an empty first cell of Row 3. -->
 										<mx:GridItem width="100%"
 													 borderColor="#0B0A0A"

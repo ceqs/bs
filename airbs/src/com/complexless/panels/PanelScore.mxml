@@ -11,7 +11,7 @@
 					  creationComplete="init()" styleName="main">
 	
 	<fx:Script>
-		
+
 		<![CDATA[
 			import com.complexless.dialogs.Window;
 			import com.complexless.utils.SQLbuckscore;
@@ -68,6 +68,8 @@
 			public var inchvalue:Number;
 			public var myangleoptions:XMLList;
 			public var distancerect:Number=0;
+			public var angledescription1:String="Close";
+			public var angledescription2:String="Far";
 			///////////////////////////////////////////////////////////////////////////////////////////////			
 			protected function init():void
 			{
@@ -349,7 +351,12 @@
 						textList[1]=mylistcodeImage[i].attribute("Description");
 					}	
 				}
-				if(grade!="0"){
+				
+				if(grade=="0"){ 
+					angledescription1="Left";
+					angledescription2="Right";
+				}
+				if(grade=="22" || grade=="66"){
 					var app:airbs=this.parentApplication as airbs;
 					Alert.show("The view you have chosen is not an exact match to the Buscksocre requirements. Your result may vary."+"Do yo wish to continue", "Irregular Image Orientation Confirmation",
 						Alert.OK | Alert.CANCEL,app.mainBox,
@@ -416,6 +423,7 @@
 				currentState='MeasureLeftMainBeam';
 				txttypicalleft.text=cmbletftypical.selectedItem;
 				txttypicalrigth.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Measure "+angledescription1+" Main Beam"
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 				
@@ -426,6 +434,7 @@
 				currentState='RecordLeftMainBeamLine';	
 				txtRecordMainLeftPoints.text=cmbletftypical.selectedItem;
 				txtRecordMainRigthPoints.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Record "+angledescription1+" Main Beam"; 
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -434,6 +443,7 @@
 				currentState='RecordRigthMainBeam';
 				txtTypicalLeftRecordRigth.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordRigth.text=cmbrigthtypical.selectedItem;
+				btnRecordLeftTine.label="Record "+angledescription2+" Main Beam"
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -612,9 +622,10 @@
 					scoreutils.mainbeamleft=ISP.toString();
 					
 					currentState='MeasureRigthMainBeam';
+					btnRecordLeftTine.label="Measure "+angledescription2+" Main Beam"
 					txtTypicalLeftPonitsRigthMain.text=cmbletftypical.selectedItem;
 					txtTypicalRigthPonitsRigthMain.text=cmbrigthtypical.selectedItem;
-					lbllasmeasurement.text="LeftMainBeam="+scoreutils.mainbeamleft.toString();
+					lbllasmeasurement.text=angledescription1+"MainBeam="+scoreutils.mainbeamleft.toString();
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}
 			}
@@ -659,16 +670,16 @@
 						if(ISP>=Number(scoreutils.mainbeamleft)) scoreutils.insidespread=(Number(myangleoptions[0].attribute("A"))*ISP+Number(myangleoptions[0].attribute("B"))).toString();
 						else scoreutils.insidespread=(Number(myangleoptions[0].attribute("A"))*(Number(scoreutils.mainbeamleft))+Number(myangleoptions[0].attribute("B"))).toString();
 						scoreutils.insidespread=scoreutils.roundDecimals(Number(scoreutils.insidespread),4).toString();
-							
-					}
 						
+					}
+					
 					
 					ISP=scoreutils.roundDecimals(ISP,4);
 					scoreutils.mainbeamrigth=ISP.toString();
-					if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)>=1) currentState='MeasureRigthTine'; 
-					else if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)<=1)currentState='MeasureLeftCircunference';
-					else if(parseInt(cmbletftypical.selectedItem)>1) currentState='MeasureLeftTine';
-					lbllasmeasurement.text="Rigth Main Beam="+scoreutils.mainbeamrigth.toString();
+					if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)>=1){ currentState='MeasureRigthTine'; btnRecordLeftTine.label="Measure "+angledescription2+" Tine 1"; }
+					else if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)<=1){currentState='MeasureLeftCircunference';  btnRecordLeftTine.label="Measure "+angledescription1+" Circumference 1";}
+					else if(parseInt(cmbletftypical.selectedItem)>1){ currentState='MeasureLeftTine'; btnRecordLeftTine.label="Measure "+angledescription1+" Tine 1";}
+					lbllasmeasurement.text=angledescription2+"Main Beam="+scoreutils.mainbeamrigth.toString();
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}
 			}
@@ -679,7 +690,8 @@
 				currentState='RecordLeftTineLine';
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
-				btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+				//btnRecordLeftTine.label="Record "+angledescription2+" Tine 1";
+				btnRecordLeftTine.label="Recorder "+angledescription1+" Tine "+numbertypicalleft;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -761,9 +773,9 @@
 							if(scoreutils.Typicalpointrigth10=="1") scoreutils.Typicalpointrigth10=scoreutils.Typicalpointleft10;
 						}			
 						currentState='MeasureLeftTine';
-						lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"="+ISP.toString();
+						lbllasmeasurement.text="Typical "+angledescription1+" Line "+numbertypicalleft+"="+ISP.toString();
 						numbertypicalleft++;
-						btnRecordLeftTine.label="Measure Left Tine "+numbertypicalleft;
+						btnRecordLeftTine.label="Measure "+angledescription1+" Tine "+numbertypicalleft;
 					}else{
 						if(grade=='0')
 						{
@@ -816,9 +828,9 @@
 							scoreutils.Typicalpointleft10=ISP.toString();
 							if(scoreutils.Typicalpointrigth10=="1") scoreutils.Typicalpointrigth10=scoreutils.Typicalpointleft10;
 						}	
-						if(parseInt(cmbrigthtypical.selectedItem)>1)currentState='MeasureRigthTine';
-						else currentState='MeasureLeftCircunference';
-						lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"="+ISP.toString();
+						if(parseInt(cmbrigthtypical.selectedItem)>1){ currentState='MeasureRigthTine'; btnRecordLeftTine.label="Measure "+angledescription2+" Tine "+numbertypicalrigth;}
+						else{ currentState='MeasureLeftCircunference'; btnRecordLeftTine.label="Measure "+angledescription1+" Circumference 1"; }
+						lbllasmeasurement.text="Typical "+angledescription1+" Line "+numbertypicalleft+"="+ISP.toString();
 						numbertypicalleft=1;
 						cont=0;
 					}
@@ -834,7 +846,7 @@
 				currentState='RecordRigthTineLine';
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
-				btnRecordLeftTine.label="Record Rigth Tine "+numbertypicalrigth;
+				btnRecordLeftTine.label="Record "+angledescription2+" Tine "+numbertypicalrigth;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 				
@@ -920,9 +932,9 @@
 							if(scoreutils.Typicalpointleft10=="1") scoreutils.Typicalpointleft10=scoreutils.Typicalpointrigth10;
 						}	
 						currentState='MeasureRigthTine';
-						lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"="+ISP.toString();
+						lbllasmeasurement.text="Typical "+angledescription2+" Line "+numbertypicalrigth+"="+ISP.toString();
 						numbertypicalrigth++;
-						btnRecordLeftTine.label="Measure Rigth Tine "+numbertypicalrigth;
+						btnRecordLeftTine.label="Measure "+angledescription2+" Tine "+numbertypicalrigth;
 						
 					}else{
 						if(grade=='0')
@@ -977,7 +989,8 @@
 							if(scoreutils.Typicalpointleft10=="1") scoreutils.Typicalpointleft10=scoreutils.Typicalpointrigth10;
 						}	
 						currentState='MeasureLeftCircunference';
-						lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"="+ISP.toString();
+						lbllasmeasurement.text="Typical "+angledescription2+" Line "+numbertypicalrigth+"="+ISP.toString();
+						btnRecordLeftTine.label="Measure "+angledescription1+" Circumference 1";
 						numbertypicalrigth=1;
 						cont=0;
 					}
@@ -994,7 +1007,7 @@
 				currentState='RecordLeftCircunference';
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
-				btnRecordLeftTine.label="Record Letf Circumference "+numbercincumferenceleft;
+				btnRecordLeftTine.label="Record "+angledescription1+" Circumference "+numbercincumferenceleft;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
 			
@@ -1048,9 +1061,9 @@
 						if(numbercincumferenceleft==4)
 							scoreutils.Circumferenceleft4=ISP.toString();
 						currentState='MeasureLeftCircunference';
-						lbllasmeasurement.text="Letf Circumference "+numbercincumferenceleft+"="+ISP.toString();
+						lbllasmeasurement.text=angledescription1+" Circumference "+numbercincumferenceleft+"="+ISP.toString();
 						numbercincumferenceleft++;
-						btnRecordLeftTine.label="Measure Letf Circumference "+numbercincumferenceleft;
+						btnRecordLeftTine.label="Measure "+angledescription1+" Circumference "+numbercincumferenceleft;
 						
 					}else{
 						if(grade=='0')
@@ -1073,7 +1086,8 @@
 						if(numbercincumferenceleft==4)
 							scoreutils.Circumferenceleft4=ISP.toString();
 						currentState='MeasureRigthCircumference'
-						lbllasmeasurement.text="Letf Circumference "+numbercincumferenceleft+"="+ISP.toString();
+						lbllasmeasurement.text=angledescription1+" Circumference "+numbercincumferenceleft+"="+ISP.toString();
+						btnRecordLeftTine.label="Measure "+angledescription2+" Circumference 1";
 						numbercincumferenceleft=1;
 						cont=0;
 					}
@@ -1089,7 +1103,7 @@
 				currentState='RecordRigthCircumference';
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
-				btnRecordLeftTine.label="Record Rigth Circumference "+numbercincumferencerigth;
+				btnRecordLeftTine.label="Record "+angledescription2+" Circumference "+numbercincumferencerigth;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -1154,9 +1168,9 @@
 						}	
 						
 						currentState='MeasureRigthCircumference';
-						lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"="+ISP.toString();
+						lbllasmeasurement.text=angledescription2+" Circumference "+numbercincumferencerigth+"="+ISP.toString();
 						numbercincumferencerigth++;
-						btnRecordLeftTine.label="Measure Rigth Circumference "+numbercincumferencerigth;
+						btnRecordLeftTine.label="Measure "+angledescription2+" Circumference "+numbercincumferencerigth;
 						
 					}else{
 						if(grade=='0')
@@ -1188,8 +1202,8 @@
 							scoreutils.Circumferencerigth4=ISP.toString();
 							if(scoreutils.Circumferenceleft4=="1") scoreutils.Circumferenceleft4=scoreutils.Circumferencerigth4;
 						}	
-						currentState='MeasureAnormalPoints'
-						lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"="+ISP.toString();
+						currentState='MeasureAnormalPoints';
+						lbllasmeasurement.text=angledescription2+" Circumference "+numbercincumferencerigth+"="+ISP.toString();
 						numbercincumferencerigth=1;
 						cont=0;
 					}
@@ -1201,7 +1215,7 @@
 			protected function MeasureLeftAnormalTine_clickHandler(event:MouseEvent):void
 			{
 				currentState='RecordLefAbnormalTine';				
-				btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
+				btnRecordLeftTine.label="Record "+angledescription1+" Abnormal Tine "+numberabnormalleft;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -1293,7 +1307,7 @@
 						currentState='MeasureLeftAnormalTine';
 						//lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
 						numberabnormalleft++;
-						btnRecordLeftTine.label="Measure Left Anormal Tine "+numberabnormalleft;
+						btnRecordLeftTine.label="Measure "+angledescription1+" Abnormal Tine "+numberabnormalleft;
 						
 					}else{
 						if(grade=='0')
@@ -1349,7 +1363,7 @@
 							scoreutils.Abnormalpointleft20=ISP.toString();
 						
 						if(parseInt(cmbabnormalpointsrigth.selectedItem)==0) currentState='CompleteScoringfinal';
-						else currentState='MeasureRigthAnormalTine'
+						else{ currentState='MeasureRigthAnormalTine'; btnRecordLeftTine.label="Measure "+angledescription2+" Abnormal Tine 1";  }
 						
 						//lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
 						numberabnormalleft=1;
@@ -1364,7 +1378,7 @@
 				var app:airbs=this.parentApplication as airbs;
 				currentState='RecordRigthAbnormalTine';
 				
-				btnRecordLeftTine.label="Record Rigth Abnormal Tine "+numberabnormalright;
+				btnRecordLeftTine.label="Record "+angledescription2+" Abnormal Tine "+numberabnormalright;
 				
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 				
@@ -1456,7 +1470,7 @@
 						currentState='MeasureRigthAnormalTine';
 						//lbllasmeasurement.text="Abnormal Rigth Tine "+numberabnormalright+"="+ISP.toString();
 						numberabnormalright++;
-						btnRecordLeftTine.label="Measure Rigth Anormal Tine "+numberabnormalright;
+						btnRecordLeftTine.label="Measure "+angledescription2+" Abnormal Tine "+numberabnormalright;
 						
 					}else{
 						if(grade=='0')
@@ -1512,7 +1526,7 @@
 						if(numberabnormalright==20)
 							scoreutils.Abnormalpointrigth20=ISP.toString();
 						currentState='CompleteScoringfinal'
-						lbllasmeasurement.text="Abnormal Rigth Line "+numberabnormalright+"="+ISP.toString();	
+						lbllasmeasurement.text="Abnormal "+angledescription2+" Line "+numberabnormalright+"="+ISP.toString();	
 						numberabnormalright=1;
 						cont=0;
 					}
@@ -1548,9 +1562,9 @@
 						scoreutils.Typicalpointleft10="1";
 					
 					currentState='MeasureLeftTine';
-					lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"= To be Determinated";
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+numbertypicalleft+"= To be Determinated";
 					numbertypicalleft++;
-					btnRecordLeftTine.label="Measure Left Tine "+numbertypicalleft;
+					btnRecordLeftTine.label="Measure "+angledescription1+" Tine "+numbertypicalleft;
 					var app:airbs=this.parentApplication as airbs;
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}else{
@@ -1576,7 +1590,7 @@
 						scoreutils.Typicalpointleft10="1";
 					cont++;
 					currentState='MeasureRigthTine';
-					lbllasmeasurement.text="Typical Left Line "+numbertypicalleft+"= To be Determinated";
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+numbertypicalleft+"= To be Determinated";
 					numbertypicalleft=1;
 					cont=0;
 					var app:airbs=this.parentApplication as airbs;
@@ -1682,9 +1696,9 @@
 						
 					}	
 					currentState='MeasureRigthTine';
-					lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"=To be Determinated";
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+numbertypicalrigth+"=To be Determinated";
 					numbertypicalrigth++;
-					btnRecordLeftTine.label="Measure Rigth Tine "+numbertypicalrigth;
+					btnRecordLeftTine.label="Measure "+angledescription2+" Tine "+numbertypicalrigth;
 					var app:airbs=this.parentApplication as airbs;
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 					
@@ -1782,7 +1796,7 @@
 						
 					}	
 					currentState='MeasureLeftCircunference';
-					lbllasmeasurement.text="Typical Rigth Line "+numbertypicalrigth+"=To be Determinated";
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+numbertypicalrigth+"=To be Determinated";
 					numbertypicalrigth=1;
 					cont=0;
 					var app:airbs=this.parentApplication as airbs;
@@ -1802,9 +1816,9 @@
 					if(numbercincumferenceleft==4)
 						scoreutils.Circumferenceleft4="1";
 					currentState='MeasureLeftCircunference';
-					lbllasmeasurement.text="Letf Circumference "+numbercincumferenceleft+"=To be Determinated";
+					lbllasmeasurement.text=angledescription1+" Circumference "+numbercincumferenceleft+"=To be Determinated";
 					numbercincumferenceleft++;
-					btnRecordLeftTine.label="Measure Letf Circumference "+numbercincumferenceleft;
+					btnRecordLeftTine.label="Measure "+angledescription1+" Circumference "+numbercincumferenceleft;
 					var app:airbs=this.parentApplication as airbs;
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}else{
@@ -1818,7 +1832,7 @@
 					if(numbercincumferenceleft==4)
 						scoreutils.Circumferenceleft4="1";
 					currentState='MeasureRigthCircumference'
-					lbllasmeasurement.text="Letf Circumference "+numbercincumferenceleft+"=To be Determinated";
+					lbllasmeasurement.text=angledescription1+" Circumference "+numbercincumferenceleft+"=To be Determinated";
 					numbercincumferenceleft=1;
 					cont=0;
 					var app:airbs=this.parentApplication as airbs;
@@ -1853,9 +1867,9 @@
 					}	
 					
 					currentState='MeasureRigthCircumference';
-					lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"=To be Determinated";
+					lbllasmeasurement.text=angledescription2+" Circumference "+numbercincumferencerigth+"=To be Determinated";
 					numbercincumferencerigth++;
-					btnRecordLeftTine.label="Measure Rigth Circumference "+numbercincumferencerigth;
+					btnRecordLeftTine.label="Measure "+angledescription2+" Circumference "+numbercincumferencerigth;
 					var app:airbs=this.parentApplication as airbs;
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 					
@@ -1882,7 +1896,7 @@
 						else scoreutils.Circumferenceleft4="0";
 					}	
 					currentState='MeasureAnormalPoints'
-					lbllasmeasurement.text="Rigth Circumference "+numbercincumferencerigth+"=To be Determinated";
+					lbllasmeasurement.text=angledescription2+" Circumference "+numbercincumferencerigth+"=To be Determinated";
 					numbercincumferencerigth=1;
 					cont=0;
 					var app:airbs=this.parentApplication as airbs;
@@ -1894,12 +1908,12 @@
 			{
 				if(numbertypicalleft==1){
 					currentState='RecordRigthMainBeam';
-					btnRecordLeftTine.label="Record Rigth Main Beam";
+					btnRecordLeftTine.label="Record "+angledescription2+" Main Beam";
 				}else{
 					numbertypicalleft--;
 					cont--;
 					currentState='RecordLeftTineLine';
-					btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+					btnRecordLeftTine.label="Recorder "+angledescription1+" Tine "+numbertypicalleft;
 				}
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
@@ -1910,27 +1924,27 @@
 				
 				currentState='MeasureLeftTine';
 				if((numbertypicalleft-1)==1)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft1;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft1;
 				else if((numbertypicalleft-1)==2)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft2;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft2;
 				else if((numbertypicalleft-1)==3)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft3;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft3;
 				else if((numbertypicalleft-1)==4)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft4;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft4;
 				else if((numbertypicalleft-1)==5)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft5;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft5;
 				else if((numbertypicalleft-1)==6)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft6;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft6;
 				else if((numbertypicalleft-1)==7)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft7;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft7;
 				else if((numbertypicalleft-1)==8)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft8;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft8;
 				else if((numbertypicalleft-1)==9)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft9;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft9;
 				else if((numbertypicalleft-1)==10)
-					lbllasmeasurement.text="Typical Left Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft10;
-				else lbllasmeasurement.text="Rigth Main beam "+scoreutils.mainbeamrigth;
-				btnRecordLeftTine.label="Measure Left Tine "+numbertypicalleft;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(numbertypicalleft-1)+"="+scoreutils.Typicalpointleft10;
+				else lbllasmeasurement.text=angledescription2+" Main beam "+scoreutils.mainbeamrigth;
+				btnRecordLeftTine.label="Measure "+angledescription1+" Tine "+numbertypicalleft;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 			}
@@ -1938,16 +1952,17 @@
 			protected function MeasureRigthTineBack_clickHandler(event:MouseEvent):void
 			{
 				if(numbertypicalrigth==1){
-					if(parseInt(cmbletftypical.selectedItem)<=1)  currentState='RecordRigthMainBeam';
-					else{ currentState='RecordLeftTineLine';
+					if(parseInt(cmbletftypical.selectedItem)<=1){  currentState='RecordRigthMainBeam';  btnRecordLeftTine.label="Record "+angledescription2+" Main Beam ";}
+					else{
 						numbertypicalleft=parseInt(cmbletftypical.selectedItem)-1;
-						btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;
+						currentState='RecordLeftTineLine';
+						btnRecordLeftTine.label="Record "+angledescription1+" Tine "+numbertypicalleft;
 					}
 				}else{
 					numbertypicalrigth--;
 					cont--;
 					currentState='RecordRigthTineLine';
-					btnRecordLeftTine.label="Recorder Rigth Tine "+numbertypicalrigth;
+					btnRecordLeftTine.label="Record "+angledescription2+" Tine "+numbertypicalrigth;
 				}
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
@@ -1957,41 +1972,41 @@
 			{
 				currentState='MeasureRigthTine';
 				if((numbertypicalrigth-1)==1)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth1;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth1;
 				else if((numbertypicalrigth-1)==2)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth2;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth2;
 				else if((numbertypicalrigth-1)==3)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth3;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth3;
 				else if((numbertypicalrigth-1)==4)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth4;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth4;
 				else if((numbertypicalrigth-1)==5)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth5;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth5;
 				else if((numbertypicalrigth-1)==6)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth6;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth6;
 				else if((numbertypicalrigth-1)==7)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth7;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth7;
 				else if((numbertypicalrigth-1)==8)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth8;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth8;
 				else if((numbertypicalrigth-1)==9)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth9;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth9;
 				else if((numbertypicalrigth-1)==10)
-					lbllasmeasurement.text="Typical Rigth Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth10;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+(numbertypicalrigth-1)+"="+scoreutils.Typicalpointrigth10;
 				else {
 					var val:String;
-					if(parseInt(cmbletftypical.selectedItem)==1) val=scoreutils.Typicalpointleft1;
-					else if(parseInt(cmbletftypical.selectedItem)==2) val=scoreutils.Typicalpointleft2;
-					else if(parseInt(cmbletftypical.selectedItem)==3) val=scoreutils.Typicalpointleft3;
-					else if(parseInt(cmbletftypical.selectedItem)==4) val=scoreutils.Typicalpointleft4;
-					else if(parseInt(cmbletftypical.selectedItem)==5) val=scoreutils.Typicalpointleft5;
-					else if(parseInt(cmbletftypical.selectedItem)==6) val=scoreutils.Typicalpointleft6;
-					else if(parseInt(cmbletftypical.selectedItem)==7) val=scoreutils.Typicalpointleft7;
-					else if(parseInt(cmbletftypical.selectedItem)==8) val=scoreutils.Typicalpointleft8;
-					else if(parseInt(cmbletftypical.selectedItem)==9) val=scoreutils.Typicalpointleft9;
-					else if(parseInt(cmbletftypical.selectedItem)==10) val=scoreutils.Typicalpointleft10;
+					if(parseInt(cmbletftypical.selectedItem)-1==1) val=scoreutils.Typicalpointleft1;
+					else if(parseInt(cmbletftypical.selectedItem)-1==2) val=scoreutils.Typicalpointleft2;
+					else if(parseInt(cmbletftypical.selectedItem)-1==3) val=scoreutils.Typicalpointleft3;
+					else if(parseInt(cmbletftypical.selectedItem)-1==4) val=scoreutils.Typicalpointleft4;
+					else if(parseInt(cmbletftypical.selectedItem)-1==5) val=scoreutils.Typicalpointleft5;
+					else if(parseInt(cmbletftypical.selectedItem)-1==6) val=scoreutils.Typicalpointleft6;
+					else if(parseInt(cmbletftypical.selectedItem)-1==7) val=scoreutils.Typicalpointleft7;
+					else if(parseInt(cmbletftypical.selectedItem)-1==8) val=scoreutils.Typicalpointleft8;
+					else if(parseInt(cmbletftypical.selectedItem)-1==9) val=scoreutils.Typicalpointleft9;
+					else if(parseInt(cmbletftypical.selectedItem)-1==10) val=scoreutils.Typicalpointleft10;
 					
-					lbllasmeasurement.text="Typical Left Line "+parseInt(cmbletftypical.selectedItem)+"="+val;
+					lbllasmeasurement.text="Typical "+angledescription1+" Line "+(parseInt(cmbletftypical.selectedItem)-1)+"="+val;
 				}
-				btnRecordLeftTine.label="Measure Rigth Tine "+numbertypicalrigth;
+				btnRecordLeftTine.label="Measure "+angledescription2+" Tine "+numbertypicalrigth;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 				
@@ -2003,15 +2018,15 @@
 				if(numbercincumferenceleft==1){
 					
 					if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)<=1)  currentState='RecordRigthMainBeam';		
-					else if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)>1){ currentState='RecordRigthTineLine'; numbertypicalrigth=parseInt(cmbrigthtypical.selectedItem)-1;  btnRecordLeftTine.label="Recorder Rigth Tine "+numbertypicalrigth;}
-					else if(parseInt(cmbletftypical.selectedItem)>1 && parseInt(cmbrigthtypical.selectedItem)<=1){ currentState='RecordLeftTineLine'; numbertypicalrigth=parseInt(cmbletftypical.selectedItem)-1;  btnRecordLeftTine.label="Recorder Left Tine "+numbertypicalleft;}
-					else {currentState='RecordRigthTineLine'; numbertypicalrigth=parseInt(cmbrigthtypical.selectedItem)-1;  btnRecordLeftTine.label="Recorder Rigth Tine "+numbertypicalrigth;}
-				
+					else if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)>1){ currentState='RecordRigthTineLine'; numbertypicalrigth=parseInt(cmbrigthtypical.selectedItem)-1;  btnRecordLeftTine.label="Record "+angledescription2+" Tine "+numbertypicalrigth;}
+					else if(parseInt(cmbletftypical.selectedItem)>1 && parseInt(cmbrigthtypical.selectedItem)<=1){ currentState='RecordLeftTineLine'; numbertypicalleft=parseInt(cmbletftypical.selectedItem)-1;  btnRecordLeftTine.label="Record "+angledescription1+" Tine "+numbertypicalleft;}
+					else {currentState='RecordRigthTineLine'; numbertypicalrigth=parseInt(cmbrigthtypical.selectedItem)-1;  btnRecordLeftTine.label="Recorder "+angledescription2+" Tine "+numbertypicalrigth;}
+					
 				}else{
 					numbercincumferenceleft--;
 					cont--;
 					currentState='RecordLeftCircunference';
-					btnRecordLeftTine.label="Recorder Left Circumference "+numbercincumferenceleft;
+					btnRecordLeftTine.label="Recorder "+angledescription1+" Circumference "+numbercincumferenceleft;
 				}
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
@@ -2021,13 +2036,13 @@
 			{
 				currentState='MeasureLeftCircunference';
 				if((numbercincumferenceleft-1)==1)
-					lbllasmeasurement.text="Letf Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft1;
+					lbllasmeasurement.text=angledescription1+" Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft1;
 				else if((numbercincumferenceleft-1)==2)
-					lbllasmeasurement.text="Letf Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft2;
+					lbllasmeasurement.text=angledescription1+" Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft2;
 				else if((numbercincumferenceleft-1)==3)
-					lbllasmeasurement.text="Letf Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft3;
+					lbllasmeasurement.text=angledescription1+" Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft3;
 				else if((numbercincumferenceleft-1)==4)
-					lbllasmeasurement.text="Letf Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft4;
+					lbllasmeasurement.text=angledescription1+" Circumference "+(numbercincumferenceleft-1)+"="+scoreutils.Circumferenceleft4;
 				else{
 					var val:String;
 					if(parseInt(cmbrigthtypical.selectedItem)==1) val=scoreutils.Typicalpointrigth1;
@@ -2040,9 +2055,9 @@
 					else if(parseInt(cmbrigthtypical.selectedItem)==8) val=scoreutils.Typicalpointrigth8;
 					else if(parseInt(cmbrigthtypical.selectedItem)==9) val=scoreutils.Typicalpointrigth9;
 					else if(parseInt(cmbrigthtypical.selectedItem)==10) val=scoreutils.Typicalpointrigth10;
-					lbllasmeasurement.text="Typical Rigth Line "+parseInt(cmbrigthtypical.selectedItem)+"="+val;
+					lbllasmeasurement.text="Typical "+angledescription2+" Line "+parseInt(cmbrigthtypical.selectedItem)+"="+val;
 				}
-				btnRecordLeftTine.label="Measure Left Circunference "+numbercincumferenceleft;
+				btnRecordLeftTine.label="Measure "+angledescription1+" Circunference "+numbercincumferenceleft;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 			}
@@ -2052,12 +2067,12 @@
 				if(numbercincumferencerigth==1){
 					currentState='RecordLeftCircunference';
 					numbercincumferenceleft=4;
-					btnRecordLeftTine.label="Recorder Left Circumference "+numbercincumferenceleft;
+					btnRecordLeftTine.label="Recorder "+angledescription1+" Circumference "+numbercincumferenceleft;
 				}else{
 					numbercincumferencerigth--;
 					cont--;
 					currentState='RecordRigthCircumference';
-					btnRecordLeftTine.label="Recorder Rigth Circumference "+numbercincumferencerigth;
+					btnRecordLeftTine.label="Recorder "+angledescription2+" Circumference "+numbercincumferencerigth;
 				}
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
@@ -2067,17 +2082,17 @@
 			{
 				currentState='MeasureRigthCircumference';
 				if((numbercincumferencerigth-1)==1)
-					lbllasmeasurement.text="Rigth Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth1;
+					lbllasmeasurement.text=angledescription2+" Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth1;
 				else if((numbercincumferencerigth-1)==2)
-					lbllasmeasurement.text="Rigth Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth2;
+					lbllasmeasurement.text=angledescription2+" Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth2;
 				else if((numbercincumferencerigth-1)==3)
-					lbllasmeasurement.text="Rigth Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth3;
+					lbllasmeasurement.text=angledescription2+" Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth3;
 				else if((numbercincumferencerigth-1)==4)
-					lbllasmeasurement.text="Rigth Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth4;
+					lbllasmeasurement.text=angledescription2+" Circumference "+(numbercincumferencerigth-1)+"="+scoreutils.Circumferencerigth4;
 				else
-					lbllasmeasurement.text="Left Circumference 4="+scoreutils.Circumferenceleft4;
+					lbllasmeasurement.text=angledescription1+" Circumference 4="+scoreutils.Circumferenceleft4;
 				
-				btnRecordLeftTine.label="Measure Rigth Circunference "+numbercincumferencerigth;
+				btnRecordLeftTine.label="Measure "+angledescription2+" Circunference "+numbercincumferencerigth;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 			}
@@ -2086,8 +2101,8 @@
 			{
 				numbercincumferencerigth=4;
 				currentState='RecordRigthCircumference';
-				lbllasmeasurement.text="Rigth Circumference 4"+"="+scoreutils.Circumferencerigth4;
-				btnRecordLeftTine.label="Measure Rigth Circunference "+numbercincumferencerigth;
+				lbllasmeasurement.text=angledescription2+" Circumference 4"+"="+scoreutils.Circumferencerigth4;
+				btnRecordLeftTine.label="Measure "+angledescription2+" Circunference "+numbercincumferencerigth;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -2098,13 +2113,13 @@
 				if(numberabnormalleft==1){
 					currentState='MeasureAnormalPoints';
 					btnRecordLeftTine.label="Measure Anormal Points";
-					lbllasmeasurement.text="Rigth Circumference 4 :"+scoreutils.Circumferencerigth4;
+					lbllasmeasurement.text=angledescription2+" Circumference 4 :"+scoreutils.Circumferencerigth4;
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}else{
 					numberabnormalleft--;
 					cont--;
 					currentState='RecordLefAbnormalTine';
-					btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
+					btnRecordLeftTine.label="Record "+angledescription1+" Abnormal Tine "+numberabnormalleft;
 					
 					app.workpanel.panelprincipal.manageCropper.beginDraw();
 				}
@@ -2115,7 +2130,7 @@
 			{
 				
 				currentState='MeasureLeftAnormalTine';
-				btnRecordLeftTine.label="Measure Left Anormal Tine "+numberabnormalleft;
+				btnRecordLeftTine.label="Measure "+angledescription1+" Anormal Tine "+numberabnormalleft;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 				
@@ -2126,13 +2141,13 @@
 				if(numberabnormalright==1){
 					currentState='RecordLefAbnormalTine';
 					numberabnormalleft=parseInt(cmbabnormalpointsleft.selectedItem);
-					btnRecordLeftTine.label="Record Left Abnormal Tine "+numberabnormalleft;
+					btnRecordLeftTine.label="Record "+angledescription1+" Abnormal Tine "+numberabnormalleft;
 					
 				}else{
 					numberabnormalright--;
 					cont--;
 					currentState='RecordRigthAbnormalTine';
-					btnRecordLeftTine.label="Record Rigth Abnormal Tine "+numberabnormalright;
+					btnRecordLeftTine.label="Record "+angledescription2+" Abnormal Tine "+numberabnormalright;
 				}
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
@@ -2141,7 +2156,7 @@
 			protected function RecordRigthAbnormalTineBack_clickHandler(event:MouseEvent):void
 			{
 				currentState='MeasureRigthAnormalTine';
-				btnRecordLeftTine.label="Measure Rigth Anormal Tine "+numberabnormalright;
+				btnRecordLeftTine.label="Measure "+angledescription2+" Anormal Tine "+numberabnormalright;
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 				
@@ -2153,20 +2168,20 @@
 				if(parseInt(cmbabnormalpointsrigth.selectedItem)==0){
 					if(parseInt(cmbabnormalpointsleft.selectedItem)==0){
 						currentState='MeasureAnormalPoints';
-						btnRecordLeftTine.label="Measure Left Anormal Tine";
-						lbllasmeasurement.text="Measure Rigth Circunference 4 "+scoreutils.Circumferencerigth4;
+						btnRecordLeftTine.label="Measure "+angledescription1+" Anormal Tine";
+						lbllasmeasurement.text="Measure "+angledescription2+" Circunference 4 "+scoreutils.Circumferencerigth4;
 						app.workpanel.panelprincipal.manageCropper.endDraw();
 					}else{
 						numberabnormalleft=parseInt(cmbabnormalpointsleft.selectedItem);
 						currentState='RecordLefAbnormalTine';
-						btnRecordLeftTine.label="Recorder Left Anormal Tine "+numberabnormalleft;
+						btnRecordLeftTine.label="Record "+angledescription1+" Anormal Tine "+numberabnormalleft;
 						app.workpanel.panelprincipal.manageCropper.beginDraw();
 					}
 					
 				}else{
 					numberabnormalright=parseInt(cmbabnormalpointsrigth.selectedItem);
 					currentState='RecordRigthAbnormalTine';
-					btnRecordLeftTine.label="Recorder Rigth Anormal Tine "+numberabnormalright;
+					btnRecordLeftTine.label="Record "+angledescription2+" Anormal Tine "+numberabnormalright;
 					app.workpanel.panelprincipal.manageCropper.beginDraw();
 				}
 			}
@@ -2242,7 +2257,9 @@
 			protected function MeasureRigthMainBeamBack_clickHandler(event:MouseEvent):void
 			{
 				currentState='RecordLeftMainBeamLine'; 
+				btnRecordLeftTine.label="Record "+angledescription1+" Main Beam ";
 				var app:airbs=this.parentApplication as airbs;
+				
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
 			
@@ -2314,502 +2331,493 @@
 	
 	
 	
-
+	
+	
+	<s:VGroup id="holder" width="100%" height="100%" gap="0">								
+		<s:SkinnableContainer width="100%" height="45" textAlign="left" skinClass="com.complexless.skins.spark.ToolbarSkin">
+			<s:HGroup paddingLeft="6" paddingRight="6" width="100%" height="100%" verticalAlign="middle">
+				<s:Label id="txtNamepaneltitle" width="100%" fontSize="20"
+						 text=" Name"/>
+				<s:Button label="Close" click="closebutton_buckscore()"/>
+				<s:Button label="Back"
+						  click.CompleteScoringfinal="CompleteScoringfinalBack_clickHandler(event)"										 
+						  click.MeasureAnormalPoints="MeasureAnormalPointsBack(event)"										 
+						  click.MeasureInsideSpread="BackMeasureInsideSpread_clickHandler(event)"										 
+						  click.MeasureLeftAnormalTine="MeasureLeftAnormalTineBack_clickHandler(event)"										
+						  click.MeasureLeftCircunference="MeasureLeftCircunferenceBack_clickHandler(event)"										 
+						  click.MeasureLeftMainBeam="currentState='NumberTypicalPoints'; numbertypicalleft=1; lbllasmeasurement.text='Inside Spread: '+ scoreutils.insidespread;"										  
+						  click.MeasureLeftTine="MeasureLeftTineBack_clickHandler(event)"										 
+						  click.MeasureRigthAnormalTine="MeasureRigthAnormalTineBack_clickHandler(event)"									
+						  click.MeasureRigthCircumference="MeasureRigthCircumferenceBack_clickHandler(event)"										
+						  click.MeasureRigthMainBeam="MeasureRigthMainBeamBack_clickHandler(event)"										
+						  click.MeasureRigthTine="MeasureRigthTineBack_clickHandler(event)"										 
+						  click.NumberTypicalPoints="NumberTypicalPointsBack_clickHandler(event)"									
+						  click.positionphoto="button3_backeditphoto(event)"										 
+						  click.RecordEarWidth="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
+						  click.RecorderInsideSpread="currentState='MeasureInsideSpread'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
+						  click.RecorderInsideSpreadEstimate="BackMeasureInsideSpread_clickHandler(event)"									 
+						  click.RecordEyeballWidthFeature="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"									 
+						  click.RecordEyetoEyeWidth="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
+						  click.RecordLefAbnormalTine="RecordLefAbnormalTineBack_clickHandler(event)"									
+						  click.RecordLeftCircunference="RecordLeftCircunferenceBack_clickHandler(event)"										 
+						  click.RecordLeftMainBeamLine="currentState='MeasureLeftMainBeam';  btnRecordLeftTine.label='Measure '+angledescription1+' Main Beam ';  var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw(); "										 
+						  click.RecordLeftTineLine="RecordLeftTineLineBack_clickHandler(event)"									  
+						  click.RecordRigthAbnormalTine="RecordRigthAbnormalTineBack_clickHandler(event)"									 
+						  click.RecordRigthCircumference="RecordRigthCircumferenceBack_clickHandler(event)"							
+						  click.RecordRigthMainBeam="currentState='MeasureRigthMainBeam'; lbllasmeasurement.text='Record '+angledescription2+' Main Beam:'+scoreutils.mainbeamleft;      btnRecordLeftTine.label='Measure '+angledescription2+' Main Beam ';    var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"									  
+						  click.RecordRigthTineLine="RecordRigthTineLineBack_clickHandler(event)"					
+						  click.referenceFeature="button3_referenceFeature(event)"
+						  click.scorephoto="button3_backscorephoto(event)"/>
+			</s:HGroup>
+		</s:SkinnableContainer>
+		<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center"
+					  paddingLeft="6" paddingRight="6"
+					  height.MeasureLeftAnormalTine="668">
 				
-					<s:VGroup id="holder" width="100%" height="100%" gap="0">								
-						<s:SkinnableContainer width="100%" height="45" textAlign="left" skinClass="com.complexless.skins.spark.ToolbarSkin">
-							<s:HGroup paddingLeft="6" paddingRight="6" width="100%" height="100%" verticalAlign="middle">
-								<s:Label id="txtNamepaneltitle" width="100%" fontSize="20"
-										 text=" Name"/>
-								<s:Button label="Close" click="closebutton_buckscore()"/>
-								<s:Button label="Back"
-										  click.CompleteScoringfinal="CompleteScoringfinalBack_clickHandler(event)"										 
-										  click.MeasureAnormalPoints="MeasureAnormalPointsBack(event)"										 
-										  click.MeasureInsideSpread="BackMeasureInsideSpread_clickHandler(event)"										 
-										  click.MeasureLeftAnormalTine="MeasureLeftAnormalTineBack_clickHandler(event)"										
-										  click.MeasureLeftCircunference="MeasureLeftCircunferenceBack_clickHandler(event)"										 
-										  click.MeasureLeftMainBeam="currentState='NumberTypicalPoints'; numbertypicalleft=1; lbllasmeasurement.text='Inside Spread: '+ scoreutils.insidespread;"										  
-										  click.MeasureLeftTine="MeasureLeftTineBack_clickHandler(event)"										 
-										  click.MeasureRigthAnormalTine="MeasureRigthAnormalTineBack_clickHandler(event)"									
-										  click.MeasureRigthCircumference="MeasureRigthCircumferenceBack_clickHandler(event)"										
-										  click.MeasureRigthMainBeam="MeasureRigthMainBeamBack_clickHandler(event)"										
-										  click.MeasureRigthTine="MeasureRigthTineBack_clickHandler(event)"										 
-										  click.NumberTypicalPoints="NumberTypicalPointsBack_clickHandler(event)"									
-										  click.positionphoto="button3_backeditphoto(event)"										 
-										  click.RecordEarWidth="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
-										  click.RecorderInsideSpread="currentState='MeasureInsideSpread'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
-										  click.RecorderInsideSpreadEstimate="BackMeasureInsideSpread_clickHandler(event)"									 
-										  click.RecordEyeballWidthFeature="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"									 
-										  click.RecordEyetoEyeWidth="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
-										  click.RecordLefAbnormalTine="RecordLefAbnormalTineBack_clickHandler(event)"									
-										  click.RecordLeftCircunference="RecordLeftCircunferenceBack_clickHandler(event)"										 
-										  click.RecordLeftMainBeamLine="currentState='MeasureLeftMainBeam'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw(); "										 
-										  click.RecordLeftTineLine="RecordLeftTineLineBack_clickHandler(event)"									  
-										  click.RecordRigthAbnormalTine="RecordRigthAbnormalTineBack_clickHandler(event)"									 
-										  click.RecordRigthCircumference="RecordRigthCircumferenceBack_clickHandler(event)"							
-										  click.RecordRigthMainBeam="currentState='MeasureRigthMainBeam'; lbllasmeasurement.text='Record Rigth Main Beam:'+scoreutils.mainbeamrigth;; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"									  
-										  click.RecordRigthTineLine="RecordRigthTineLineBack_clickHandler(event)"					
-										  click.referenceFeature="button3_referenceFeature(event)"
-										  click.scorephoto="button3_backscorephoto(event)"/>
-							</s:HGroup>
-						</s:SkinnableContainer>
-						<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
-							<s:VGroup width="100%" height="100%" horizontalAlign="center"
-									  paddingLeft="6" paddingRight="6"
-									  height.MeasureLeftAnormalTine="668">
-								
-								<s:Label x="20"  y="20"  text="Score Deer" paddingTop="6"/>
-								<s:VGroup includeIn="scorephoto">
-									<s:Label text="State"/>
-									<s:ComboBox id="cmbstate"/>
-									<s:Label text="Deer Age"/>
-									<s:ComboBox id="cmbage"/>
-									
-									<s:Group width="197" height="26">
-										<s:Button x="97" y="1" label="Next"
-												  click="scorephoto_clickHandler(event)"/>
-									</s:Group>
-									<mx:HRule width="200" height="0"/>
-								</s:VGroup>
-								<s:Label includeIn="positionphoto,referenceFeature" x="108" y="46"
-										 text="Image Orientation"/>
-								<s:Group includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,positionphoto,referenceFeature"
-										 width="100%" height="100%"
-										 height.MeasureInsideSpread="130"
-										 height.MeasureLeftAnormalTine="186"
-										 height.RecordEarWidth="131"
-										 height.RecorderInsideSpread="131"
-										 height.RecordEyeballWidthFeature="131"
-										 height.RecordEyetoEyeWidth="131">
-									
-									
-									
-									
-									<s:VGroup includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,RecorderInsideSpreadEstimate" x="0" y="0" width="100%"
-											  height="130" horizontalAlign="center"
-											  textAlign="center" textAlignLast="center"
-											  verticalAlign="middle">
-										<s:Button id="tglearwidth" 
-												  width="212" height="33"
-												  label="Record Ear Width Feature" cornerRadius="10"
-												  label.MeasureInsideSpread="Measure Inside Spread"
-												  alpha="10"
-												  click.MeasureInsideSpread="click_MeasureInsideSpread(); "
-												  click.RecordEarWidth="toggle_EarWidthHandler(event)"
-												  label.RecorderInsideSpread="Record Inside Spread"												
-												  click.RecorderInsideSpread="toggle_RecorderInsideSpread(event)"
-												  label.RecorderInsideSpreadEstimate="Estimate Inside Spread"												 
-												  click.RecorderInsideSpreadEstimate="RecorderInsideSpreadEstimate_clickHandler(event)"
-												  label.RecordEyeballWidthFeature="Record Eyeball Width Feature"												  
-												  click.RecordEyeballWidthFeature="toggle_EarWidthHandler(event)"
-												  label.RecordEyetoEyeWidth="Record Inside Spread"												 
-												  click.RecordEyetoEyeWidth="toggle_EarWidthHandler(event)"/>
-										<s:Button includeIn="RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
-												  width="208" height="34" label="Erase Lines"
-												  click="eraselines_clickHandler(event)"
-												  cornerRadius="10"
-												  alpha="10"/>
-									</s:VGroup>
-									<s:VGroup includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-											  width="306" height="100%" horizontalAlign="center" >
-										<s:Label text="Number of Left Typical Points"
-												 text.CompleteScoringfinal="Left Abnormal Points"
-												 text.MeasureAnormalPoints="Number of Left Abnormal Points"
-												 text.MeasureLeftAnormalTine="Left Abnormal Points"
-												 text.MeasureLeftCircunference="Left Typical Points"
-												 text.MeasureLeftMainBeam="Left Typical Points"
-												 text.MeasureLeftTine="Left Typical Points"
-												 text.MeasureRigthAnormalTine="Left Abnormal Points"
-												 text.MeasureRigthCircumference="Left Typical Points"
-												 text.MeasureRigthMainBeam="Left Typical Points"
-												 text.MeasureRigthTine="Left Typical Points"
-												 text.RecordLefAbnormalTine="Left Abnormal Points"
-												 text.RecordLeftCircunference="Left Typical Points"
-												 text.RecordLeftMainBeamLine="Left Typical Points"
-												 text.RecordLeftTineLine="Left Typical Points"
-												 text.RecordRigthAbnormalTine="Left Abnormal Points"
-												 text.RecordRigthCircumference="Left Typical Points"
-												 text.RecordRigthMainBeam="Left Typical Points"
-												 text.RecordRigthTineLine="Left Typical Points"/>
-										<s:DropDownList id="cmbletftypical"
-													includeIn="NumberTypicalPoints"
-													selectedIndex="0">
-											<s:dataProvider>
-												<mx:ArrayList>
-													<fx:String>1</fx:String>
-													<fx:String>2</fx:String>
-													<fx:String>3</fx:String>
-													<fx:String>4</fx:String>
-													<fx:String>5</fx:String>
-													<fx:String>6</fx:String>
-													<fx:String>7</fx:String>
-													<fx:String>8</fx:String>
-													<fx:String>9</fx:String>
-													<fx:String>10</fx:String>
-												</mx:ArrayList>
-											</s:dataProvider>	
-										</s:DropDownList>	
-										<s:TextInput id="txtTypicalLeftPonitsRigthMain"
-													 includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"
-													 editable.MeasureRigthMainBeam="false"/>
-										<s:TextInput id="txttypicalleft"
-													 includeIn="MeasureLeftMainBeam"
-													 editable="false"/>
-										<s:TextInput includeIn="RecordLeftMainBeamLine" editable="false" id="txtRecordMainLeftPoints"/>
-										<s:TextInput id="txtTypicalLeftRecordRigth"
-													 includeIn="RecordRigthMainBeam"
-													 editable="false"/>
-										<s:TextInput id="txtTypicalLeftRecordLeftTine"
-													 includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
-													 editable.RecordLeftTineLine="false"/>
-										<s:DropDownList id="cmbabnormalpointsleft"
-													includeIn="MeasureAnormalPoints"
-													selectedIndex="0">
-											<s:dataProvider>
-												<mx:ArrayList>
-													<fx:String>0</fx:String>
-													<fx:String>1</fx:String>
-													<fx:String>2</fx:String>
-													<fx:String>3</fx:String>
-													<fx:String>4</fx:String>
-													<fx:String>5</fx:String>
-													<fx:String>6</fx:String>
-													<fx:String>7</fx:String>
-													<fx:String>8</fx:String>
-													<fx:String>9</fx:String>
-													<fx:String>10</fx:String>
-													<fx:String>11</fx:String>
-													<fx:String>12</fx:String>
-													<fx:String>13</fx:String>
-													<fx:String>14</fx:String>
-													<fx:String>15</fx:String>
-													<fx:String>16</fx:String>
-													<fx:String>17</fx:String>
-													<fx:String>18</fx:String>
-													<fx:String>19</fx:String>
-													<fx:String>20</fx:String>
-												</mx:ArrayList>
-											</s:dataProvider>
-											
-											
-										</s:DropDownList>	
-										<s:TextInput id="txtleftanormalpoints"
-													 includeIn="MeasureLeftAnormalTine,RecordLefAbnormalTine,MeasureRigthAnormalTine,RecordRigthAbnormalTine,CompleteScoringfinal"/>
-										<s:Label text="Number of Rigth Typical Points"
-												 text.CompleteScoringfinal="Rigth Abnormal Points"
-												 text.MeasureAnormalPoints="Number of Rigth Abnormal Points"
-												 text.MeasureLeftAnormalTine="Rigth Abnormal Points"
-												 text.MeasureLeftCircunference="Rigth Typical Points"
-												 text.MeasureLeftMainBeam="Rigth Typical Points"
-												 text.MeasureLeftTine="Rigth Typical Points"
-												 text.MeasureRigthAnormalTine="Rigth Abnormal Points"
-												 text.MeasureRigthCircumference="Rigth Typical Points"
-												 text.MeasureRigthMainBeam="Rigth Typical Points"
-												 text.MeasureRigthTine="Rigth Typical Points"
-												 text.RecordLefAbnormalTine="Rigth Abnormal Points"
-												 text.RecordLeftCircunference="Rigth Typical Points"
-												 text.RecordLeftMainBeamLine="Rigth Typical Points"
-												 text.RecordLeftTineLine="Rigth Typical Points"
-												 text.RecordRigthAbnormalTine="Rigth Abnormal Points"
-												 text.RecordRigthCircumference="Rigth Typical Points"
-												 text.RecordRigthMainBeam="Rigth Typical Points"
-												 text.RecordRigthTineLine="Rigth Typical Points"/>
-										<s:TextInput id="txtrigthanormalpoints"
-													 includeIn="CompleteScoringfinal,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordRigthAbnormalTine,MeasureLeftAnormalTine"/>
-										<s:DropDownList id="cmbabnormalpointsrigth"
-													includeIn="MeasureAnormalPoints"
-													selectedIndex="0"> 
-											<s:dataProvider>
-												<mx:ArrayList>
-													<fx:String>0</fx:String>
-													<fx:String>1</fx:String>
-													<fx:String>2</fx:String>
-													<fx:String>3</fx:String>
-													<fx:String>4</fx:String>
-													<fx:String>5</fx:String>
-													<fx:String>6</fx:String>
-													<fx:String>7</fx:String>
-													<fx:String>8</fx:String>
-													<fx:String>9</fx:String>
-													<fx:String>10</fx:String>
-													<fx:String>11</fx:String>
-													<fx:String>12</fx:String>
-													<fx:String>13</fx:String>
-													<fx:String>14</fx:String>
-													<fx:String>15</fx:String>
-													<fx:String>16</fx:String>
-													<fx:String>17</fx:String>
-													<fx:String>18</fx:String>
-													<fx:String>19</fx:String>
-													<fx:String>20</fx:String>
-												</mx:ArrayList>
-											</s:dataProvider>
-										</s:DropDownList>
-										<s:TextInput id="txtTypicalRigthRecordLeftTine"
-													 includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
-													 editable.RecordLeftTineLine="false"/>
-										<s:TextInput id="txtTypicalRigthRecordRigth"
-													 includeIn="RecordRigthMainBeam"
-													 editable="false"/>
-										<s:TextInput id="txtTypicalRigthPonitsRigthMain"
-													 includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"
-													 editable.MeasureRigthMainBeam="false"/>
-										<s:TextInput id="txtRecordMainRigthPoints"
-													 includeIn="RecordLeftMainBeamLine"
-													 editable="false"/>
-										<mx:HRule includeIn="MeasureLeftAnormalTine,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthTineLine"
-												   width="267"
-												/>
-										<s:TextInput id="txttypicalrigth"
-													 includeIn="MeasureLeftMainBeam"
-													 editable="false"/>
-										<s:DropDownList id="cmbrigthtypical"
-													includeIn="NumberTypicalPoints"
-													chromeColor="#323232"
-													selectedIndex="0">
-											<s:dataProvider>
-												<mx:ArrayList>
-													<fx:String>1</fx:String>
-													<fx:String>2</fx:String>
-													<fx:String>3</fx:String>
-													<fx:String>4</fx:String>
-													<fx:String>5</fx:String>
-													<fx:String>6</fx:String>
-													<fx:String>7</fx:String>
-													<fx:String>8</fx:String>
-													<fx:String>9</fx:String>
-													<fx:String>10</fx:String>
-												</mx:ArrayList>
-											</s:dataProvider>
-										</s:DropDownList>	
-										<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints"
-												  width="268" height="6"
-												 
-												 />
-										<s:Button id="btnRecordLeftTine"
-												  includeIn="MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-												  width="144" label="Measure Main Beams" alpha="8"
-												  width.MeasureAnormalPoints="212"
-												  label.MeasureAnormalPoints="Measure left Abnormal Tine"
-												  click.MeasureAnormalPoints="MeasureAnormalPoints_clickHandler(event)"
-												  x.MeasureLeftAnormalTine="52"
-												  width.MeasureLeftAnormalTine="203"
-												  label.MeasureLeftAnormalTine="Measure left Abnormal Tine 1"
-												  click.MeasureLeftAnormalTine="MeasureLeftAnormalTine_clickHandler(event)"
-												  x.MeasureLeftCircunference="47"
-												  width.MeasureLeftCircunference="213"
-												  label.MeasureLeftCircunference="Measure Letf Circumference 1"
-												  click.MeasureLeftCircunference="MeasureLeftCircunference_clickHandler(event)"
-												  x.MeasureLeftMainBeam="69"
-												  width.MeasureLeftMainBeam="168"
-												  label.MeasureLeftMainBeam="Measure Letf Main Beam"
-												  click.MeasureLeftMainBeam="LeftMainBeam_clickHandler(event)"
-												  width.MeasureLeftTine="162"
-												  label.MeasureLeftTine="Measure Left Tine 1 "
-												  click.MeasureLeftTine="MeasureLeftTine_clickHandler(event)"
-												  x.MeasureRigthAnormalTine="46"
-												  width.MeasureRigthAnormalTine="232"
-												  label.MeasureRigthAnormalTine="Measure Right Abnormal Tine"
-												  click.MeasureRigthAnormalTine="MeasureRigthAnormalTine_clickHandler(event)"
-												  width.MeasureRigthCircumference="207"
-												  label.MeasureRigthCircumference="Measure Rigth Circumference 1"
-												  click.MeasureRigthCircumference="MeasureRigthCircumference_clickHandler(event)"
-												  x.MeasureRigthMainBeam="59"
-												  width.MeasureRigthMainBeam="188"
-												  label.MeasureRigthMainBeam="Measure Rigth Main Beam"
-												  click.MeasureRigthMainBeam="MeasureRigthMainBeam_clickHandler(event)"
-												  width.MeasureRigthTine="162"
-												  label.MeasureRigthTine="Measure Rigth Tine 1 "
-												  click.MeasureRigthTine="MeasureRigthTine_clickHandler(event)"
-												  x.NumberTypicalPoints="65"
-												  width.NumberTypicalPoints="176"
-												  click.NumberTypicalPoints="TypicalPoints_clickHandler(event)"
-												  width.RecordLefAbnormalTine="185"
-												  label.RecordLefAbnormalTine="Record left Abnormal Tine 1"
-												  click.RecordLefAbnormalTine="RecordLefAbnormalTine_clickHandler(event)"
-												  x.RecordLeftCircunference="50"
-												  width.RecordLeftCircunference="207"
-												  label.RecordLeftCircunference="Recorder Letf Circumference 1"
-												  click.RecordLeftCircunference="RecordLeftCircunference_clickHandler(event)"
-												  x.RecordLeftMainBeamLine="66"
-												  width.RecordLeftMainBeamLine="174"
-												  label.RecordLeftMainBeamLine="Record Left Main Beam"
-												  click.RecordLeftMainBeamLine="RecordLeftMainBeamLine_clickHandler(event)"
-												  label.RecordLeftTineLine="Record Left Tine 1"
-												  click.RecordLeftTineLine="RecordLeftTineLine_clickHandler(event)"
-												  x.RecordRigthAbnormalTine="37"
-												  width.RecordRigthAbnormalTine="232"
-												  label.RecordRigthAbnormalTine="Record Rigth Abnormal Tine"
-												  click.RecordRigthAbnormalTine="RecordRigthAbnormalTine_clickHandler(event)"
-												  width.RecordRigthCircumference="207"
-												  label.RecordRigthCircumference="Recorder Rigth Circumference 1 "
-												  click.RecordRigthCircumference="RecordRigthCircumference_clickHandler(event)"
-												  x.RecordRigthMainBeam="61"
-												  width.RecordRigthMainBeam="184"
-												  label.RecordRigthMainBeam="Record Right Main Beam"
-												  click.RecordRigthMainBeam="RecordRigthMainBeam_clickHandler(event)"
-												  label.RecordRigthTineLine="Record Rigth Tine 1"
-												  click.RecordRigthTineLine="RecordRigthTineLine_clickHandler(event)"/>
-										<s:Button includeIn="RecordLeftMainBeamLine" x="68"
-												  width="174" label="Erase Lines" alpha="8"
-												  click="eraselines_clickHandler(event)"/>
-										<s:ToggleButton includeIn="RecordLefAbnormalTine,RecordRigthAbnormalTine"
-														width="180" label="Erase Lines" alpha="8"
-														click="eraselines_clickHandler(event)"
-														width.RecordLefAbnormalTine="187"/>
-										<s:ToggleButton includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
-														width="144" label="Use Mirror Value"
-														alpha="8"
-														width.RecordLeftCircunference="207"
-														click.RecordLeftCircunference="RecordLeftCircunferenceMirror_clickHandler(event)"
-														click.RecordLeftTineLine="RecordLeftTineLineMirror_clickHandler(event)"
-														width.RecordRigthCircumference="207"
-														click.RecordRigthCircumference="RecordRigthCircumferenceMirror_clickHandler(event)"
-														click.RecordRigthTineLine="RecordRigthTineLineMirror_clickHandler(event)"/>
-										<s:ToggleButton includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
-														width="144" label="Erase Lines" alpha="8"
-														click="eraselines_clickHandler(event)"
-														width.RecordLeftCircunference="207"
-														width.RecordRigthCircumference="207"
-														/>
-										<s:ToggleButton includeIn="RecordLeftCircunference,RecordRigthCircumference"
-														width="174" label="Help" alpha="8"
-														click="helpcircumference_clickHandler(event)"
-														width.RecordLeftCircunference="207"
-														width.RecordRigthCircumference="207"/>
-										<mx:HRule includeIn="RecordRigthMainBeam" x="0"
-												  y="96" width="267" height="2"/>
-										<s:Button includeIn="RecordRigthMainBeam" x="74"
-												  y="127" width="158" label="Erase Lines"
-												  alpha="8" 
-												  click="eraselines_clickHandler(event)"/>
-										<mx:HRule includeIn="RecordLeftMainBeamLine" x="0"
-												  y="97" width="268"/>
-										<mx:HRule includeIn="MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-												  width="267" height="5"
-												  />
-										<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-												  width="187" height="30" label="Complete Scoring"
-												  alpha="8"
-												  click="CompleteScoring_clickHandler(event)"
-												  fontSize="18" fontStyle="normal"
-												  fontWeight="normal"/>
-										
-										<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-												  width="267" height="5"
-												  />
-										<s:VGroup includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftCircunference,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,MeasureLeftTine"
-												  width="306"
-												  height="133"
-												  horizontalAlign="center"
-												  verticalAlign.NumberTypicalPoints="top">
-											<s:Label text="Last Measurement&#xd;"/>
-											<s:Label id="lbllasmeasurement"
-													 text.MeasureRigthMainBeam="Rigth Main Beam ="
-													 text.NumberTypicalPoints="Inside Spread="/>
-											<s:Button width="188" height="29" label="View ScoreSheet"
-													  alpha="8"
-													  click="ViewScoreSheet_clickHandler(event)"
-													  fontSize="18"/>
-											<s:Button width="186" height="29" label="View Instructions"
-													  alpha="8"
-													  click="ViewInstructions_clickHandler(event)"
-													  fontSize="18"/>
-										</s:VGroup>
-										
-										
-										<s:Image id="imagezoomscoring"
-												 includeIn="MeasureLeftAnormalTine,MeasureLeftMainBeam,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-												 width="187" height="113" click="launchPopUp(event)"
-												 rollOut="doZoomProduct(event)"
-												 rollOver="doZoomProduct(event)" scaleX="1"
-												 scaleY="1" source="Image/MAINBM_0.jpg"
-												 source.MeasureLeftAnormalTine="Image/ABNTIN_0.jpg"
-												 source.MeasureRigthAnormalTine="Image/ABNTIN_0.jpg"
-												 source.RecordLefAbnormalTine="Image/ABNTIN_0.jpg"
-												 source.RecordLeftCircunference="Image/CRCFRN_0.jpg"
-												 horizontalCenter.RecordLeftMainBeamLine="4"
-												 source.RecordLeftTineLine="Image/TYPTIN_0.jpg"
-												 source.RecordRigthAbnormalTine="Image/ABNTIN_0.jpg"
-												 source.RecordRigthCircumference="Image/CRCFRN_0.jpg"
-												 source.RecordRigthTineLine="Image/TYPTIN_0.jpg"/>
-										
-									</s:VGroup>
-									<s:VGroup includeIn="positionphoto" x="0" y="0" width="306"
-											  height="635" horizontalAlign="center">
-										<s:HGroup width="305" height="149" horizontalAlign="center"
-												  verticalAlign="middle">
-											<s:Group includeIn="positionphoto" x="71" width="144"
-													 height="123">
-												<s:Image id="imageposition" x="10" y="7"
-														 width="133" height="107"
-														 source="Image/0_RL.png"/>
-											</s:Group>
-											<!-- <s:Label id="lblpositionphoto" includeIn="positionphoto"
-													 rotation="90" text="Zero Degrees"/> -->
-										</s:HGroup>
-										<s:HGroup y="141" width="306" height="34"
-												  horizontalAlign="center" horizontalCenter="0">
-											<!--<s:Button width="32" height="28"
-													  click="btnback_backphoto(event)" cornerRadius="30"
-													  icon="Image/back.png"/> -->
-											<s:Button label="Left" click="btnback_backphoto(event)"
-													  name="Left"/>
-											<s:Spacer width="80" height="33"/>
-											<!--<s:Button width="29" height="28" alpha="1" blendMode="layer"
-													  click="btnnext_nextphoto(event)" cornerRadius="30"
-													  icon="Image/next.png" name="btnnext"/> -->
-											<s:Button click="btnnext_nextphoto(event)" label="Right" name="Right" />
-										</s:HGroup>
-										
-										<s:Label id="lblpositionphoto" includeIn="positionphoto"
-												 text="Zero Degrees"/>
-										
-										<s:Button x="63" y="173" width="156" height="33"
-												  label="Lock in View" alpha="4"
-												  click="button4_positionphoto(event)"
-												  horizontalCenter="10" name="btnback"/>
-									</s:VGroup>
-									<s:VGroup includeIn="referenceFeature" x="0" y="10" width="306"
-											  height="274" horizontalAlign="center">
-										
-										<s:HGroup x="69" y="337" width="208" height="210" alpha="10"
-												  verticalAlign="middle">
-											<mx:List id="birdlist" width="158" height="204"
-													 creationComplete="birdlist_complete(event)"
-													 itemRenderer="mx.controls.Image" rowCount="2"
-													 rowHeight="100" selectedIndex="0"
-													 verticalAlign="middle">	
-											</mx:List>
-											<s:VGroup width="37" height="199" horizontalAlign="center"
-													  verticalAlign="middle">
-												<s:Label id="lblEarWidth" rotation="90" text="Ear Width"
-														 verticalAlign="top"/>
-												<s:Spacer width="10" height="26"/>
-												<s:Label id="lblEyetoEyewidth" rotation="90"
-														 text="Eye to Eye width" verticalAlign="bottom"/>
-											</s:VGroup>
-										</s:HGroup>
-										<s:Group x="0" y="304" width="267" height="55">
-											<s:Button width="100" height="31" label="Start"
-													  click="selectiontypefeature_clickHandler(event)"
-													  cornerRadius="5" horizontalCenter="1"/>
-										</s:Group>
-									</s:VGroup>
-									
-								</s:Group>
-								<s:Image id="imagebusckscorezoom"
-										 includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
-										 width="196" height="117" click="launchPopUp2(event)"
-										 rollOut="doZoomProduct(event)"
-										 rollOver="doZoomProduct(event)" scaleX="1" scaleY="1"
-										 source.MeasureInsideSpread="Image/INSSPR_0.jpg"
-										 source.RecordEarWidth="Image/REFFTR_001.png"
-										 source.RecorderInsideSpread="Image/INSSPR_0.jpg"
-										 source.RecordEyeballWidthFeature="Image/REFFTR_005.png"
-										 source.RecordEyetoEyeWidth="Image/REFFTR_002.png"/>
-							</s:VGroup>
-						</s:SkinnableContainer>
+				<s:Label x="20"  y="20"  text="Score Deer" paddingTop="6"/>
+				<s:VGroup includeIn="scorephoto">
+					<s:Label text="State"/>
+					<s:ComboBox id="cmbstate"/>
+					<s:Label text="Deer Age"/>
+					<s:ComboBox id="cmbage"/>
+					
+					<s:Group width="197" height="26">
+						<s:Button x="97" y="1" label="Next"
+								  click="scorephoto_clickHandler(event)"/>
+					</s:Group>
+					<mx:HRule width="200" height="0"/>
+				</s:VGroup>
+				<s:Label includeIn="positionphoto,referenceFeature" x="108" y="46"
+						 text="Image Orientation"/>
+				<s:Group includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureInsideSpread,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine,RecorderInsideSpread,RecorderInsideSpreadEstimate,positionphoto,referenceFeature"
+						 width="100%" height="100%"
+						 height.MeasureInsideSpread="130"
+						 height.MeasureLeftAnormalTine="186"
+						 height.RecordEarWidth="131"
+						 height.RecorderInsideSpread="131"
+						 height.RecordEyeballWidthFeature="131"
+						 height.RecordEyetoEyeWidth="131">
+					
+					
+					
+					
+					<s:VGroup includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread,RecorderInsideSpreadEstimate" x="0" y="0" width="100%"
+							  height="130" horizontalAlign="center"
+							  textAlign="center" textAlignLast="center"
+							  verticalAlign="middle">
+						<s:Button id="tglearwidth" 
+								  width="212" height="33"
+								  label="Record Ear Width Feature" cornerRadius="10"
+								  label.MeasureInsideSpread="Measure Inside Spread"
+								  alpha="10"
+								  click.MeasureInsideSpread="click_MeasureInsideSpread(); "
+								  click.RecordEarWidth="toggle_EarWidthHandler(event)"
+								  label.RecorderInsideSpread="Record Inside Spread"												
+								  click.RecorderInsideSpread="toggle_RecorderInsideSpread(event)"
+								  label.RecorderInsideSpreadEstimate="Estimate Inside Spread"												 
+								  click.RecorderInsideSpreadEstimate="RecorderInsideSpreadEstimate_clickHandler(event)"
+								  label.RecordEyeballWidthFeature="Record Eyeball Width Feature"												  
+								  click.RecordEyeballWidthFeature="toggle_EarWidthHandler(event)"
+								  label.RecordEyetoEyeWidth="Record Inside Spread"												 
+								  click.RecordEyetoEyeWidth="toggle_EarWidthHandler(event)"/>
+						<s:Button includeIn="RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+								  width="208" height="34" label="Erase Lines"
+								  click="eraselines_clickHandler(event)"
+								  cornerRadius="10"
+								  alpha="10"/>
 					</s:VGroup>
-				
+					<s:VGroup includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
+							  width="306" height="100%" horizontalAlign="center" >
+						<s:Label text="Number of Left Typical Points"
+								 text.CompleteScoringfinal=" Abnormal Points"
+								 text.MeasureAnormalPoints="Number of Left Abnormal Points"
+								 text.MeasureLeftAnormalTine="Left Abnormal Points"
+								 text.MeasureLeftCircunference="Left Typical Points"
+								 text.MeasureLeftMainBeam="Left Typical Points"
+								 text.MeasureLeftTine="Left Typical Points"
+								 text.MeasureRigthAnormalTine="Left Abnormal Points"
+								 text.MeasureRigthCircumference="Left Typical Points"
+								 text.MeasureRigthMainBeam="Left Typical Points"
+								 text.MeasureRigthTine="Left Typical Points"
+								 text.RecordLefAbnormalTine="Left Abnormal Points"
+								 text.RecordLeftCircunference="Left Typical Points"
+								 text.RecordLeftMainBeamLine="Left Typical Points"
+								 text.RecordLeftTineLine="Left Typical Points"
+								 text.RecordRigthAbnormalTine="Left Abnormal Points"
+								 text.RecordRigthCircumference="Left Typical Points"
+								 text.RecordRigthMainBeam="Left Typical Points"
+								 text.RecordRigthTineLine="Left Typical Points"/>
+						<s:DropDownList id="cmbletftypical"
+										includeIn="NumberTypicalPoints"
+										selectedIndex="0">
+							<s:dataProvider>
+								<mx:ArrayList>
+									<fx:String>1</fx:String>
+									<fx:String>2</fx:String>
+									<fx:String>3</fx:String>
+									<fx:String>4</fx:String>
+									<fx:String>5</fx:String>
+									<fx:String>6</fx:String>
+									<fx:String>7</fx:String>
+									<fx:String>8</fx:String>
+									<fx:String>9</fx:String>
+									<fx:String>10</fx:String>
+								</mx:ArrayList>
+							</s:dataProvider>	
+						</s:DropDownList>	
+						<s:TextInput id="txtTypicalLeftPonitsRigthMain"
+									 includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"
+									 editable.MeasureRigthMainBeam="false"/>
+						<s:TextInput id="txttypicalleft"
+									 includeIn="MeasureLeftMainBeam"
+									 editable="false"/>
+						<s:TextInput includeIn="RecordLeftMainBeamLine" editable="false" id="txtRecordMainLeftPoints"/>
+						<s:TextInput id="txtTypicalLeftRecordRigth"
+									 includeIn="RecordRigthMainBeam"
+									 editable="false"/>
+						<s:TextInput id="txtTypicalLeftRecordLeftTine"
+									 includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
+									 editable.RecordLeftTineLine="false"/>
+						<s:DropDownList id="cmbabnormalpointsleft"
+										includeIn="MeasureAnormalPoints"
+										selectedIndex="0">
+							<s:dataProvider>
+								<mx:ArrayList>
+									<fx:String>0</fx:String>
+									<fx:String>1</fx:String>
+									<fx:String>2</fx:String>
+									<fx:String>3</fx:String>
+									<fx:String>4</fx:String>
+									<fx:String>5</fx:String>
+									<fx:String>6</fx:String>
+									<fx:String>7</fx:String>
+									<fx:String>8</fx:String>
+									<fx:String>9</fx:String>
+									<fx:String>10</fx:String>
+									<fx:String>11</fx:String>
+									<fx:String>12</fx:String>
+									<fx:String>13</fx:String>
+									<fx:String>14</fx:String>
+									<fx:String>15</fx:String>
+									<fx:String>16</fx:String>
+									<fx:String>17</fx:String>
+									<fx:String>18</fx:String>
+									<fx:String>19</fx:String>
+									<fx:String>20</fx:String>
+								</mx:ArrayList>
+							</s:dataProvider>
+							
+							
+						</s:DropDownList>	
+						<s:TextInput id="txtleftanormalpoints"
+									 includeIn="MeasureLeftAnormalTine,RecordLefAbnormalTine,MeasureRigthAnormalTine,RecordRigthAbnormalTine,CompleteScoringfinal"/>
+						<s:Label text="Number of Rigth Typical Points"
+								 text.CompleteScoringfinal="Rigth Abnormal Points"
+								 text.MeasureAnormalPoints="Number of Rigth Abnormal Points"
+								 text.MeasureLeftAnormalTine="Rigth Abnormal Points"
+								 text.MeasureLeftCircunference="Rigth Typical Points"
+								 text.MeasureLeftMainBeam="Rigth Typical Points"
+								 text.MeasureLeftTine="Rigth Typical Points"
+								 text.MeasureRigthAnormalTine="Rigth Abnormal Points"
+								 text.MeasureRigthCircumference="Rigth Typical Points"
+								 text.MeasureRigthMainBeam="Rigth Typical Points"
+								 text.MeasureRigthTine="Rigth Typical Points"
+								 text.RecordLefAbnormalTine="Rigth Abnormal Points"
+								 text.RecordLeftCircunference="Rigth Typical Points"
+								 text.RecordLeftMainBeamLine="Rigth Typical Points"
+								 text.RecordLeftTineLine="Rigth Typical Points"
+								 text.RecordRigthAbnormalTine="Rigth Abnormal Points"
+								 text.RecordRigthCircumference="Rigth Typical Points"
+								 text.RecordRigthMainBeam="Rigth Typical Points"
+								 text.RecordRigthTineLine="Rigth Typical Points"/>
+						<s:TextInput id="txtrigthanormalpoints"
+									 includeIn="CompleteScoringfinal,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordRigthAbnormalTine,MeasureLeftAnormalTine"/>
+						<s:DropDownList id="cmbabnormalpointsrigth"
+										includeIn="MeasureAnormalPoints"
+										selectedIndex="0"> 
+							<s:dataProvider>
+								<mx:ArrayList>
+									<fx:String>0</fx:String>
+									<fx:String>1</fx:String>
+									<fx:String>2</fx:String>
+									<fx:String>3</fx:String>
+									<fx:String>4</fx:String>
+									<fx:String>5</fx:String>
+									<fx:String>6</fx:String>
+									<fx:String>7</fx:String>
+									<fx:String>8</fx:String>
+									<fx:String>9</fx:String>
+									<fx:String>10</fx:String>
+									<fx:String>11</fx:String>
+									<fx:String>12</fx:String>
+									<fx:String>13</fx:String>
+									<fx:String>14</fx:String>
+									<fx:String>15</fx:String>
+									<fx:String>16</fx:String>
+									<fx:String>17</fx:String>
+									<fx:String>18</fx:String>
+									<fx:String>19</fx:String>
+									<fx:String>20</fx:String>
+								</mx:ArrayList>
+							</s:dataProvider>
+						</s:DropDownList>
+						<s:TextInput id="txtTypicalRigthRecordLeftTine"
+									 includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
+									 editable.RecordLeftTineLine="false"/>
+						<s:TextInput id="txtTypicalRigthRecordRigth"
+									 includeIn="RecordRigthMainBeam"
+									 editable="false"/>
+						<s:TextInput id="txtTypicalRigthPonitsRigthMain"
+									 includeIn="MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine"
+									 editable.MeasureRigthMainBeam="false"/>
+						<s:TextInput id="txtRecordMainRigthPoints"
+									 includeIn="RecordLeftMainBeamLine"
+									 editable="false"/>
+						<mx:HRule includeIn="MeasureLeftAnormalTine,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthTineLine"
+								  width="267"
+								  />
+						<s:TextInput id="txttypicalrigth"
+									 includeIn="MeasureLeftMainBeam"
+									 editable="false"/>
+						<s:DropDownList id="cmbrigthtypical"
+										includeIn="NumberTypicalPoints"
+										chromeColor="#323232"
+										selectedIndex="0">
+							<s:dataProvider>
+								<mx:ArrayList>
+									<fx:String>1</fx:String>
+									<fx:String>2</fx:String>
+									<fx:String>3</fx:String>
+									<fx:String>4</fx:String>
+									<fx:String>5</fx:String>
+									<fx:String>6</fx:String>
+									<fx:String>7</fx:String>
+									<fx:String>8</fx:String>
+									<fx:String>9</fx:String>
+									<fx:String>10</fx:String>
+								</mx:ArrayList>
+							</s:dataProvider>
+						</s:DropDownList>	
+						<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftCircunference,MeasureLeftTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints"
+								  width="268" height="6"
+								  
+								  />
+						<s:Button id="btnRecordLeftTine"
+								  includeIn="MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
+								  width="144" label="Measure Main Beams" alpha="8"
+								  x.MeasureAnormalPoints="30" width.MeasureAnormalPoints="246"
+								  label.MeasureAnormalPoints="Continue Measuring Abnormal Points?"
+								  click.MeasureAnormalPoints="MeasureAnormalPoints_clickHandler(event)"
+								  x.MeasureLeftAnormalTine="52" width.MeasureLeftAnormalTine="203"
+								  label.MeasureLeftAnormalTine="Measure Left Abnormal Tine 1"
+								  click.MeasureLeftAnormalTine="MeasureLeftAnormalTine_clickHandler(event)"
+								  x.MeasureLeftCircunference="47"
+								  width.MeasureLeftCircunference="213"
+								  label.MeasureLeftCircunference="Measure Left Circumference 1"
+								  click.MeasureLeftCircunference="MeasureLeftCircunference_clickHandler(event)"
+								  x.MeasureLeftMainBeam="69" width.MeasureLeftMainBeam="168"
+								  label.MeasureLeftMainBeam="Measure Letf Main Beam"
+								  click.MeasureLeftMainBeam="LeftMainBeam_clickHandler(event)"
+								  width.MeasureLeftTine="162"
+								  label.MeasureLeftTine="Measure Left Tine 1 "
+								  click.MeasureLeftTine="MeasureLeftTine_clickHandler(event)"
+								  x.MeasureRigthAnormalTine="46" width.MeasureRigthAnormalTine="232"
+								  label.MeasureRigthAnormalTine="Measure Right Abnormal Tine"
+								  click.MeasureRigthAnormalTine="MeasureRigthAnormalTine_clickHandler(event)"
+								  width.MeasureRigthCircumference="207"
+								  label.MeasureRigthCircumference="Measure Right Circumference 1"
+								  click.MeasureRigthCircumference="MeasureRigthCircumference_clickHandler(event)"
+								  x.MeasureRigthMainBeam="59" width.MeasureRigthMainBeam="188"
+								  label.MeasureRigthMainBeam="Measure Rigth Main Beam"
+								  click.MeasureRigthMainBeam="MeasureRigthMainBeam_clickHandler(event)"
+								  width.MeasureRigthTine="162"
+								  label.MeasureRigthTine="Measure Rigth Tine 1 "
+								  click.MeasureRigthTine="MeasureRigthTine_clickHandler(event)"
+								  x.NumberTypicalPoints="65" width.NumberTypicalPoints="176"
+								  click.NumberTypicalPoints="TypicalPoints_clickHandler(event)"
+								  width.RecordLefAbnormalTine="185"
+								  label.RecordLefAbnormalTine="Record left Abnormal Tine 1"
+								  click.RecordLefAbnormalTine="RecordLefAbnormalTine_clickHandler(event)"
+								  x.RecordLeftCircunference="50" width.RecordLeftCircunference="207"
+								  label.RecordLeftCircunference="Recorder Left Circumference 1"
+								  click.RecordLeftCircunference="RecordLeftCircunference_clickHandler(event)"
+								  x.RecordLeftMainBeamLine="66" width.RecordLeftMainBeamLine="174"
+								  label.RecordLeftMainBeamLine="Record Left Main Beam"
+								  click.RecordLeftMainBeamLine="RecordLeftMainBeamLine_clickHandler(event)"
+								  label.RecordLeftTineLine="Record Left Tine 1"
+								  click.RecordLeftTineLine="RecordLeftTineLine_clickHandler(event)"
+								  x.RecordRigthAbnormalTine="37" width.RecordRigthAbnormalTine="232"
+								  label.RecordRigthAbnormalTine="Record Right Abnormal Tine"
+								  click.RecordRigthAbnormalTine="RecordRigthAbnormalTine_clickHandler(event)"
+								  width.RecordRigthCircumference="207"
+								  label.RecordRigthCircumference="Recorder Right Circumference 1 "
+								  click.RecordRigthCircumference="RecordRigthCircumference_clickHandler(event)"
+								  x.RecordRigthMainBeam="61" width.RecordRigthMainBeam="184"
+								  label.RecordRigthMainBeam="Record Right Main Beam"
+								  click.RecordRigthMainBeam="RecordRigthMainBeam_clickHandler(event)"
+								  label.RecordRigthTineLine="Record Right Tine 1"
+								  click.RecordRigthTineLine="RecordRigthTineLine_clickHandler(event)"/>
+						<s:Button includeIn="RecordLeftMainBeamLine" x="68"
+								  width="174" label="Erase Lines" alpha="8"
+								  click="eraselines_clickHandler(event)"/>
+						<s:ToggleButton includeIn="RecordLefAbnormalTine,RecordRigthAbnormalTine"
+										width="180" label="Erase Lines" alpha="8"
+										click="eraselines_clickHandler(event)"
+										width.RecordLefAbnormalTine="187"/>
+						<s:ToggleButton includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
+										width="144" label="Use Mirror Value"
+										alpha="8"
+										width.RecordLeftCircunference="207"
+										click.RecordLeftCircunference="RecordLeftCircunferenceMirror_clickHandler(event)"
+										click.RecordLeftTineLine="RecordLeftTineLineMirror_clickHandler(event)"
+										width.RecordRigthCircumference="207"
+										click.RecordRigthCircumference="RecordRigthCircumferenceMirror_clickHandler(event)"
+										click.RecordRigthTineLine="RecordRigthTineLineMirror_clickHandler(event)"/>
+						<s:ToggleButton includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
+										width="144" label="Erase Lines" alpha="8"
+										click="eraselines_clickHandler(event)"
+										width.RecordLeftCircunference="207"
+										width.RecordRigthCircumference="207"
+										/>
+						<s:ToggleButton includeIn="RecordLeftCircunference,RecordRigthCircumference"
+										width="174" label="Help" alpha="8"
+										click="helpcircumference_clickHandler(event)"
+										width.RecordLeftCircunference="207"
+										width.RecordRigthCircumference="207"/>
+						<mx:HRule includeIn="RecordRigthMainBeam" x="0"
+								  y="96" width="267" height="2"/>
+						<s:Button includeIn="RecordRigthMainBeam" x="74"
+								  y="127" width="158" label="Erase Lines"
+								  alpha="8" 
+								  click="eraselines_clickHandler(event)"/>
+						<mx:HRule includeIn="RecordLeftMainBeamLine" x="0"
+								  y="97" width="268"/>
+						<mx:HRule includeIn="MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
+								  width="267" height="5"
+								  />
+						<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
+								  width="187" height="30" label="Complete Scoring"
+								  alpha="8"
+								  click="CompleteScoring_clickHandler(event)"
+								  fontSize="18" fontStyle="normal"
+								  fontWeight="normal"/>
+						
+						<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
+								  width="267" height="5"
+								  />
+						<s:VGroup includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftCircunference,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,MeasureLeftTine"
+								  width="306"
+								  height="133"
+								  horizontalAlign="center"
+								  verticalAlign.NumberTypicalPoints="top">
+							<s:Label text="Last Measurement&#xd;"/>
+							<s:Label id="lbllasmeasurement"
+									 text.MeasureRigthMainBeam="Rigth Main Beam ="
+									 text.NumberTypicalPoints="Inside Spread="/>
+							<s:Button width="188" height="29" label="View ScoreSheet"
+									  alpha="8"
+									  click="ViewScoreSheet_clickHandler(event)"
+									  fontSize="18"/>
+							<s:Button width="186" height="29" label="View Instructions"
+									  alpha="8"
+									  click="ViewInstructions_clickHandler(event)"
+									  fontSize="18"/>
+						</s:VGroup>
+						
+						
+						<s:Image id="imagezoomscoring"
+								 includeIn="MeasureLeftAnormalTine,MeasureLeftMainBeam,MeasureRigthAnormalTine,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
+								 width="187" height="113" click="launchPopUp(event)"
+								 rollOut="doZoomProduct(event)"
+								 rollOver="doZoomProduct(event)" scaleX="1"
+								 scaleY="1" source="Image/MAINBM_0.jpg"
+								 source.MeasureLeftAnormalTine="Image/ABNTIN_0.jpg"
+								 source.MeasureRigthAnormalTine="Image/ABNTIN_0.jpg"
+								 source.RecordLefAbnormalTine="Image/ABNTIN_0.jpg"
+								 source.RecordLeftCircunference="Image/CRCFRN_0.jpg"
+								 horizontalCenter.RecordLeftMainBeamLine="4"
+								 source.RecordLeftTineLine="Image/TYPTIN_0.jpg"
+								 source.RecordRigthAbnormalTine="Image/ABNTIN_0.jpg"
+								 source.RecordRigthCircumference="Image/CRCFRN_0.jpg"
+								 source.RecordRigthTineLine="Image/TYPTIN_0.jpg"/>
+						
+					</s:VGroup>
+					<s:VGroup includeIn="positionphoto" x="0" y="0" width="306"
+							  height="635" horizontalAlign="center">
+						<s:HGroup width="305" height="149" horizontalAlign="center"
+								  verticalAlign="middle">
+							<s:Group includeIn="positionphoto" x="71" width="144"
+									 height="123">
+								<s:Image id="imageposition" x="10" y="7"
+										 width="133" height="107"
+										 source="Image/0_RL.png"/>
+							</s:Group>
+							<!-- <s:Label id="lblpositionphoto" includeIn="positionphoto"
+							rotation="90" text="Zero Degrees"/> -->
+						</s:HGroup>
+						<s:HGroup y="141" width="306" height="34"
+								  horizontalAlign="center" horizontalCenter="0">
+							<!--<s:Button width="32" height="28"
+							click="btnback_backphoto(event)" cornerRadius="30"
+							icon="Image/back.png"/> -->
+							<s:Button label="Left" click="btnback_backphoto(event)"
+									  name="Left"/>
+							<s:Spacer width="80" height="33"/>
+							<!--<s:Button width="29" height="28" alpha="1" blendMode="layer"
+							click="btnnext_nextphoto(event)" cornerRadius="30"
+							icon="Image/next.png" name="btnnext"/> -->
+							<s:Button click="btnnext_nextphoto(event)" label="Right" name="Right" />
+						</s:HGroup>
+						
+						<s:Label id="lblpositionphoto" includeIn="positionphoto"
+								 text="Zero Degrees"/>
+						
+						<s:Button x="63" y="173" width="156" height="33"
+								  label="Lock in View" alpha="4"
+								  click="button4_positionphoto(event)"
+								  horizontalCenter="10" name="btnback"/>
+					</s:VGroup>
+					<s:VGroup includeIn="referenceFeature" x="0" y="10" width="306"
+							  height="274" horizontalAlign="center">
+						
+						<s:HGroup x="69" y="337" width="208" height="210" alpha="10"
+								  verticalAlign="middle">
+							<mx:List id="birdlist" width="158" height="204"
+									 creationComplete="birdlist_complete(event)"
+									 itemRenderer="mx.controls.Image" rowCount="2"
+									 rowHeight="100" selectedIndex="0"
+									 verticalAlign="middle">	
+							</mx:List>
+							<s:VGroup width="37" height="199" horizontalAlign="center"
+									  verticalAlign="middle">
+								<s:Label id="lblEarWidth" rotation="90" text="Ear Width"
+										 verticalAlign="top"/>
+								<s:Spacer width="10" height="26"/>
+								<s:Label id="lblEyetoEyewidth" rotation="90"
+										 text="Eye to Eye width" verticalAlign="bottom"/>
+							</s:VGroup>
+						</s:HGroup>
+						<s:Group x="0" y="304" width="267" height="55">
+							<s:Button width="100" height="31" label="Start"
+									  click="selectiontypefeature_clickHandler(event)"
+									  cornerRadius="5" horizontalCenter="1"/>
+						</s:Group>
+					</s:VGroup>
+					
+				</s:Group>
+				<s:Image id="imagebusckscorezoom"
+						 includeIn="MeasureInsideSpread,RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
+						 width="196" height="117" click="launchPopUp2(event)"
+						 rollOut="doZoomProduct(event)"
+						 rollOver="doZoomProduct(event)" scaleX="1" scaleY="1"
+						 source.MeasureInsideSpread="Image/INSSPR_0.jpg"
+						 source.RecordEarWidth="Image/REFFTR_001.png"
+						 source.RecorderInsideSpread="Image/INSSPR_0.jpg"
+						 source.RecordEyeballWidthFeature="Image/REFFTR_005.png"
+						 source.RecordEyetoEyeWidth="Image/REFFTR_002.png"/>
+			</s:VGroup>
+		</s:SkinnableContainer>
+	</s:VGroup>
+	
 </s:SkinnableContainer>
