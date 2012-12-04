@@ -499,10 +499,14 @@
 			}
 			protected function btnScoreProccess_clickHandler(event:MouseEvent):void
 			{
+				
 				currentState='PanelScoreState';
 				panelscoreproccess.currentState='scorephoto';
 				//panelscoreproccess.currentState='scorephoto';
 				panelscoreproccess.txtNamepaneltitle.text=txtNamepaneltitle.text;
+				
+				//panelscoreproccess.cmbage.selectedIndex=2;	
+				
 			}
 			
 			public function closebutton():void
