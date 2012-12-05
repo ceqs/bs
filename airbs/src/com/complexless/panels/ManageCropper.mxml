@@ -28,7 +28,6 @@
 			import mx.utils.Base64Encoder;
 			
 			import spark.components.Image;
-			
 			private var newImage:BitmapData;
 			private var originalImage:BitmapData;
 			private var points:Array = [];
@@ -64,7 +63,7 @@
 				widthWatch = ChangeWatcher.watch(cropperPanel,'width',onSizeChange);
 				heightWatch = ChangeWatcher.watch(cropperPanel,'height',onSizeChange);
 				
-				canvas.addEventListener(MouseEvent.RIGHT_CLICK, rightClick);
+				//canvas.addEventListener(MouseEvent.RIGHT_CLICK, rightClick);
 				canvas.addEventListener(MouseEvent.MOUSE_DOWN, addPoint);
 			}
 			
@@ -98,14 +97,11 @@
 					originalImage = newImage;
 					_setImage(newImage, false);
 					FlexGlobals.topLevelApplication.workpanel.panelprincipal.imageforedition.source=newImage;
-						
-						
+											
 					//var encode:String = BitmapEncoder.encodeBase64(newImage);
 					
 					//trace(encode.toString());
-					
-					
-					
+
 					FlexGlobals.topLevelApplication.updatephotocrop(newImage);
 				}
 			}
@@ -173,16 +169,21 @@
 				return points;
 			}
 			
+			public var mouseclick:String="false";
 			private function addPoint(event:MouseEvent):void
 			{
 				if(drawing && event.buttonDown) {
 					var imageScaleFactor:Number = zoomArray[zoomIndex];
-					trace("Punto real --> " + canvas.mouseX + ", " + canvas.mouseY);
+					//trace("Punto real --> " + canvas.mouseX + ", " + canvas.mouseY);
 					var x:Number = (canvas.mouseX / imageScaleFactor);
 					var y:Number = (canvas.mouseY / imageScaleFactor);
 					points.push({x: x, y: y});
 					drawLine(points);
+					mouseclick="true";
+					trace("trace de entrada"+mouseclick);
+					//if(points.length!=0)  GraphicsUtils.drawDashedPolyLine(canvas, new Stroke(0xFF0000, 1, 1, false, "normal", CapsStyle.NONE), points);
 				}
+				
 			}
 			
 			private function rubberBand():void
@@ -206,16 +207,16 @@
 				
 				var tmp:Array = [];
 				var imageScaleFactor:Number = zoomArray[zoomIndex];
-				for(var i:int = 0; i < points.length; i++) {
+				for(var i:int = 0; i < points.length-1; i++) {
 					var pos:Object = points[i] ;
-					trace("Punto guardado[" + i + "] --> " + pos.x + ", " + pos.y);
+					//trace("Punto guardado[" + i + "] --> " + pos.x + ", " + pos.y);
 					var x:Number = (pos.x * imageScaleFactor);
 					var y:Number = (pos.y * imageScaleFactor);
-					trace("Punto pintado[" + i + "] --> " + pos.x + ", " + pos.y);
+					//trace("Punto pintado[" + i + "] --> " + pos.x + ", " + pos.y);
 					tmp.push({x:x, y:y});
 				}
-				
-				GraphicsUtils.drawDashedPolyLine(canvas, new Stroke(0xFF0000, 1, 1, false, "normal", CapsStyle.NONE), tmp);
+				 GraphicsUtils.drawDashedPolyLine(canvas, new Stroke(0xFF0000, 1, 1, false, "normal", CapsStyle.NONE), tmp);
+					 
 			}
 			
 			public function zoomIn():void {
@@ -427,7 +428,7 @@
 									cropPositionChanged="trace('Crop position changed');"/>
 					
 					<mx:UIComponent id="canvas" visible="false"
-									mouseMove="rubberBand()" rollOut="drawLine(points);"/>			
+									mouseDown="addPoint(event)" rollOut="drawLine(points);"/>			
 				</mx:Canvas>
 			</s:SkinnableContainer>
 		</s:VGroup>

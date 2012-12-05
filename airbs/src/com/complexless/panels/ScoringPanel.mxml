@@ -37,6 +37,7 @@
 			import mx.events.IndexChangedEvent;
 			import mx.events.ListEvent;
 			import mx.events.MenuEvent;
+			import mx.graphics.ImageSnapshot;
 			import mx.graphics.codec.PNGEncoder;
 			import mx.managers.PopUpManager;
 			import mx.messaging.messages.ErrorMessage;
@@ -47,6 +48,21 @@
 			import mx.utils.Base64Encoder;
 			import mx.utils.ObjectUtil;
 			import mx.utils.StringUtil;
+			
+			import org.alivepdf.colors.RGBColor;
+			import org.alivepdf.data.Grid;
+			import org.alivepdf.data.GridColumn;
+			import org.alivepdf.drawing.Joint;
+			import org.alivepdf.encoding.JPEGEncoder;
+			import org.alivepdf.fonts.FontFamily;
+			import org.alivepdf.images.ResizeMode;
+			import org.alivepdf.layout.Align;
+			import org.alivepdf.layout.Orientation;
+			import org.alivepdf.layout.Size;
+			import org.alivepdf.layout.Unit;
+			import org.alivepdf.pdf.PDF;
+			import org.alivepdf.saving.Download;
+			import org.alivepdf.saving.Method;
 			
 			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
@@ -61,6 +77,7 @@
 			public var scoreutils:ScoreUtils=new ScoreUtils();			
 			public var grade:String="";
 			public var cancel:String;
+			
 			public var si:String;
 			public function alertListenerScoringFinal(eventObj:CloseEvent):void
 			{
@@ -76,14 +93,14 @@
 						
 						//var adjustement:String=panelscoreproccess.adjustement;
 						var adjustement:String=app.workpanel.panelprincipal.panelscoreproccess.adjustement;
-						if(scoreutils.Circumferenceleft1!="0")	scoreutils.Circumferenceleft1=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft1)*Number(adjustement)),4).toString();
-						if(scoreutils.Circumferenceleft2!="0")	scoreutils.Circumferenceleft2=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft2)*Number(adjustement)),4).toString();
-						if(scoreutils.Circumferenceleft3!="0")	scoreutils.Circumferenceleft3=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft3)*Number(adjustement)),4).toString();
-						if(scoreutils.Circumferenceleft4!="0")	scoreutils.Circumferenceleft4=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft4)*Number(adjustement)),4).toString();
-						if(scoreutils.Circumferencerigth1!="0")	scoreutils.Circumferencerigth1=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth1)*Number(adjustement)),4).toString();
-						if(scoreutils.Circumferencerigth2!="0")	scoreutils.Circumferencerigth2=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth2)*Number(adjustement)),4).toString();
-						if(scoreutils.Circumferencerigth3!="0")	scoreutils.Circumferencerigth3=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth3)*Number(adjustement)),4).toString();
-						if(scoreutils.Circumferencerigth4!="0")	scoreutils.Circumferencerigth4=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth4)*Number(adjustement)),4).toString();
+						if(scoreutils.Circumferenceleft1!="0")	scoreutils.Circumferenceleft1=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft1)*Number(adjustement)),2).toString();
+						if(scoreutils.Circumferenceleft2!="0")	scoreutils.Circumferenceleft2=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft2)*Number(adjustement)),2).toString();
+						if(scoreutils.Circumferenceleft3!="0")	scoreutils.Circumferenceleft3=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft3)*Number(adjustement)),2).toString();
+						if(scoreutils.Circumferenceleft4!="0")	scoreutils.Circumferenceleft4=scoreutils.roundDecimals((Number(scoreutils.Circumferenceleft4)*Number(adjustement)),2).toString();
+						if(scoreutils.Circumferencerigth1!="0")	scoreutils.Circumferencerigth1=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth1)*Number(adjustement)),2).toString();
+						if(scoreutils.Circumferencerigth2!="0")	scoreutils.Circumferencerigth2=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth2)*Number(adjustement)),2).toString();
+						if(scoreutils.Circumferencerigth3!="0")	scoreutils.Circumferencerigth3=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth3)*Number(adjustement)),2).toString();
+						if(scoreutils.Circumferencerigth4!="0")	scoreutils.Circumferencerigth4=scoreutils.roundDecimals((Number(scoreutils.Circumferencerigth4)*Number(adjustement)),2).toString();
 						trace("entre si")
 					}
 					else{
@@ -101,49 +118,49 @@
 					insidespread.text=scoreutils.insidespread;
 					mainbeamleftgrid.text=scoreutils.mainbeamleft;
 					mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
-					mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),4).toString();
+					mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),2).toString();
 					t1l.text=scoreutils.Typicalpointleft1;
 					t1r.text=scoreutils.Typicalpointrigth1;
-					t1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))),4).toString();
+					t1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))),2).toString();
 					t2l.text=scoreutils.Typicalpointleft2;
 					t2r.text=scoreutils.Typicalpointrigth2;
-					t2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))),4).toString();
+					t2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))),2).toString();
 					t3l.text=scoreutils.Typicalpointleft3;
 					t3r.text=scoreutils.Typicalpointrigth3;
-					t3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))),4).toString();
+					t3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))),2).toString();
 					t4l.text=scoreutils.Typicalpointleft4;
 					t4r.text=scoreutils.Typicalpointrigth4;
-					t4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))),4).toString();
+					t4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))),2).toString();
 					t5l.text=scoreutils.Typicalpointleft5;
 					t5r.text=scoreutils.Typicalpointrigth5;
-					t5d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))),4).toString();
+					t5d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))),2).toString();
 					t6l.text=scoreutils.Typicalpointleft6;
 					t6r.text=scoreutils.Typicalpointrigth6;
-					t6d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))),4).toString();
+					t6d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))),2).toString();
 					t7l.text=scoreutils.Typicalpointleft7;
 					t7r.text=scoreutils.Typicalpointrigth7;
-					t7d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))),4).toString();
+					t7d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))),2).toString();
 					t8l.text=scoreutils.Typicalpointleft8;
 					t8r.text=scoreutils.Typicalpointrigth8;
-					t8d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))),4).toString();
+					t8d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))),2).toString();
 					t9l.text=scoreutils.Typicalpointleft9;
 					t9r.text=scoreutils.Typicalpointrigth9;
-					t9d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))),4).toString();
+					t9d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))),2).toString();
 					t10l.text=scoreutils.Typicalpointleft10;
 					t10r.text=scoreutils.Typicalpointrigth10;
-					t10d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))),4).toString();
+					t10d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))),2).toString();
 					c1l.text=scoreutils.Circumferenceleft1;
 					c1r.text=scoreutils.Circumferencerigth1;
-					c1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))),4).toString();
+					c1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))),2).toString();
 					c2l.text=scoreutils.Circumferenceleft2;
 					c2r.text=scoreutils.Circumferencerigth2;
-					c2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))),4).toString();
+					c2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))),2).toString();
 					c3l.text=scoreutils.Circumferenceleft3;
 					c3r.text=scoreutils.Circumferencerigth3;
-					c3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))),4).toString();
+					c3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))),2).toString();
 					c4l.text=scoreutils.Circumferenceleft4;
 					c4r.text=scoreutils.Circumferencerigth4;
-					c4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))),4).toString();
+					c4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))),2).toString();
 					a1.text=scoreutils.Abnormalpointleft1;
 					ar1.text=scoreutils.Abnormalpointrigth1;
 					a2.text=scoreutils.Abnormalpointleft2;
@@ -195,7 +212,7 @@
 					grossscore.text=(totalleft+ totalrigth).toString();
 					NTgrossscore.text=(totalleft+ totalrigth+ totalabnormal).toString();
 					totaldiferencefinal.text=totaldiference.toString();
-					netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-totaldiference),4).toString();
+					netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-totaldiference),2).toString();
 					netnonTypicalscore.text=(Number(NTgrossscore.text)-totaldiference).toString();
 					
 				}
@@ -237,25 +254,25 @@
 					insidespread.text=photoItem.insidespread as String;
 					mainbeamleftgrid.text=photoItem.mainbeamleft as String;
 					mainbeamrigthgrid.text=photoItem.mainbeamrigth as String;
-					mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.mainbeamleft as String)-Number(photoItem.mainbeamrigth as String))),4).toString();				
+					mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.mainbeamleft as String)-Number(photoItem.mainbeamrigth as String))),2).toString();				
 					sumleft=sumleft+Number(mainbeamleftgrid.text);
 					sumrigth=sumrigth+Number(mainbeamrigthgrid.text);
 					diference=diference+Number(mainbeamdiferene.text);
 					t1l.text=photoItem.Typicalpointleft1 as String;
 					t1r.text=photoItem.Typicalpointrigth1 as String;
-					t1d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft1 as String)-Number(photoItem.Typicalpointrigth1 as String))),4).toString();
+					t1d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft1 as String)-Number(photoItem.Typicalpointrigth1 as String))),2).toString();
 					sumleft=sumleft+Number(t1l.text);
 					sumrigth=sumrigth+Number(t1r.text);
 					diference=diference+Number(t1d.text);
 					t2l.text=photoItem.Typicalpointleft2 as String;
 					t2r.text=photoItem.Typicalpointrigth2 as String;
-					t2d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft2 as String)-Number(photoItem.Typicalpointrigth2 as String))),4).toString();
+					t2d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft2 as String)-Number(photoItem.Typicalpointrigth2 as String))),2).toString();
 					sumleft=sumleft+Number(t2l.text);
 					sumrigth=sumrigth+Number(t2r.text);
 					diference=diference+Number(t2d.text);
 					t3l.text=photoItem.Typicalpointleft3 as String;
 					t3r.text=photoItem.Typicalpointrigth3 as String;
-					t3d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft3 as String)-Number(photoItem.Typicalpointrigth3 as String))),4).toString();
+					t3d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft3 as String)-Number(photoItem.Typicalpointrigth3 as String))),2).toString();
 					
 					sumleft=sumleft+Number(t3l.text);
 					sumrigth=sumrigth+Number(t3r.text);
@@ -263,7 +280,7 @@
 										
 					t4l.text=photoItem.Typicalpointleft4 as String;
 					t4r.text=photoItem.Typicalpointrigth4 as String;
-					t4d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft4 as String)-Number(photoItem.Typicalpointrigth4 as String))),4).toString();
+					t4d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft4 as String)-Number(photoItem.Typicalpointrigth4 as String))),2).toString();
 					
 					sumleft=sumleft+Number(t4l.text);
 					sumrigth=sumrigth+Number(t4r.text);
@@ -271,7 +288,7 @@
 					
 					t5l.text=photoItem.Typicalpointleft5 as String;
 					t5r.text=photoItem.Typicalpointrigth5 as String;
-					t5d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft5 as String)-Number(photoItem.Typicalpointrigth5 as String))),4).toString();
+					t5d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft5 as String)-Number(photoItem.Typicalpointrigth5 as String))),2).toString();
 					
 					sumleft=sumleft+Number(t5l.text);
 					sumrigth=sumrigth+Number(t5r.text);
@@ -279,7 +296,7 @@
 					
 					t6l.text=photoItem.Typicalpointleft6 as String;
 					t6r.text=photoItem.Typicalpointrigth6 as String;
-					t6d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft6 as String)-Number(photoItem.Typicalpointrigth6 as String))),4).toString();
+					t6d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft6 as String)-Number(photoItem.Typicalpointrigth6 as String))),2).toString();
 					
 					sumleft=sumleft+Number(t6l.text);
 					sumrigth=sumrigth+Number(t6r.text);
@@ -287,7 +304,7 @@
 					
 					t7l.text=photoItem.Typicalpointleft7 as String;
 					t7r.text=photoItem.Typicalpointrigth7 as String;
-					t7d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft7 as String)-Number(photoItem.Typicalpointrigth7 as String))),4).toString();
+					t7d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft7 as String)-Number(photoItem.Typicalpointrigth7 as String))),2).toString();
 										
 					sumleft=sumleft+Number(t7l.text);
 					sumrigth=sumrigth+Number(t7r.text);
@@ -295,7 +312,7 @@
 					
 					t8l.text=photoItem.Typicalpointleft8 as String;
 					t8r.text=photoItem.Typicalpointrigth8 as String;
-					t8d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft8 as String)-Number(photoItem.Typicalpointrigth8 as String))),4).toString();
+					t8d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft8 as String)-Number(photoItem.Typicalpointrigth8 as String))),2).toString();
 					
 					sumleft=sumleft+Number(t8l.text);
 					sumrigth=sumrigth+Number(t8r.text);
@@ -303,7 +320,7 @@
 										
 					t9l.text=photoItem.Typicalpointleft9 as String;
 					t9r.text=photoItem.Typicalpointrigth9 as String;
-					t9d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft9 as String)-Number(photoItem.Typicalpointrigth9 as String))),4).toString();
+					t9d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft9 as String)-Number(photoItem.Typicalpointrigth9 as String))),2).toString();
 					
 					sumleft=sumleft+Number(t9l.text);
 					sumrigth=sumrigth+Number(t9r.text);
@@ -311,7 +328,7 @@
 					
 					t10l.text=photoItem.Typicalpointleft10 as String;
 					t10r.text=photoItem.Typicalpointrigth10 as String;
-					t10d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft10 as String)-Number(photoItem.Typicalpointrigth10 as String))),4).toString();
+					t10d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Typicalpointleft10 as String)-Number(photoItem.Typicalpointrigth10 as String))),2).toString();
 					
 					sumleft=sumleft+Number(t10l.text);
 					sumrigth=sumrigth+Number(t10r.text);
@@ -319,7 +336,7 @@
 										
 					c1l.text=photoItem.Circumferenceleft1 as String;
 					c1r.text=photoItem.Circumferencerigth1 as String;
-					c1d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft1 as String)-Number(photoItem.Circumferencerigth1 as String))),4).toString();
+					c1d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft1 as String)-Number(photoItem.Circumferencerigth1 as String))),2).toString();
 					
 					sumleft=sumleft+Number(c1l.text);
 					sumrigth=sumrigth+Number(c1r.text);
@@ -327,7 +344,7 @@
 					
 					c2l.text=photoItem.Circumferenceleft2 as String;
 					c2r.text=photoItem.Circumferencerigth2 as String;
-					c2d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft2 as String)-Number(photoItem.Circumferencerigth2 as String))),4).toString();
+					c2d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft2 as String)-Number(photoItem.Circumferencerigth2 as String))),2).toString();
 					
 					sumleft=sumleft+Number(c2l.text);
 					sumrigth=sumrigth+Number(c2r.text);
@@ -335,7 +352,7 @@
 										
 					c3l.text=photoItem.Circumferenceleft3 as String;
 					c3r.text=photoItem.Circumferencerigth3 as String;
-					c3d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft3 as String)-Number(photoItem.Circumferencerigth3 as String))),4).toString();
+					c3d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft3 as String)-Number(photoItem.Circumferencerigth3 as String))),2).toString();
 					
 					sumleft=sumleft+Number(c3l.text);
 					sumrigth=sumrigth+Number(c3r.text);
@@ -343,7 +360,7 @@
 					
 					c4l.text=photoItem.Circumferenceleft4 as String;
 					c4r.text=photoItem.Circumferencerigth4 as String;
-					c4d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft4 as String)-Number(photoItem.Circumferencerigth4 as String))),4).toString();
+					c4d.text=scoreutils.roundDecimals((Math.abs(Number(photoItem.Circumferenceleft4 as String)-Number(photoItem.Circumferencerigth4 as String))),2).toString();
 					
 					sumleft=sumleft+Number(c4l.text);
 					sumrigth=sumrigth+Number(c4r.text);
@@ -432,14 +449,14 @@
 					ar20.text=photoItem.Abnormalpointrigth20 as String;
 					adnormalpoint=adnormalpoint+Number(ar20.text);
 					
-					tleft.text=scoreutils.roundDecimals(sumleft,4).toString();
-					trigth.text=scoreutils.roundDecimals(sumrigth,4).toString();
-					tdiference.text=scoreutils.roundDecimals(diference,4).toString();
+					tleft.text=scoreutils.roundDecimals(sumleft,2).toString();
+					trigth.text=scoreutils.roundDecimals(sumrigth,2).toString();
+					tdiference.text=scoreutils.roundDecimals(diference,2).toString();
 					
 					grossscore.text=photoItem.socorefinal as String;
 					totaldiferencefinal.text=tdiference.text;
 					NTgrossscore.text=(Number(grossscore.text)+adnormalpoint).toString();
-					netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-Number(tdiference.text)),4).toString();
+					netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-Number(tdiference.text)),2).toString();
 					netnonTypicalscore.text=(Number(NTgrossscore.text)-Number(tdiference.text)).toString();
 					
 				}else{
@@ -476,49 +493,49 @@
 				insidespread.text=scoreutils.insidespread;
 				mainbeamleftgrid.text=scoreutils.mainbeamleft;
 				mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
-				mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),4).toString();
+				mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),2).toString();
 				t1l.text=scoreutils.Typicalpointleft1;
 				t1r.text=scoreutils.Typicalpointrigth1;
-				t1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))),4).toString();
+				t1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft1)-Number(scoreutils.Typicalpointrigth1))),2).toString();
 				t2l.text=scoreutils.Typicalpointleft2;
 				t2r.text=scoreutils.Typicalpointrigth2;
-				t2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))),4).toString();
+				t2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft2)-Number(scoreutils.Typicalpointrigth2))),2).toString();
 				t3l.text=scoreutils.Typicalpointleft3;
 				t3r.text=scoreutils.Typicalpointrigth3;
-				t3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))),4).toString();
+				t3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft3)-Number(scoreutils.Typicalpointrigth3))),2).toString();
 				t4l.text=scoreutils.Typicalpointleft4;
 				t4r.text=scoreutils.Typicalpointrigth4;
-				t4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))),4).toString();
+				t4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft4)-Number(scoreutils.Typicalpointrigth4))),2).toString();
 				t5l.text=scoreutils.Typicalpointleft5;
 				t5r.text=scoreutils.Typicalpointrigth5;
-				t5d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))),4).toString();
+				t5d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft5)-Number(scoreutils.Typicalpointrigth5))),2).toString();
 				t6l.text=scoreutils.Typicalpointleft6;
 				t6r.text=scoreutils.Typicalpointrigth6;
-				t6d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))),4).toString();
+				t6d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft6)-Number(scoreutils.Typicalpointrigth6))),2).toString();
 				t7l.text=scoreutils.Typicalpointleft7;
 				t7r.text=scoreutils.Typicalpointrigth7;
-				t7d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))),4).toString();
+				t7d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft7)-Number(scoreutils.Typicalpointrigth7))),2).toString();
 				t8l.text=scoreutils.Typicalpointleft8;
 				t8r.text=scoreutils.Typicalpointrigth8;
-				t8d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))),4).toString();
+				t8d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft8)-Number(scoreutils.Typicalpointrigth8))),2).toString();
 				t9l.text=scoreutils.Typicalpointleft9;
 				t9r.text=scoreutils.Typicalpointrigth9;
-				t9d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))),4).toString();
+				t9d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft9)-Number(scoreutils.Typicalpointrigth9))),2).toString();
 				t10l.text=scoreutils.Typicalpointleft10;
 				t10r.text=scoreutils.Typicalpointrigth10;
-				t10d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))),4).toString();
+				t10d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Typicalpointleft10)-Number(scoreutils.Typicalpointrigth10))),2).toString();
 				c1l.text=scoreutils.Circumferenceleft1;
 				c1r.text=scoreutils.Circumferencerigth1;
-				c1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))),4).toString();
+				c1d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft1)-Number(scoreutils.Circumferencerigth1))),2).toString();
 				c2l.text=scoreutils.Circumferenceleft2;
 				c2r.text=scoreutils.Circumferencerigth2;
-				c2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))),4).toString();
+				c2d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft2)-Number(scoreutils.Circumferencerigth2))),2).toString();
 				c3l.text=scoreutils.Circumferenceleft3;
 				c3r.text=scoreutils.Circumferencerigth3;
-				c3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))),4).toString();
+				c3d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft3)-Number(scoreutils.Circumferencerigth3))),2).toString();
 				c4l.text=scoreutils.Circumferenceleft4;
 				c4r.text=scoreutils.Circumferencerigth4;
-				c4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))),4).toString();
+				c4d.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.Circumferenceleft4)-Number(scoreutils.Circumferencerigth4))),2).toString();
 				a1.text=scoreutils.Abnormalpointleft1;
 				ar1.text=scoreutils.Abnormalpointrigth1;
 				a2.text=scoreutils.Abnormalpointleft2;
@@ -569,7 +586,7 @@
 				grossscore.text=(totalleft+ totalrigth).toString();
 				NTgrossscore.text=(totalleft+ totalrigth+ totalabnormal).toString();
 				totaldiferencefinal.text=totaldiference.toString();
-				netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-Number(totaldiference)),4).toString();
+				netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-Number(totaldiference)),2).toString();
 				netnonTypicalscore.text=(Number(NTgrossscore.text)-Number(totaldiference)).toString();
 			}
 			////////////////////////////////////////////////////////back SCORE //////////////////////////////			
@@ -682,6 +699,35 @@
 					app.workpanel.currentState='statePrincipal';
 				}
 			}			
+			private var myPDF:PDF;
+			function capture(source: DisplayObject, dpi:uint = 72, bgColor:Number = 0xFFFFFF): BitmapData
+			{
+				var scale:Number = dpi/72.0;
+				var bmd:BitmapData = new BitmapData(source.width * scale, source.height * scale, false, bgColor);
+				var m: Matrix = new Matrix();
+				m.scale(scale, scale);
+				bmd.draw(source, m);
+				return bmd;
+			}
+			protected function savepdf_clickHandler(event:MouseEvent):void
+			{
+				myPDF = new PDF(Orientation.LANDSCAPE, Unit.MM, Size.A4);
+				
+				//var grid:Grid = new Grid ( dp.toArray(), 200, 120, new RGBColor (0x666666), new RGBColor (0xCCCCCC), new RGBColor (0), true, new RGBColor ( 0x0 ), Joint.BEVEL );
+				var name:String=txtDeerNickName.text;				
+				myPDF.addPage();
+				//var image:ImageSnapshot=ImageSnapshot.captureImage(printingbody,300,new mx.graphics.codec.JPEGEncoder());
+				//myPDF.addImageStream(image.data,"",null,0,0);
+				var bitmapData: BitmapData = capture(printingbody, 72);
+				var encodedImage: ByteArray = new JPEGEncoder().encode(bitmapData);
+				myPDF.addImageStream(encodedImage,3,3,0,0,1,ResizeMode.FIT_TO_PAGE);
+			
+				var bytes:ByteArray = myPDF.save(Method.LOCAL);
+				var f:FileReference = new FileReference();
+				f.save(bytes,name+".pdf");
+				
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -704,7 +750,7 @@
 					<s:Button label="Facebook"/>
 					<s:Button label="Twitter"/>
 					<s:Button label="Email"/>
-					<s:Button label="Save"/>
+					<s:Button label="Save" click="savepdf_clickHandler(event)"/>
 					<s:Button label="Print" click="printingscore_clickHandler(event)"/>
 					<s:Button label="Finish" click="ScoringFinalBuck_clickHandler(event)"
 							  label.ScoringFinalBuckView="Close"

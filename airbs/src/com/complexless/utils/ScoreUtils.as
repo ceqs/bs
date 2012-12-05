@@ -113,7 +113,7 @@ package com.complexless.utils
 			
 			Number(Circumferenceleft4);
 				
-			suma=roundDecimals(suma,4);
+			suma=roundDecimals(suma,2);
 			return suma;
 		}
 		public function Tdiference():Number
@@ -147,7 +147,7 @@ package com.complexless.utils
 				
 				Math.abs((Number(Circumferenceleft4)	-	Number(Circumferencerigth4))));
 			
-			diference=roundDecimals(diference,4);
+			diference=roundDecimals(diference,2);
 			return diference;
 			
 		}
@@ -183,7 +183,7 @@ package com.complexless.utils
 				
 				Number(Circumferencerigth4);
 			
-			suma=roundDecimals(suma,4);
+			suma=roundDecimals(suma,2);
 			return suma;
 		}
 		
@@ -271,7 +271,7 @@ package com.complexless.utils
 				Number(Abnormalpointleft20);
 				
 			
-			suma=roundDecimals(suma,4);
+			suma=roundDecimals(suma,2);
 			return suma;
 		}
 		
