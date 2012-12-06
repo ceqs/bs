@@ -72,6 +72,9 @@
 			public var angledescription2:String="Far";
 			public var vectorleft:ArrayList=new ArrayList;
 			public var circumferenceleft:ArrayList= new ArrayList;
+			
+			public var logarchive:File;
+			public var log:String;
 			///////////////////////////////////////////////////////////////////////////////////////////////			
 			protected function init():void
 			{
@@ -237,6 +240,8 @@
 				}
 				trace("reference feature:"+referencetype);
 				var app:airbs=this.parentApplication as airbs;
+				trace("reference type selection="+referencetype);
+				log+="\n---reference type selection="+referencetype+"\n";
 				
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -255,7 +260,9 @@
 						trace(arraypoints[i].y);
 						if(i==0){
 							x0=Number(arraypoints[i].x);
+							trace("medida"+(i+1)+":"+x0)
 							y0=Number(arraypoints[i].y);
+							trace("medida"+(i+1)+":"+y0);
 						}else{							
 							distance=distance+Math.sqrt(Math.pow(arraypoints[i].x-x0,2)+Math.pow(arraypoints[i].y-y0,2));
 							x0=arraypoints[i].x;
@@ -263,6 +270,7 @@
 						}												
 					}
 					//distance=distance/72;
+					trace("long of ear|eye| measure"+distance);
 					if(grade=="90"){
 						currentState='RecorderInsideSpreadEstimate';
 						var  stateReferenceRule:String=(parseInt(scoredeerage)<2 && referencetype=='005' ? "Rule1":
@@ -280,9 +288,11 @@
 							if(mylistposition[i].attribute("Description")==scorestate){
 								var rule:Number=Number(mylistposition[i].attribute(stateReferenceRule));
 								inchvalue=distance/rule;
-								trace("valueinch:"+inchvalue);
+								trace("Rule selection:"+stateReferenceRule);
+								trace("valueinch with measure:"+inchvalue);
 							}							
 						}
+						log+="\n---Age="+scoredeerage+"  \n---rule selection="+stateReferenceRule+"\n ---calculate rule indice:"+rule+" \n---distance feature: "+distance+"\n---inchevalue"+inchvalue  ;
 					}	
 					else{						
 						currentState='MeasureInsideSpread';
@@ -301,10 +311,14 @@
 							if(mylistposition[i].attribute("Description")==scorestate){
 								var rule2:Number=Number(mylistposition[i].attribute(stateReferenceRule2));
 								inchvalue=distance/rule2;
-								trace("valueinch:"+inchvalue);
+								trace("Rule selection:"+stateReferenceRule);
+								trace("valueinch with measure:"+inchvalue);
 							}
 						}
+						log+="\n---Age="+scoredeerage+" \n---rule selection="+stateReferenceRule2+" \n---calculate rule indice:"+rule2+ " \n---distance feature: "+distance+"\n---inchevalue"+inchvalue;
 					}
+					
+					////log="Age="+scoredeerage+"   rule selection="+stateReferenceRule+"  calculate rule indice:"+rule+"  inchevalue"+inchvalue;
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}	
 			}
@@ -331,6 +345,7 @@
 						trace(key1+"."+key2);
 						grade=mylistposition[i].attribute("Code");
 						trace("grado:"+grade);
+						log+="\n---grade: "+grade+"\n";
 					}
 				}
 				
@@ -423,7 +438,7 @@
 				PopUpManager.addPopUp(win,app.mainBox,true);
 				PopUpManager.centerPopUp(win);
 			}
-			////////////////////////////navigation in points ///////////////////
+
 			protected function TypicalPoints_clickHandler(event:MouseEvent):void
 			{	
 				currentState='MeasureLeftMainBeam';
@@ -571,7 +586,7 @@
 					}
 					//distance=distance/72;
 					var options:XMLList;
-					
+					log+="\n---distance of points inside spread: "+distance+"\n";
 					options=prefsXML.child("Equations").child("Equation");
 					
 					var j:int=0;
@@ -588,6 +603,9 @@
 					trace(myangleoptions.toString());
 					
 					var ldistance:Number=(distance)/(inchvalue);
+					
+					log+="\n---distance divided with inchevalue of inside spread: "+ldistance+"\n";
+					
 					var ISP:Number=Number(myangleoptions[0].attribute("A"))*ldistance+
 						Number(myangleoptions[0].attribute("B"));
 					ISP=scoreutils.roundDecimals(ISP,2); 
@@ -618,7 +636,7 @@
 						break;
 					}
 				}
-				
+				log+="\n---Inside spread estimate between maximize of maim beam left and main beam rigth";
 				trace(myangleoptions.toString());
 				
 			}
@@ -648,8 +666,11 @@
 						}	
 					}
 					//distance=distance/72;
+					log+="\n---distance of CLOSE/LEFT main beam: "+distance+"\n";
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
+					
+					log+="\n---distance divided with inchevalue of CLOSE/LEFT main beam: "+ldistance+"\n";
 					if(grade=='0'){
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
@@ -696,8 +717,10 @@
 						}
 					}
 					//distance=distance/72;
+					log+="\n---distance of FAR/RIGTH main beam: "+distance+"\n";
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
+					log+="\n---distance divided with inchevalue of FAR/RIGHT main beam: "+ldistance+"\n";
 					if(grade=='0'){
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbrigthtypical.selectedItem);
@@ -706,7 +729,7 @@
 						ISP=Number(myangleoptions[2].attribute("A"))*ldistance+Number(myangleoptions[2].attribute("B"))+
 							Number(myangleoptions[2].attribute("C"))*Number(cmbrigthtypical.selectedItem);
 					}
-					if(grade='90'){
+					if(grade=='90'){
 						if(ISP>=Number(scoreutils.mainbeamleft)) scoreutils.insidespread=(Number(myangleoptions[0].attribute("A"))*ISP+Number(myangleoptions[0].attribute("B"))).toString();
 						else scoreutils.insidespread=(Number(myangleoptions[0].attribute("A"))*(Number(scoreutils.mainbeamleft))+Number(myangleoptions[0].attribute("B"))).toString();
 						scoreutils.insidespread=scoreutils.roundDecimals(Number(scoreutils.insidespread),2).toString();
@@ -720,10 +743,28 @@
 					else if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)<=1){currentState='MeasureLeftCircunference';  btnRecordLeftTine.label="Measure "+angledescription1+" Circumference 1";}
 					else if(parseInt(cmbletftypical.selectedItem)>1){ currentState='MeasureLeftTine'; btnRecordLeftTine.label="Measure "+angledescription1+" Tine 1";}
 					lbllasmeasurement.text=angledescription2+"Main Beam="+scoreutils.mainbeamrigth.toString();
+					//logarchive=new File(log);
+					try{
+						saveAs("c:/tmp","logbuckscore.txt",log);
+					}catch(errObject:Error){trace("no guardo");}
+						
+					
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}
 			}
-			
+			public function saveAs(filepath:String,filename:String,logaux:String):void {
+				var file:File = new File(filepath+File.separator+filename);
+				var fileStream:FileStream = new FileStream();
+				
+				fileStream.open(file,FileMode.WRITE);
+				
+				fileStream.writeUTFBytes(logaux);
+				
+				
+				fileStream.close();
+				
+			}
+
 			/////////////typical points lef//////////////////
 			protected function MeasureLeftTine_clickHandler(event:MouseEvent):void
 			{
@@ -1065,6 +1106,7 @@
 			{
 				var app:airbs=this.parentApplication as airbs;
 				currentState='RecordLeftCircunference';
+				usermirrortypical.visible=true;
 				txtTypicalLeftRecordLeftTine.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordLeftTine.text=cmbrigthtypical.selectedItem;
 				for(var i:int=0;i<circumferenceleft.length;i++){
@@ -1211,6 +1253,7 @@
 							
 							ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							trace("entre 0");
 						}else{
 							
 							ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
@@ -1241,15 +1284,18 @@
 						btnRecordLeftTine.label="Measure "+angledescription2+" Circumference "+numbercincumferencerigth;
 						
 					}else{
-						if(grade=='0')
+						trace("angulo a medir"+grade);
+						if(grade=="0")
 						{
 							
 							ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							trace("entre 0");
 						}else{
 							
 							ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							trace("entre y no es 0");
 						}
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0)cont++;

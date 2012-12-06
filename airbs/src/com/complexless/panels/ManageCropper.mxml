@@ -26,6 +26,7 @@
 			import mx.graphics.codec.JPEGEncoder;
 			import mx.managers.CursorManager;
 			import mx.utils.Base64Encoder;
+			import mx.utils.GraphicsUtil;
 			
 			import spark.components.Image;
 			private var newImage:BitmapData;
@@ -138,7 +139,7 @@
 			}
 
 			public function beginDraw():void {
-				//cursorID = CursorManager.setCursor(crosshairCursor);
+				cursorID = CursorManager.setCursor(crosshairCursor);
 				erase();
 				drawing = true;
 				
@@ -155,7 +156,7 @@
 			}
 			
 			public function endDraw():void {
-				//CursorManager.removeCursor(cursorID);
+				CursorManager.removeCursor(cursorID);
 				drawing = false;
 				canvas.visible = false;
 			}
@@ -212,9 +213,11 @@
 					//trace("Punto guardado[" + i + "] --> " + pos.x + ", " + pos.y);
 					var x:Number = (pos.x * imageScaleFactor);
 					var y:Number = (pos.y * imageScaleFactor);
+					
 					//trace("Punto pintado[" + i + "] --> " + pos.x + ", " + pos.y);
 					tmp.push({x:x, y:y});
 				}
+				
 				 GraphicsUtils.drawDashedPolyLine(canvas, new Stroke(0xFF0000, 1, 1, false, "normal", CapsStyle.NONE), tmp);
 					 
 			}

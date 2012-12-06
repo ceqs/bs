@@ -1,0 +1,93 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace bs "library://ns.adobe.com/flex/mx";
+
+global
+{
+	vertical-align: middle;
+	font-size: 13;
+	font-family: "Arial, Calibri";
+	
+	chrome-color: #303030;
+	content-background-color: #323232;
+	content-background-alpha: 1.0;
+	
+	color: #cecece;
+	text-roll-over-color: #cecece;
+	text-selected-color: #cecece;
+	
+	roll-over-color: #666666;
+	selection-color: #aeaeae;
+}
+
+bs|MenuBar
+{
+	font-anti-alias-type: advanced;
+	font-grid-fit-type: subpixel;
+	
+	chrome-color: #303030;
+	content-background-color: #323232;
+	content-background-alpha: 1.0;
+	
+	color: #cecece;
+	text-roll-over-color: #cecece;
+	text-selected-color: #cecece;
+	color: #ffffff;
+	
+	roll-over-color: #666666;
+	selection-color: #aeaeae;
+}
+
+bs|Menu
+{
+	roll-over-color: #666666;
+	selection-color: #aeaeae;
+	color: #ffffff;  
+	symbol-color: #ffffff;
+}
+
+#mainBox {
+	backgroundColor: #323232;
+	backgroundAlpha: 1.0;
+}
+
+#titleMain {
+	borderColor: #000000;
+	borderWeight: 1;
+	borderVisible: true;
+}
+
+mx|Alert{
+	color : #ffffff;
+	buttonStyleName: "buttonStyle";
+	title-style-name: "alertTitleStyle";
+	messageStyleName: "messageStyle";
+	header-height:30;
+
+	background-color: #606060;
+	corner-radius :0;
+	border-style :solid;
+
+	border-color : #5970a0;
+}
+.alertTitleStyle{
+	font-family: Verdana;
+	font-size: 13;
+	font-weight :bold;
+	text-align :left;
+	color :#ffffff;
+}
+
+.messageStyle{
+	font-family: Arial;
+	font-size: 13;
+	font-weight: bold;
+}
+
+.buttonStyle {
+	background-color: #323232;
+	theme-color: #323232;
+	color: red;
+}
+

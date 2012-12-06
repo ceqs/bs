@@ -107,6 +107,12 @@
 						trace("nada ajuste");
 					}
 					currentState='ScoringFinalBuck';
+					if(app.workpanel.panelprincipal.panelscoreproccess.grade=="0"){
+						lblangleoptions1.text="LEFT";
+						lblangleoptions3.text="LEFT";
+						lblangleoptions2.text="RIGHT";
+						lblangleoptions4.text="RIGHT";	
+					}
 					deernamefinishscore=app.workpanel.panelprincipal.deernamefinishscore;
 					txtDeerNickName.text=deernamefinishscore;
 					txtLocationDeer.text=app.workpanel.panelprincipal.panelscoreproccess.location; //location
@@ -233,6 +239,7 @@
 				deernamefinishscore=app.workpanel.panelprincipal.deernamefinishscore;
 				var scoresheet:ArrayCollection=new ArrayCollection();
 				scoresheet=app.sqlscore.resaultscore(deernamefinishscore);
+				
 				trace("tamaño:"+scoresheet.length)
 				if(scoresheet.length==1){
 					var photoItem:Object =scoresheet[0];
@@ -248,6 +255,14 @@
 					var sumleft:Number=0;
 					var sumrigth:Number=0;
 					var diference:Number=0;
+					
+					var angleaux:String=photoItem.ftrfeatures as String;
+					if(angleaux=="0"){
+						lblangleoptions1.text="LEFT";
+						lblangleoptions3.text="LEFT";
+						lblangleoptions2.text="RIGHT";
+						lblangleoptions4.text="RIGHT";	
+					}
 					txtcommentsdeer.text=photoItem.comments as String;
 					numberleftponitsgrid.text=photoItem.leftpoints as String;
 					numberrigthponitsgrid.text=photoItem.rigthpoints as String;
@@ -490,7 +505,14 @@
 				imageforedition0.source=app.workpanel.panelprincipal.arraybyte;
 				numberleftponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbletftypical.selectedItem;
 				numberrigthponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbrigthtypical.selectedItem;
+				if(app.workpanel.panelprincipal.panelscoreproccess.grade=="0"){
+					lblangleoptions1.text="LEFT";
+					lblangleoptions3.text="LEFT";
+					lblangleoptions2.text="RIGHT";
+					lblangleoptions4.text="RIGHT";	
+				}
 				insidespread.text=scoreutils.insidespread;
+				
 				mainbeamleftgrid.text=scoreutils.mainbeamleft;
 				mainbeamrigthgrid.text=scoreutils.mainbeamrigth;
 				mainbeamdiferene.text=scoreutils.roundDecimals((Math.abs(Number(scoreutils.mainbeamleft)-Number(scoreutils.mainbeamrigth))),2).toString();
@@ -603,7 +625,7 @@
 					scoreutils=app.workpanel.panelprincipal.panelscoreproccess.scoreutils;
 					var  verificatescore:ArrayCollection=app.sqlscore.resaultscore(txtDeerNickName.text);
 					if(verificatescore.length>=1) app.sqlscore.removescore(txtDeerNickName.text);
-					var typeerror:String=app.sqlscore.addItemscore(txtDeerNickName.text,app.workpanel.panelprincipal.panelscoreproccess.location,txtdatedeer.text,txtcommentsdeer.text,"",scoreutils.insidespread,
+					var typeerror:String=app.sqlscore.addItemscore(txtDeerNickName.text,app.workpanel.panelprincipal.panelscoreproccess.location,txtdatedeer.text,txtcommentsdeer.text,app.workpanel.panelprincipal.panelscoreproccess.grade,scoreutils.insidespread,
 						scoreutils.mainbeamleft,
 						scoreutils.mainbeamrigth,
 						scoreutils.Typicalpointleft1,
@@ -848,9 +870,9 @@
 														 colSpan="2"
 														 horizontalAlign="center"
 														 verticalAlign="bottom">
-												<s:Label paddingTop="3"
-														 text="LEFT"
-														 verticalAlign="middle"/>
+												<s:Label id="lblangleoptions1" paddingTop="3"
+														 text="LEFT" verticalAlign="middle"
+														 text.ScoringFinalBuck="CLOSE"/>
 											</mx:GridItem>
 											<!-- Define the second cell of Row 1. -->
 											<mx:GridItem width="100%"
@@ -859,9 +881,9 @@
 														 colSpan="2"
 														 horizontalAlign="center"
 														 verticalAlign="bottom">
-												<s:Label paddingTop="3"
-														 text="RIGTH"
-														 verticalAlign="middle"/>
+												<s:Label id="lblangleoptions2" paddingTop="3"
+														 text="RIGTH" verticalAlign="middle"
+														 text.ScoringFinalBuck="FAR"/>
 											</mx:GridItem>
 											<!-- Define the third cell of Row 1. -->
 											
@@ -1198,8 +1220,9 @@
 													 colSpan="1"
 													 horizontalAlign="center"
 													 verticalAlign="bottom">
-											<s:Label paddingTop="3" text="LEFT"
-													 verticalAlign="middle"/>
+											<s:Label id="lblangleoptions3" paddingTop="3" text="LEFT"
+													 verticalAlign="middle"
+													 text.ScoringFinalBuck="CLOSE"/>
 										</mx:GridItem>
 										<!-- Define the third cell of Row 1. -->
 										<mx:GridItem width="100%"
@@ -1208,8 +1231,9 @@
 													 colSpan="1"
 													 horizontalAlign="center"
 													 verticalAlign="bottom">
-											<s:Label paddingTop="3" text="RIGTH"
-													 verticalAlign="middle"/>
+											<s:Label id="lblangleoptions4" paddingTop="3"
+													 text="RIGTH" verticalAlign="middle"
+													 text.ScoringFinalBuck="FAR"/>
 										</mx:GridItem>
 										<mx:GridItem width="100%"
 													 borderColor="#0B0A0A"

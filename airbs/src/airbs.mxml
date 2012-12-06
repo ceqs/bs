@@ -99,7 +99,7 @@
 				appUpdater.isCheckForUpdateVisible = false;
 				appUpdater.addEventListener(UpdateEvent.INITIALIZED, onUpdate);
 				appUpdater.addEventListener(ErrorEvent.ERROR, onError);
-				appUpdater.initialize();
+				//appUpdater.initialize();
 				llenarTabla();
 			}
 
@@ -190,8 +190,7 @@
 				}
 			}
 			public function updatephotocrop(image:BitmapData):void
-			{
-				
+			{	
 				if(workpanel.panelprincipal.deernamefinishscore!=""){
 					var encoder:JPEGEncoder = new JPEGEncoder(75);  //quality of compression. 75 is a good compromise
 					var baseEncoder:Base64Encoder = new Base64Encoder();
@@ -199,7 +198,6 @@
 					baseEncoder.encodeBytes(imageByteArray);
 					var encodedBytes:String=baseEncoder.toString();
 					sqlscore.updatephotoscorecrop(workpanel.panelprincipal.deernamefinishscore,encodedBytes);
-					
 				}
 				else Alert.show("Choose Photo Please","BuckScore");
 			}
@@ -263,6 +261,7 @@
 		<s:VGroup width="100%" height="100%" gap="0">
 			<s:HGroup id="borderTop" height="15" width="100%"/>
 			<s:SkinnableContainer id="mainBox" width="100%" height="100%">
+				
 				<s:VGroup width="100%" height="100%" gap="0" paddingBottom="6" paddingLeft="6"
 						  paddingRight="6" paddingTop="6">
 					<s:SkinnableContainer width="100%" height="56" skinClass="com.complexless.skins.spark.TitleMainSkin">
@@ -272,7 +271,7 @@
 									 text=" What's your Buckscore™?" verticalAlign="middle"
 									 />
 							<s:Label width="100%" height="100%" fontFamily="Arial" fontSize="13"
-									 fontWeight="normal" text="Powered by the MSU Deer Lab "
+									 fontWeight="normal" text="Powered by the MSU Deer Lab V0.5"
 									 textAlign="right" verticalAlign="middle"
 									 />
 						</s:HGroup>
@@ -312,7 +311,10 @@
 					</mx:HDividedBox>
 				</s:VGroup>
 			</s:SkinnableContainer>
-			<s:HGroup id="borderBottom" width="100%" height="15"/>
+			
+			<s:HGroup id="borderBottom" width="100%" height="15">
+				
+			</s:HGroup>
 		</s:VGroup>
 		<s:VGroup id="borderRight" width="15" height="100%"/>
 	</s:HGroup>
