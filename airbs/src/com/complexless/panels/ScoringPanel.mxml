@@ -9,7 +9,7 @@
 					   xmlns:ns1="*"
 					   width="100%" height="100%" >
 	
-	<fx:Style source="assets/css/airbs.css"/>
+	<fx:Style source="assets/css/airbs2.css"/>
 	
 	<fx:Script>
 		<![CDATA[

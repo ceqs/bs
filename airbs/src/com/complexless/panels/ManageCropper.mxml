@@ -400,7 +400,7 @@
 		<s:State name="process"/>
 	</mx:states>
 	
-	<s:BorderContainer x="0" y="0" width="100%" height="100%" borderColor="0x000000" borderAlpha="1.0" borderWeight="1">
+	<s:BorderContainer x="0" y="0" width="100%" height="100%" borderColor="#202020" backgroundColor="#202020" borderAlpha="1.0" borderWeight="1">
 		<s:VGroup width="100%" height="100%" gap="0">
 			<s:SkinnableContainer id="toolbar" width="100%" height="25" 
 								  skinClass="com.complexless.skins.spark.ToolbarSkin"
@@ -429,7 +429,6 @@
 									cropConstraintChanged="trace('Crop constraint changed');"
 									cropDimensionsChanged="trace('Crop dimensions changed');"
 									cropPositionChanged="trace('Crop position changed');"/>
-					
 					<mx:UIComponent id="canvas" visible="false"
 									mouseDown="addPoint(event)" rollOut="drawLine(points);"/>			
 				</mx:Canvas>

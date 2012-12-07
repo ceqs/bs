@@ -303,7 +303,7 @@ declarations define DataGrid skin parts except <code>headerColumnSeparator</code
             <s:Rect id="background" left="1" right="1" top="1" bottom="1" >
                 <s:fill>
                     <!--- Defines the color of the background. The default color is 0xFFFFFF. -->
-                    <s:SolidColor id="bgFill" color="0xFFFFFF" />
+                    <s:SolidColor id="bgFill" color="0x202020" />
                 </s:fill>
             </s:Rect>
             
@@ -312,7 +312,7 @@ declarations define DataGrid skin parts except <code>headerColumnSeparator</code
                 <!--- @private -->
                 <s:Line id="headerSeparator">
                     <s:stroke>
-                        <s:SolidColorStroke color="0x696969" weight="1" caps="square"/>
+                        <s:SolidColorStroke color="0x202020" weight="1" caps="square"/>
                     </s:stroke>
                 </s:Line>          
                 

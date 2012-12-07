@@ -2480,36 +2480,39 @@
 			<s:HGroup paddingLeft="6" paddingRight="6" width="100%" height="100%" verticalAlign="middle">
 				<s:Label id="txtNamepaneltitle" width="100%" fontSize="20"
 						 text=" Name"/>
-				<s:Button label="Close" click="closebutton_buckscore()"  click.NumberTypicalPoints="closebutton_buckscore2()" click.MeasureAnormalPoints="closebutton_buckscore3()"/>
-				<s:Button label="Back"
-						  click.CompleteScoringfinal="CompleteScoringfinalBack_clickHandler(event)"										 
-						  click.MeasureAnormalPoints="MeasureAnormalPointsBack(event)"										 
-						  click.MeasureInsideSpread="BackMeasureInsideSpread_clickHandler(event)"										 
-						  click.MeasureLeftAnormalTine="MeasureLeftAnormalTineBack_clickHandler(event)"										
-						  click.MeasureLeftCircunference="MeasureLeftCircunferenceBack_clickHandler(event)"										 
-						  click.MeasureLeftMainBeam="currentState='NumberTypicalPoints'; numbertypicalleft=1; lbllasmeasurement.text='Inside Spread: '+ scoreutils.insidespread;"										  
-						  click.MeasureLeftTine="MeasureLeftTineBack_clickHandler(event)"										 
-						  click.MeasureRigthAnormalTine="MeasureRigthAnormalTineBack_clickHandler(event)"									
-						  click.MeasureRigthCircumference="MeasureRigthCircumferenceBack_clickHandler(event)"										
-						  click.MeasureRigthMainBeam="MeasureRigthMainBeamBack_clickHandler(event)"										
-						  click.MeasureRigthTine="MeasureRigthTineBack_clickHandler(event)"										 
-						  click.NumberTypicalPoints="NumberTypicalPointsBack_clickHandler(event)"									
-						  click.positionphoto="button3_backeditphoto(event)"										 
-						  click.RecordEarWidth="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
-						  click.RecorderInsideSpread="currentState='MeasureInsideSpread'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
-						  click.RecorderInsideSpreadEstimate="BackMeasureInsideSpread_clickHandler(event)"									 
-						  click.RecordEyeballWidthFeature="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"									 
-						  click.RecordEyetoEyeWidth="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"										 
-						  click.RecordLefAbnormalTine="RecordLefAbnormalTineBack_clickHandler(event)"									
-						  click.RecordLeftCircunference="RecordLeftCircunferenceBack_clickHandler(event)"										 
-						  click.RecordLeftMainBeamLine="currentState='MeasureLeftMainBeam';  btnRecordLeftTine.label='Measure '+angledescription1+' Main Beam ';  var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw(); "										 
-						  click.RecordLeftTineLine="RecordLeftTineLineBack_clickHandler(event)"									  
-						  click.RecordRigthAbnormalTine="RecordRigthAbnormalTineBack_clickHandler(event)"									 
-						  click.RecordRigthCircumference="RecordRigthCircumferenceBack_clickHandler(event)"							
-						  click.RecordRigthMainBeam="currentState='MeasureRigthMainBeam'; lbllasmeasurement.text='Record '+angledescription2+' Main Beam:'+scoreutils.mainbeamleft;      btnRecordLeftTine.label='Measure '+angledescription2+' Main Beam ';    var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"									  
-						  click.RecordRigthTineLine="RecordRigthTineLineBack_clickHandler(event)"					
+				<s:Button label="Close" chromeColor="#8E0E0E" click="closebutton_buckscore()"
+						  click.MeasureAnormalPoints="closebutton_buckscore3()"
+						  click.NumberTypicalPoints="closebutton_buckscore2()"
+						  alpha.scorephoto="9"/>
+				<s:Button label="Back" chromeColor="#8E0E0E"
+						  click.CompleteScoringfinal="CompleteScoringfinalBack_clickHandler(event)"
+						  click.MeasureAnormalPoints="MeasureAnormalPointsBack(event)"
+						  click.MeasureInsideSpread="BackMeasureInsideSpread_clickHandler(event)"
+						  click.MeasureLeftAnormalTine="MeasureLeftAnormalTineBack_clickHandler(event)"
+						  click.MeasureLeftCircunference="MeasureLeftCircunferenceBack_clickHandler(event)"
+						  click.MeasureLeftMainBeam="currentState='NumberTypicalPoints'; numbertypicalleft=1; lbllasmeasurement.text='Inside Spread: '+ scoreutils.insidespread;"
+						  click.MeasureLeftTine="MeasureLeftTineBack_clickHandler(event)"
+						  click.MeasureRigthAnormalTine="MeasureRigthAnormalTineBack_clickHandler(event)"
+						  click.MeasureRigthCircumference="MeasureRigthCircumferenceBack_clickHandler(event)"
+						  click.MeasureRigthMainBeam="MeasureRigthMainBeamBack_clickHandler(event)"
+						  click.MeasureRigthTine="MeasureRigthTineBack_clickHandler(event)"
+						  click.NumberTypicalPoints="NumberTypicalPointsBack_clickHandler(event)"
+						  click.positionphoto="button3_backeditphoto(event)"
+						  click.RecordEarWidth="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"
+						  click.RecorderInsideSpread="currentState='MeasureInsideSpread'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"
+						  click.RecorderInsideSpreadEstimate="BackMeasureInsideSpread_clickHandler(event)"
+						  click.RecordEyeballWidthFeature="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"
+						  click.RecordEyetoEyeWidth="currentState='referenceFeature'; var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"
+						  click.RecordLefAbnormalTine="RecordLefAbnormalTineBack_clickHandler(event)"
+						  click.RecordLeftCircunference="RecordLeftCircunferenceBack_clickHandler(event)"
+						  click.RecordLeftMainBeamLine="currentState='MeasureLeftMainBeam';  btnRecordLeftTine.label='Measure '+angledescription1+' Main Beam ';  var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw(); "
+						  click.RecordLeftTineLine="RecordLeftTineLineBack_clickHandler(event)"
+						  click.RecordRigthAbnormalTine="RecordRigthAbnormalTineBack_clickHandler(event)"
+						  click.RecordRigthCircumference="RecordRigthCircumferenceBack_clickHandler(event)"
+						  click.RecordRigthMainBeam="currentState='MeasureRigthMainBeam'; lbllasmeasurement.text='Record '+angledescription2+' Main Beam:'+scoreutils.mainbeamleft;      btnRecordLeftTine.label='Measure '+angledescription2+' Main Beam ';    var app:airbs=this.parentApplication as airbs;  app.workpanel.panelprincipal.manageCropper.endDraw();"
+						  click.RecordRigthTineLine="RecordRigthTineLineBack_clickHandler(event)"
 						  click.referenceFeature="button3_referenceFeature(event)"
-						  click.scorephoto="button3_backscorephoto(event)"/>
+						  alpha.scorephoto="9" click.scorephoto="button3_backscorephoto(event)"/>
 			</s:HGroup>
 		</s:SkinnableContainer>
 		<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
@@ -2520,9 +2523,9 @@
 				<s:Label x="20"  y="20"  text="Score Deer" paddingTop="6"/>
 				<s:VGroup includeIn="scorephoto">
 					<s:Label text="State"/>
-					<s:ComboBox id="cmbstate"/>
+					<s:DropDownList id="cmbstate"/>
 					<s:Label text="Deer Age"/>
-					<s:ComboBox id="cmbage"/>
+					<s:DropDownList id="cmbage"/>
 					
 					<s:Group width="197" height="26">
 						<s:Button x="97" y="1" label="Next"
@@ -2621,8 +2624,7 @@
 						<s:TextInput id="txtTypicalLeftRecordLeftTine"
 									 includeIn="RecordLeftCircunference,RecordLeftTineLine,RecordRigthCircumference,RecordRigthTineLine"
 									 editable.RecordLeftTineLine="false"/>
-						<s:DropDownList id="cmbabnormalpointsleft"
-										includeIn="MeasureAnormalPoints"
+						<s:DropDownList id="cmbabnormalpointsleft" includeIn="MeasureAnormalPoints"
 										selectedIndex="0">
 							<s:dataProvider>
 								<mx:ArrayList>

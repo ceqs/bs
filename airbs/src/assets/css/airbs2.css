@@ -42,13 +42,13 @@ bs|MenuBar
 bs|Menu
 {
 	roll-over-color: #666666;
-	selection-color: #aeaeae;
+	selection-color: #221E1F;
 	color: #ffffff;  
 	symbol-color: #ffffff;
 }
 
 #mainBox {
-	backgroundColor: #323232;
+	backgroundColor: #202020;
 	backgroundAlpha: 1.0;
 }
 
@@ -65,7 +65,7 @@ mx|Alert{
 	messageStyleName: "messageStyle";
 	header-height:30;
 
-	background-color: #606060;
+	background-color: #202020;
 	corner-radius :0;
 	border-style :solid;
 
@@ -86,8 +86,30 @@ mx|Alert{
 }
 
 .buttonStyle {
-	background-color: #323232;
-	theme-color: #323232;
-	color: red;
+	backgroundColor: #243E82;
+	theme-color: #243E82;
+	color: white;
 }
+
+
+s|Button { 
+	backgroundColor: #0a4efa;
+	chromeColor: #1F317D;
+	backgroundAlpha : 9.0;
+	cornerRadius: 5;
+	focusAlpha: 9.0;
+	
+}
+s|DropDownList
+{
+	contentBackgroundColor : #D2D3D0;
+	contentBackgroundAlpha : 9.0;
+	chromeColor :white;
+	fontSize : 12;
+	color : black;
+	
+	
+		
+}
+
 

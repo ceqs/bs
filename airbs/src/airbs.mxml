@@ -10,7 +10,7 @@
 					   xmlns:ps="com.complexless.panels.*"
 					   width="750" height="550" backgroundAlpha="0" creationComplete="initApp()"
 					   currentState="PanelScoreState" showStatusBar="false" styleName="main" xmlns:dialogs="com.complexless.dialogs.*">
-	<fx:Style source="assets/css/airbs.css"/>
+	<fx:Style source="assets/css/airbs2.css"/>
 	<fx:Script>
 		<![CDATA[
 			import air.update.ApplicationUpdaterUI;
@@ -264,7 +264,7 @@
 				
 				<s:VGroup width="100%" height="100%" gap="0" paddingBottom="6" paddingLeft="6"
 						  paddingRight="6" paddingTop="6">
-					<s:SkinnableContainer width="100%" height="56" skinClass="com.complexless.skins.spark.TitleMainSkin">
+					<s:SkinnableContainer width="100%" height="56" >   
 						<s:HGroup id="titleMain" width="100%" height="100%" gap="0" paddingLeft="5"
 								  paddingRight="5">
 							<s:Label height="100%" fontSize="24"
