@@ -106,7 +106,9 @@
 					else{
 						trace("nada ajuste");
 					}
+					app.workpanel.panelprincipal.manageCropper.endDraw();
 					currentState='ScoringFinalBuck';
+					trace("grade:"+app.workpanel.panelprincipal.panelscoreproccess.grade);
 					if(app.workpanel.panelprincipal.panelscoreproccess.grade=="0"){
 						lblangleoptions1.text="LEFT";
 						lblangleoptions3.text="LEFT";
@@ -700,21 +702,22 @@
 						app.workpanel.panelprincipal.panelscoreproccess.cmbrigthtypical.selectedItem,
 						grossscore.text);
 					app.sqlscore.updatephotoscore(txtDeerNickName.text,grossscore.text);
-					
+					trace("grabando")
 					if(typeerror=="1"){
 						app.workpanel.panelprincipal.panelscoreproccess.cmbage.selectedIndex=0;
 						app.workpanel.panelprincipal.panelscoreproccess.cmbstate.selectedIndex=0;
-						app.workpanel.panelprincipal.panelscoreproccess.cmbabnormalpointsleft.selectedIndex=0;
-						app.workpanel.panelprincipal.panelscoreproccess.cmbabnormalpointsrigth.selectedIndex=0;
+						//app.workpanel.panelprincipal.panelscoreproccess.cmbabnormalpointsleft.selectedIndex=0;
+						//app.workpanel.panelprincipal.panelscoreproccess.cmbabnormalpointsrigth.selectedIndex=0;
 						app.workpanel.panelprincipal.panelscoreproccess.cmbletftypical.selectedIndex=0;
 						app.workpanel.panelprincipal.panelscoreproccess.cmbrigthtypical.selectedIndex=0;
 						app.workpanel.currentState='statePrincipal'; 
+						
 						app.workpanel.panelprincipal.currentState='stateMain';
 					}else Alert.show("No insert data","Buckscore");
 					app.workpanel.panelprincipal.panelscoreproccess.scoreutils=new ScoreUtils();
 					app.workpanel.panelprincipal.array2refresh();
 				}
-				else {
+				else{
 					txtcommentsdeer.text='';
 					scoreutils=new ScoreUtils();
 					app.workpanel.panelprincipal.statescoringview="";

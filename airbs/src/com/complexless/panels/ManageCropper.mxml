@@ -211,8 +211,8 @@
 				for(var i:int = 0; i < points.length-1; i++) {
 					var pos:Object = points[i] ;
 					//trace("Punto guardado[" + i + "] --> " + pos.x + ", " + pos.y);
-					var x:Number = (pos.x * imageScaleFactor);
-					var y:Number = (pos.y * imageScaleFactor);
+					var x:Number = (pos.x * imageScaleFactor)+9;
+					var y:Number = (pos.y * imageScaleFactor)+8;
 					
 					//trace("Punto pintado[" + i + "] --> " + pos.x + ", " + pos.y);
 					tmp.push({x:x, y:y});

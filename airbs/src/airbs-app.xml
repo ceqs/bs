@@ -18,11 +18,11 @@
 	<id>airbs</id>
 
 	<!-- Used as the filename for the application. Required. -->
-	<filename>airbs</filename>
+	<filename>Buckscore Application</filename>
 
 	<!-- The name that is displayed in the AIR application installer. 
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
-	<name>airbs</name>
+	<name>Buckscore Application</name>
 	
 	<!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade. 
 	Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
@@ -115,7 +115,7 @@
 	<!-- devices supported by AIR. If you wish to restrict deployment -->
 	<!-- (i.e., to only mobile devices) then add this element and list -->
 	<!-- only the profiles which your application does support. -->
-	<!-- <supportedProfiles>desktop extendedDesktop mobileDevice extendedMobileDevice</supportedProfiles> -->
+	 <supportedProfiles>extendedDesktop desktop</supportedProfiles> 
 
 	<!-- The subpath of the standard default installation location to use. Optional. -->
 	<!-- <installFolder></installFolder> -->
@@ -125,15 +125,13 @@
 
 	<!-- The icon the system uses for the application. For at least one resolution,
 	specify the path to a PNG file included in the AIR package. Optional. -->
-	<!-- <icon>
-		<image16x16></image16x16>
-		<image32x32></image32x32>
-		<image36x36></image36x36>
-		<image48x48></image48x48>
-		<image72x72></image72x72>
-		<image114x114></image114x114>
-		<image128x128></image128x128>
-	</icon> -->
+	<icon>
+  <image16x16>assets/icons/bs16.png</image16x16> 
+  <image32x32>assets/icons/bs32.png</image32x32> 
+  <image48x48>assets/icons/bs48.png</image48x48> 
+  <image128x128>assets/icons/bs128.png</image128x128> 
+  </icon>
+
 
 	<!-- Whether the application handles the update when a user double-clicks an update version
 	of the AIR file (true), or the default AIR application installer handles the update (false).
