@@ -10,14 +10,14 @@ global
 	font-family: "Arial, Calibri";
 	
 	chrome-color: #303030;
-	content-background-color: #323232;
+	content-background-color: #202020;
 	content-background-alpha: 1.0;
 	
 	color: #cecece;
 	text-roll-over-color: #cecece;
 	text-selected-color: #cecece;
 	
-	roll-over-color: #666666;
+	roll-over-color: #202020;
 	selection-color: #aeaeae;
 }
 
@@ -25,12 +25,12 @@ bs|MenuBar
 {
 	font-anti-alias-type: advanced;
 	font-grid-fit-type: subpixel;
+
+	chrome-color: #202020;
+	content-background-color: #202020;
+	content-background-alpha: 2.0;
 	
-	chrome-color: #303030;
-	content-background-color: #323232;
-	content-background-alpha: 1.0;
-	
-	color: #cecece;
+	color: #202020;
 	text-roll-over-color: #cecece;
 	text-selected-color: #cecece;
 	color: #ffffff;
@@ -102,14 +102,33 @@ s|Button {
 }
 s|DropDownList
 {
-	contentBackgroundColor : #D2D3D0;
+	contentBackgroundColor : #FFFFFF;
 	contentBackgroundAlpha : 9.0;
-	chromeColor :white;
+	chromeColor : white;
 	fontSize : 12;
 	color : black;
+	borderColor: white;
+	backgroundColor: #FFFFFF;
 	
-	
-		
 }
+s|TextInput
+{
+	contentBackgroundColor: white;
+	color: black;
+	
+}
+
+s|TextArea
+
+{
+	contentBackgroundColor: white;
+	color: black;
+	
+}
+s|DataGrid{
+	contentBackgroundColor: #323232;
+	
+}
+
 
 

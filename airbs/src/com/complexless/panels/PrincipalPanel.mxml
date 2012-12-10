@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
-					   xmlns:s="library://ns.adobe.com/flex/spark"
-					   xmlns:mx="library://ns.adobe.com/flex/mx"
-					   xmlns:bs="library://ns.adobe.com/flex/mx"
-					   xmlns:net="flash.net.*"
-					   xmlns:imagecropper="com.flexblocks.imagecropper.*"
-					   xmlns:utils="utils.*"
-					   xmlns:ns1="*"
-					   width="100%" height="100%" xmlns:panels="com.complexless.panels.*">
+					  xmlns:s="library://ns.adobe.com/flex/spark"
+					  xmlns:mx="library://ns.adobe.com/flex/mx"
+					  xmlns:bs="library://ns.adobe.com/flex/mx"
+					  xmlns:net="flash.net.*"
+					  xmlns:imagecropper="com.flexblocks.imagecropper.*"
+					  xmlns:utils="utils.*"
+					  xmlns:ns1="*"
+					  xmlns:panels="com.complexless.panels.*"
+					  width="100%" height="100%">
 	
 
 	
@@ -549,6 +550,13 @@
 		]]>
 	</fx:Script>
 	
+	<s:transitions>
+		<s:Transition autoReverse="true">
+			<s:Fade target="{effects}" duration="3000" />
+		</s:Transition>
+	</s:transitions>
+	
+	
 	<s:states>
 		<s:State name="stateMain">
 		</s:State>
@@ -575,13 +583,13 @@
 			<panels:ManageCropper id="manageCropper" width="100%" height="100%" />
 		</s:VGroup>
 		<s:BorderContainer width="320" height="100%" minWidth="320" borderAlpha="1.0"
-						   borderColor="0x000000" borderWeight="1">
+						   borderColor="0x000000" borderWeight="1" >
 			
 			<panels:PanelScore includeIn="PanelScoreState" id="panelscoreproccess"
-							width="100%" height="100%"/>
+							   width="100%" height="100%"/>
 			
-			<s:VGroup includeIn="editAlbum,editphoto,stateMain,updatephotodata" id="holder" width="100%" height="100%" gap="0">								
-				<s:SkinnableContainer width="100%" height="45"
+			<s:VGroup includeIn="editAlbum,editphoto,stateMain,updatephotodata"  width="100%" height="100%" gap="0">								
+				<s:SkinnableContainer width="100%" height="45"   
 									  skinClass="com.complexless.skins.spark.ToolbarSkin"
 									  textAlign="left" width.editphoto="318" >
 					<s:HGroup width="100%" height="100%" paddingLeft="6"
@@ -608,7 +616,11 @@
 								  cornerRadius="7"/>
 					</s:HGroup>
 				</s:SkinnableContainer>
-				<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
+				<s:SkinnableContainer id="effects" width="100%" height="100%"
+									  skinClass="com.complexless.skins.spark.ContentCropperSkin"
+									  skinClass.editAlbum="com.complexless.skins.spark.ContentCropperSkin2"
+									  skinClass.editphoto="com.complexless.skins.spark.ContentCropperSkin2"
+									  skinClass.updatephotodata="com.complexless.skins.spark.ContentCropperSkin2">
 					<s:HGroup includeIn="stateMain" width="100%" height="95"
 							  accentColor="#3F8AF0" paddingLeft="6" paddingRight="6"
 							  paddingTop="6">
@@ -720,7 +732,7 @@
 							<mx:HRule includeIn="editAlbum" width="100%" height="1"/>
 							<s:HGroup includeIn="editAlbum" verticalAlign="middle">
 								<s:Label width="100" text="Album Name"/>
-								<s:ComboBox id="combodeletealbum" dataProvider="{combo}" width="133"/>
+								<s:DropDownList id="combodeletealbum" dataProvider="{combo}" width="133"/>
 							</s:HGroup>
 							<s:HGroup includeIn="editAlbum" width="100%"
 									  horizontalAlign="right" gap="15">
@@ -734,7 +746,7 @@
 					</s:VGroup>
 					
 					<s:SkinnableContainer includeIn="stateMain" width="307">
-						<s:VGroup horizontalAlign="center" paddingLeft="6">
+						<s:VGroup width="100%" horizontalAlign="center" paddingLeft="6">
 							<s:HGroup width="304" height="30"
 									  horizontalAlign="center" verticalAlign="middle">
 								<s:Button id="btndeerinfo" label="Deer Info" alpha="4"
@@ -751,12 +763,12 @@
 									  alpha="4" chromeColor="#202020"
 									  click="btnScoreProccess_clickHandler(event)" enabled="false"/>
 							<s:Spacer height="10"/>
-							<s:HGroup width="306" height="30" 
+							<s:HGroup width="306" height="30"   
 									  verticalAlign="middle">
 								<s:Label text="Create Item"/>
 								<s:Spacer width="18"/>
 								<s:DropDownList id="combophoto" width="126" alpha="9"
-												change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo'){currentState='editphoto';  imgupload.source='';};"
+												change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo'){currentState='editphoto';  imgupload.source='';}; "
 												cornerRadius="4"
 												doubleClick="currentState='editphoto'; imgupload.source=''; "
 												labelField="Add Photo" selectedIndex="0">
@@ -775,10 +787,10 @@
 					</s:SkinnableContainer>
 					
 					<s:SkinnableContainer includeIn="stateMain"
-										  width="304"
+										  width="100%"
 										  height="100%">
 						
-						<s:VGroup paddingLeft="6">
+						<s:VGroup width="100%" paddingLeft="6">
 							<s:HGroup width="100%" height="30" horizontalAlign="right"
 									  verticalAlign="middle">
 								<s:Label x="0" width="214" text="Choose Deer To Start Scoring"/>
@@ -795,8 +807,7 @@
 											 focusIn="clearMyTextInput()"/>
 							</s:HGroup>
 							
-							<s:DataGrid id="datagridalbumname"
-										width="290" height="100%"
+							<s:DataGrid id="datagridalbumname" width="290" height="100%"
 										borderVisible="true" dataProvider="{array}"
 										selectionChange="datagrid1_selectionChangeHandler(event)"
 										skinClass="com.complexless.skins.spark.DataGridSkin">

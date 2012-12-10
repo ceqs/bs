@@ -2515,7 +2515,7 @@
 						  alpha.scorephoto="9" click.scorephoto="button3_backscorephoto(event)"/>
 			</s:HGroup>
 		</s:SkinnableContainer>
-		<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin">
+		<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin2">
 			<s:VGroup width="100%" height="100%" horizontalAlign="center"
 					  paddingLeft="6" paddingRight="6"
 					  height.MeasureLeftAnormalTine="668">
@@ -2523,9 +2523,9 @@
 				<s:Label x="20"  y="20"  text="Score Deer" paddingTop="6"/>
 				<s:VGroup includeIn="scorephoto">
 					<s:Label text="State"/>
-					<s:DropDownList id="cmbstate"/>
+					<s:DropDownList id="cmbstate" width="150"/>
 					<s:Label text="Deer Age"/>
-					<s:DropDownList id="cmbage"/>
+					<s:DropDownList id="cmbage" width="150"/>
 					
 					<s:Group width="197" height="26">
 						<s:Button x="97" y="1" label="Next"
@@ -2551,26 +2551,27 @@
 							  height="130" horizontalAlign="center"
 							  textAlign="center" textAlignLast="center"
 							  verticalAlign="middle">
-						<s:Button id="tglearwidth" 
-								  width="212" height="33"
-								  label="Record Ear Width Feature" cornerRadius="10"
+						<s:Button id="tglearwidth" width="212" height="25"
+								  label="Record Ear Width Feature" alpha="10" cornerRadius="10"
+								  height.MeasureInsideSpread="25"
 								  label.MeasureInsideSpread="Measure Inside Spread"
-								  alpha="10"
 								  click.MeasureInsideSpread="click_MeasureInsideSpread(); "
+								  height.RecordEarWidth="25"
 								  click.RecordEarWidth="toggle_EarWidthHandler(event)"
-								  label.RecorderInsideSpread="Record Inside Spread"												
+								  label.RecorderInsideSpread="Record Inside Spread"
 								  click.RecorderInsideSpread="toggle_RecorderInsideSpread(event)"
-								  label.RecorderInsideSpreadEstimate="Estimate Inside Spread"												 
+								  label.RecorderInsideSpreadEstimate="Estimate Inside Spread"
 								  click.RecorderInsideSpreadEstimate="RecorderInsideSpreadEstimate_clickHandler(event)"
-								  label.RecordEyeballWidthFeature="Record Eyeball Width Feature"												  
+								  label.RecordEyeballWidthFeature="Record Eyeball Width Feature"
 								  click.RecordEyeballWidthFeature="toggle_EarWidthHandler(event)"
-								  label.RecordEyetoEyeWidth="Record Inside Spread"												 
+								  height.RecordEyetoEyeWidth="25"
+								  label.RecordEyetoEyeWidth="Record Inside Spread"
 								  click.RecordEyetoEyeWidth="toggle_EarWidthHandler(event)"/>
 						<s:Button includeIn="RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
-								  width="208" height="34" label="Erase Lines"
-								  click="eraselines_clickHandler(event)"
-								  cornerRadius="10"
-								  alpha="10"/>
+								  width="208" height="25" label="Erase Lines" alpha="10"
+								  click="eraselines_clickHandler(event)" cornerRadius="10"
+								  height.RecordEarWidth="25"
+								  height.RecordEyetoEyeWidth="25"/>
 					</s:VGroup>
 					<s:VGroup includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 							  width="306" height="100%" horizontalAlign="center" >
@@ -2788,7 +2789,7 @@
 								  alpha.MeasureRigthTine="8"
 								  click.MeasureRigthTine="MeasureRigthTine_clickHandler(event)"
 								  x.NumberTypicalPoints="65" width.NumberTypicalPoints="188"
-								  alpha.NumberTypicalPoints="8"
+								  height.NumberTypicalPoints="25" alpha.NumberTypicalPoints="8"
 								  click.NumberTypicalPoints="TypicalPoints_clickHandler(event)"
 								  width.RecordLefAbnormalTine="213"
 								  label.RecordLefAbnormalTine="Record left Abnormal Tine 1"
@@ -2864,11 +2865,10 @@
 								  width="267" height="5"
 								  />
 						<s:Button includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
-								  width="187" height="30" label="Complete Scoring"
-								  alpha="8"
-								  click="CompleteScoring_clickHandler(event)"
-								  fontSize="18" fontStyle="normal"
-								  fontWeight="normal"/>
+								  width="187" height="25" label="Complete Scoring" alpha="8"
+								  click="CompleteScoring_clickHandler(event)" fontSize="18"
+								  fontStyle="normal" fontWeight="normal"
+								  height.NumberTypicalPoints="25"/>
 						
 						<mx:HRule includeIn="CompleteScoringfinal,MeasureAnormalPoints,MeasureLeftAnormalTine,MeasureLeftCircunference,MeasureLeftMainBeam,MeasureLeftTine,MeasureRigthAnormalTine,MeasureRigthCircumference,MeasureRigthMainBeam,MeasureRigthTine,NumberTypicalPoints,RecordLefAbnormalTine,RecordLeftCircunference,RecordLeftMainBeamLine,RecordLeftTineLine,RecordRigthAbnormalTine,RecordRigthCircumference,RecordRigthMainBeam,RecordRigthTineLine"
 								  width="267" height="5"
@@ -2882,11 +2882,11 @@
 							<s:Label id="lbllasmeasurement"
 									 text.MeasureRigthMainBeam="Rigth Main Beam ="
 									 text.NumberTypicalPoints="Inside Spread="/>
-							<s:Button width="188" height="29" label="View ScoreSheet"
+							<s:Button width="188" height="25" label="View ScoreSheet"
 									  alpha="8"
 									  click="ViewScoreSheet_clickHandler(event)"
 									  fontSize="18"/>
-							<s:Button width="186" height="29" label="View Instructions"
+							<s:Button width="186" height="25" label="View Instructions"
 									  alpha="8"
 									  click="ViewInstructions_clickHandler(event)"
 									  fontSize="18"/>
