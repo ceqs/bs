@@ -17,6 +17,11 @@
 			/**
 			 * @private
 			 */
+			override protected function initializationComplete():void
+			{
+				useChromeColor = true;
+				super.initializationComplete();
+			}
 			
 			override public function get colorizeExclusions():Array 
 			{				
@@ -30,15 +35,20 @@
 		<s:State name="disabled" />
 	</s:states>
 	
-	
+	<!-- layer 1: border -->
+	<s:Rect left="0" right="0" top="0" bottom="0">
+		<s:stroke>
+			<s:SolidColorStroke color="#747474" alpha="1.00" weight="1" />
+		</s:stroke>
+	</s:Rect>
 	
 	<!-- background fill -->
-	<s:Rect id="background" left="0" top="0" right="0" bottom="0"  >
+	<s:Rect id="background" left="0" top="0" right="0" bottom="1" >
 		<s:fill>
 			<s:LinearGradient rotation="90">
 				<s:entries>
-					<s:GradientEntry color="0x202020"/>
-					<s:GradientEntry color="0x888888" />
+					<s:GradientEntry color="0x323F56" />
+					<s:GradientEntry color="0x323F56" />
 				</s:entries>
 			</s:LinearGradient>         
 		</s:fill>
@@ -47,7 +57,7 @@
 		</s:stroke>
 	</s:Rect>
 	
-	<s:Group id="contentGroup" left="1" right="1" top="1" bottom="1">
+	<s:Group id="contentGroup" left="0" right="0" top="0" bottom="0">
 		<s:layout>
 			<s:VerticalLayout/>
 		</s:layout>

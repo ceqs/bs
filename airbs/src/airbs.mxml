@@ -17,6 +17,11 @@
 			import air.update.events.UpdateEvent;
 			
 			import com.complexless.dialogs.ComponentsSerials;
+			import com.complexless.skins.spark.ContentCropperSkin;
+			import com.complexless.skins.spark.ContentCropperSkin2Silver;
+			import com.complexless.skins.spark.PanelLoginSkinSilver;
+			import com.complexless.skins.spark.ToolbarSkin;
+			import com.complexless.skins.spark.ToolbarSkinSilver;
 			import com.complexless.utils.SQLbuckscore;
 			import com.complexless.utils.ScoreUtils;
 			
@@ -52,12 +57,13 @@
 			
 			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
+			import spark.skins.spark.ErrorSkin;
 			private var gVersion:String;
 			private var shadowFilter:DropShadowFilter;
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
 			private var prefsXML:XML;
 			public var sqlscore:SQLbuckscore = new SQLbuckscore();
-
+			public var silver:Boolean=false;
 			private function initApp():void {
 				trace("Iniciando aplicacion...");
 				if (sqlscore.isExist()) {
@@ -130,16 +136,74 @@
 					workpanel.panelprincipal.currentState='editphoto';
 				}
 				else if(event.item.@label == "Black"){
-					setStyle("backgroundColor", 0x323232);
+					
+					styleManager.loadStyleDeclarations("assets/css/airbs2.swf",true);
+					
+					
+					if(FlexGlobals.topLevelApplication.workpanel.panelprincipal.currentState=="stateMain") FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkin);
+					else FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkin2);
+					
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.manageCropper.cropperskin.setStyle("skinClass",com.complexless.skins.spark.ContentCropperSkin);
+					silver=false;
+					try{
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.panelscoreproccess.panelScoreSkin.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkin2);
+					}catch(err:Error ){
+						
+					}
+					try{
+						FlexGlobals.topLevelApplication.workpanel.panelprincipal.panelscoreproccess.headpanelscore.setStyle("skinClass", com.complexless.skins.spark.ToolbarSkin);
+					}catch(err:Error ){
+						
+					}
+					
+					
+					
+					workpanel.panelprincipal.btndeerinfo.setStyle("chromeColor",'#202020');
+					workpanel.panelprincipal.btndeerscoresheet.setStyle("chromeColor",'#202020');
+					workpanel.panelprincipal.btnScoreProccess.setStyle("chromeColor",'#202020');
+					workpanel.panelprincipal.btnexpand.setStyle("chromeColor",'#202020');
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.headpanel.setStyle("skinClass",com.complexless.skins.spark.ToolbarSkin);
+					
+					try{
+						panelLoginUpdate.loginpanelskin.setStyle("skinClass", com.complexless.skins.spark.PanelLoginSkin);
+					}catch(err:Error ){
+						
+					}
+					setStyle("backgroundColor", 0x202020);
 					setStyle("chromeColor", 0x303030);
 					setStyle("baseColor", 0x4C4C4C);
 					setStyle("color", 0xcecece);
-					setStyle("contentBackgroundColor", 0x323232);
+					setStyle("contentBackgroundColor", 0x202020);
 					setStyle("rollOverColor", 0x666666);
 					setStyle("selectionColor", 0xaeaeae);
 					setStyle("focusColor", 0xEEEEEE);
 				}
 				else if(event.item.@label == "Silver"){
+					styleManager.loadStyleDeclarations("assets/css/airbssilver.swf",true);
+					
+					workpanel.panelprincipal.btndeerinfo.setStyle("chromeColor",'#192F55');
+					workpanel.panelprincipal.btndeerscoresheet.setStyle("chromeColor",'#192F55');
+					workpanel.panelprincipal.btnScoreProccess.setStyle("chromeColor",'#192F55');
+					workpanel.panelprincipal.btnexpand.setStyle("chromeColor",'#192F55');
+					silver=true;
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.manageCropper.cropperskin.setStyle("skinClass",com.complexless.skins.spark.ContentCropperSkinSilver);
+				
+					
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkinSilver);
+					try{
+						FlexGlobals.topLevelApplication.workpanel.panelprincipal.panelscoreproccess.panelScoreSkin.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkin2Silver);
+					}catch(err:Error ){
+						
+					}
+					try{
+						FlexGlobals.topLevelApplication.workpanel.panelprincipal.panelscoreproccess.headpanelscore.setStyle("skinClass", com.complexless.skins.spark.ToolbarSkinSilver);
+					}catch(err:Error ){
+						
+					}
+					
+					
+					
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.headpanel.setStyle("skinClass",com.complexless.skins.spark.ToolbarSkinSilver);
 					setStyle("backgroundColor", 0xcccccc);
 					setStyle("chromeColor", 0xcccccc);
 					setStyle("baseColor", 0xcccccc);
@@ -153,6 +217,13 @@
 				else if(event.item.@label == "Update License"){
 					currentState='stateLogin';
 					panelLoginUpdate.currentState = 'stateUpdate';
+					if(silver){
+						try{
+							panelLoginUpdate.loginpanelskin.setStyle("skinClass", com.complexless.skins.spark.PanelLoginSkinSilver);
+						}catch(err:Error ){
+							
+						}
+					}
 				}
 				else if(event.item.@label == "View Help"){
 					var url :URLRequest = new URLRequest("http://www.buckscore.com:8043/Account/gettingstarted");
@@ -249,7 +320,6 @@
 	<fx:Declarations>
 		<mx:WebService id="ws" wsdl="http://www.buckscore.com/WebService/WinAppIntegration.asmx?WSDL" fault="ws_faultHandler(event)">
 			<mx:operation name="SignAndRegister" result="callResultHandler(event)"/>
-		
 		</mx:WebService> 
 		
 	</fx:Declarations>	
@@ -266,7 +336,9 @@
 						  paddingRight="6" paddingTop="6">
 					<s:SkinnableContainer width="100%" height="56" >   
 						<s:HGroup id="titleMain" width="100%" height="100%" gap="0" paddingLeft="5"
-								  paddingRight="5">
+								  paddingRight="5"
+								  x.PanelScoreState="0" y.PanelScoreState="0"
+								  height.PanelScoreState="56">
 							<s:Label height="100%" fontSize="24"
 									 text=" What's your Buckscore™?" verticalAlign="middle"
 									 />
@@ -276,9 +348,10 @@
 									 text.PanelScoreState="Powered by the MSU Deer Lab V0.6"/>
 						</s:HGroup>
 					</s:SkinnableContainer>				
+					<mx:HRule width="100%"/>
 					<s:HGroup includeIn="PanelScoreState" width="100%" height="34"
 							  verticalAlign="middle">
-						<bs:MenuBar id="myMenuBar2" width="100%" height="24"
+						<mx:MenuBar id="myMenuBar2" width="100%" height="24"
 									itemClick="menuHandler(event)" labelField="@label">
 							<fx:XMLList>
 								<menuitem label="New">
@@ -297,7 +370,7 @@
 									<menuitem label="About BuckScore Application"/>
 								</menuitem>
 							</fx:XMLList>
-						</bs:MenuBar>
+						</mx:MenuBar>
 					</s:HGroup>
 			
 					<ps:WorkPanel id="workpanel" includeIn="PanelScoreState" width="100%" height="100%">						

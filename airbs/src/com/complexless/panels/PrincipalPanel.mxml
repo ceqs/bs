@@ -8,17 +8,24 @@
 					  xmlns:utils="utils.*"
 					  xmlns:ns1="*"
 					  xmlns:panels="com.complexless.panels.*"
-					  width="100%" height="100%">
+					  width="100%" height="100%" xmlns:dialogs="com.complexless.dialogs.*">
 	
 
 	
 	<fx:Script>
 		
 		<![CDATA[
+			import com.complexless.skins.spark.ToolbarSkinSilver;
+			import com.complexless.utils.SQLbuckscore;
+			import com.complexless.utils.ScoreUtils;
+			import com.complexless.utils.albumbuckscore;
+			import com.complexless.utils.albumitembuck;
+			
 			import mx.collections.ArrayCollection;
 			import mx.collections.XMLListCollection;
 			import mx.controls.Alert;
 			import mx.controls.Image;
+			import mx.core.FlexGlobals;
 			import mx.core.IFlexDisplayObject;
 			import mx.events.CloseEvent;
 			import mx.events.FlexEvent;
@@ -35,12 +42,9 @@
 			import mx.utils.Base64Encoder;
 			import mx.utils.ObjectUtil;
 			import mx.utils.StringUtil;
+			
 			import spark.events.GridSelectionEvent;
 			import spark.events.IndexChangeEvent;
-			import com.complexless.utils.SQLbuckscore;
-			import com.complexless.utils.ScoreUtils;
-			import com.complexless.utils.albumbuckscore;
-			import com.complexless.utils.albumitembuck;
 			private var gVersion:String;
 			private var albumphoto:ArrayCollection= new ArrayCollection();
 			private var createalbum:ArrayCollection = new ArrayCollection();
@@ -70,6 +74,7 @@
 			public var inchvalue:Number;
 			public var myangleoptions:XMLList;
 			public var deernamefinishscore:String;
+			public var silver:String
 			
 			///////////////////////////////////////////////////////////////////////////////////////////////			
 			
@@ -133,6 +138,7 @@
 				imgupload.visible=false;
 				btnbrowsetoadd.visible=true;
 				banderadeer="0";
+				if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkinSilver);
 				
 			}
 			protected function button3_backeditphoto(event:MouseEvent):void
@@ -172,6 +178,7 @@
 							txtdescriptionalbum.text="";
 							combophoto.selectedIndex=0;
 							currentState='stateMain';
+							if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkinSilver);
 						}
 					}else Alert.show("Album Name Duplicate","Buckscore");
 				}else Alert.show("Insert value for Album","Buckscore");
@@ -196,6 +203,7 @@
 				combophoto.selectedIndex=0;
 				//combophoto.selectedIndex=0;
 				currentState='stateMain';
+				if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkinSilver);
 			}
 			public var banderadeer:String="0";
 			protected function uploadfile():void{
@@ -285,6 +293,7 @@
 							combophoto.selectedIndex=0;
 							banderadeer="0";
 							fileReference.data.clear();
+							if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkinSilver);
 						}
 					}else{
 						Alert.show("Name Duplicate");
@@ -295,6 +304,8 @@
 			}
 			protected function datagrid1_selectionChangeHandler(event:GridSelectionEvent):void
 			{
+				
+				if(!animateScaleXUpDown.isPlaying) animateScaleXUpDown.play();
 				var app:airbs=this.parentApplication as airbs;
 				albumphoto=app.sqlscore.resault();
 				trace(datagridalbumname.selectedItem.name);
@@ -447,6 +458,7 @@
 						txtposturenamesave.text="";
 						imgupload.visible=false;
 						currentState="stateMain";
+						if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkinSilver);
 						if(bandera=="1"){
 							for(i=0;i<array2.length;i++){
 								var objectaux:Object=array2[i];
@@ -506,6 +518,10 @@
 				currentState='PanelScoreState';
 				panelscoreproccess.currentState='scorephoto';
 				//panelscoreproccess.currentState='scorephoto';
+				if(FlexGlobals.topLevelApplication.silver){
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.panelscoreproccess.panelScoreSkin.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkin2Silver);
+					FlexGlobals.topLevelApplication.workpanel.panelprincipal.panelscoreproccess.headpanelscore.setStyle("skinClass", com.complexless.skins.spark.ToolbarSkinSilver);
+				}
 				panelscoreproccess.txtNamepaneltitle.text=txtNamepaneltitle.text;
 				
 				//panelscoreproccess.cmbage.selectedIndex=2;	
@@ -516,6 +532,8 @@
 			{
 				trace("close button");
 				currentState='stateMain';
+				if(FlexGlobals.topLevelApplication.silver) FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkinSilver);
+				else FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkin);
 			}
 			public var statescoringview:String;
 			protected function btn_scoringreviewPrincipalPanel(event:MouseEvent):void
@@ -573,7 +591,23 @@
 						   complete="fileReference_complete(event);" />
 		<net:FileReference id="fileReferenceupdate"
 						   select="fileReference_selectupdate(event);"
-						   complete="fileReference_completeupdate(event);" />		
+						   complete="fileReference_completeupdate(event);" />	
+		<mx:Sequence id="animateScaleXUpDown"  target="{btnScoreProccess}" repeatCount="0">
+			<mx:AnimateProperty 
+				property="scaleX" 
+				fromValue="1.0" 
+				toValue="1.5"/>
+			<mx:AnimateProperty 
+				property="scaleX" 
+				fromValue="1.5" 
+				toValue="1.0"/>    
+		</mx:Sequence>
+		
+		<s:Resize id="myRotate" 
+				   repeatCount="0"/>
+		
+		<mx:Resize id="resizeEffect" repeatCount="0" />
+		
 	</fx:Declarations>
 	<mx:HDividedBox id="mainPanel" width="100%" height="100%" focusEnabled="true"
 					hasFocusableChildren="true">
@@ -589,7 +623,7 @@
 							   width="100%" height="100%"/>
 			
 			<s:VGroup includeIn="editAlbum,editphoto,stateMain,updatephotodata"  width="100%" height="100%" gap="0">								
-				<s:SkinnableContainer width="100%" height="45"   
+				<s:SkinnableContainer id="headpanel" width="100%" height="45"   
 									  skinClass="com.complexless.skins.spark.ToolbarSkin"
 									  textAlign="left" width.editphoto="318" >
 					<s:HGroup width="100%" height="100%" paddingLeft="6"
@@ -597,19 +631,20 @@
 							  width.editphoto="319">
 						<s:Label id="txtNamepaneltitle" width="100%" fontSize="20"
 								 text=" Name"/>
-						<s:Button includeIn="updatephotodata, editphoto" label="Close"  click.editphoto=" txtdeernamesave.text='';
+						<s:Button includeIn="updatephotodata, editphoto" label="Close" chromeColor="#9C1A1A" click.editphoto=" txtdeernamesave.text='';
 								  txttagnumbersave.text='';
 								  txtranchnamesave.text='';
 								  txtposturenamesave.text='';
 								  imgupload.visible=false;
 								  btnbrowsetoadd.visible=true;
-								  combophoto.selectedIndex= -1; currentState='stateMain';"
+								  combophoto.selectedIndex= -1; currentState='stateMain'; if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkinSilver);"
 								  click.updatephotodata=" txtdeernamesave.text='';
 								  txttagnumbersave.text='';
 								  txtranchnamesave.text='';
 								  txtposturenamesave.text='';
 								  imgupload.visible=false;
-								  combophoto.selectedIndex= -1; currentState='stateMain';"
+								  combophoto.selectedIndex= -1; currentState='stateMain';
+								  if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkinSilver);"
 								  />
 						<s:Button includeIn="stateMain" label="Delete" alpha="12"
 								  chromeColor="#9C1A1A" click="deletephoto_clickHandler(event)"
@@ -617,10 +652,8 @@
 					</s:HGroup>
 				</s:SkinnableContainer>
 				<s:SkinnableContainer id="effects" width="100%" height="100%"
-									  skinClass="com.complexless.skins.spark.ContentCropperSkin"
-									  skinClass.editAlbum="com.complexless.skins.spark.ContentCropperSkin2"
-									  skinClass.editphoto="com.complexless.skins.spark.ContentCropperSkin2"
-									  skinClass.updatephotodata="com.complexless.skins.spark.ContentCropperSkin2">
+									  skinClass.stateMain="com.complexless.skins.spark.ContentCropperSkin"
+									  skinClass="com.complexless.skins.spark.ContentCropperSkin2">
 					<s:HGroup includeIn="stateMain" width="100%" height="95"
 							  accentColor="#3F8AF0" paddingLeft="6" paddingRight="6"
 							  paddingTop="6">
@@ -739,7 +772,7 @@
 								<s:Button label="Delete"
 										  click="DeleteAlbum_clickHandler(event)"/>
 								<s:Button label="Close"
-										  click="currentState='stateMain'"
+										  click="currentState='stateMain'; if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkinSilver);"
 										  />
 							</s:HGroup>
 						</s:VGroup>
@@ -759,16 +792,19 @@
 										  click="btn_scoringreviewPrincipalPanel(event)"
 										  enabled="false"/>
 							</s:HGroup>
-							<s:Button id="btnScoreProccess" width="126" height="28" label="SCORE"
-									  alpha="4" chromeColor="#202020"
-									  click="btnScoreProccess_clickHandler(event)" enabled="false"/>
+							
+							<s:Button id="btnScoreProccess" x="66" width="186" height="34"
+									  label="SCORE" alpha="4" chromeColor="#E8E4E4"
+									  click="btnScoreProccess_clickHandler(event)" color="#202020"
+									  enabled="false" fontSize="26" fontStyle="normal"
+									  fontWeight="bold"/>
 							<s:Spacer height="10"/>
 							<s:HGroup width="306" height="30"   
 									  verticalAlign="middle">
 								<s:Label text="Create Item"/>
 								<s:Spacer width="18"/>
 								<s:DropDownList id="combophoto" width="126" alpha="9"
-												change="if(combophoto.selectedItem=='Album')currentState='editAlbum'; if(combophoto.selectedItem=='Photo'){currentState='editphoto';  imgupload.source='';}; "
+												change="if(combophoto.selectedItem=='Album'){currentState='editAlbum'; if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkin2Silver);}if(combophoto.selectedItem=='Photo'){currentState='editphoto';  imgupload.source=''; if(FlexGlobals.topLevelApplication.silver)FlexGlobals.topLevelApplication.workpanel.panelprincipal.effects.setStyle('skinClass', com.complexless.skins.spark.ContentCropperSkin2Silver);}; "
 												cornerRadius="4"
 												doubleClick="currentState='editphoto'; imgupload.source=''; "
 												labelField="Add Photo" selectedIndex="0">
@@ -794,7 +830,7 @@
 							<s:HGroup width="100%" height="30" horizontalAlign="right"
 									  verticalAlign="middle">
 								<s:Label x="0" width="214" text="Choose Deer To Start Scoring"/>
-								<s:Button label="Expand" chromeColor="#202020"
+								<s:Button id="btnexpand" label="Expand" chromeColor="#202020"
 										  click="ExpandPanel_clickHandler(event)" cornerRadius="8"/>
 							</s:HGroup>
 							

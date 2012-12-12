@@ -113,7 +113,10 @@
 						lblangleoptions1.text="LEFT";
 						lblangleoptions3.text="LEFT";
 						lblangleoptions2.text="RIGHT";
-						lblangleoptions4.text="RIGHT";	
+						lblangleoptions4.text="RIGHT";
+						npointclose.text="NO. POINTS LEFT";
+						npointfar.text="NO. POINTS RIGHT";
+						
 					}
 					deernamefinishscore=app.workpanel.panelprincipal.deernamefinishscore;
 					txtDeerNickName.text=deernamefinishscore;
@@ -217,11 +220,11 @@
 					trigth.text=totalrigth.toString();
 					tdiference.text=totaldiference.toString();
 					
-					grossscore.text=(totalleft+ totalrigth).toString();
-					NTgrossscore.text=(totalleft+ totalrigth+ totalabnormal).toString();
+					grossscore.text=scoreutils.roundDecimals(((totalleft+ totalrigth)),2).toString();
+					NTgrossscore.text=scoreutils.roundDecimals((totalleft+ totalrigth+ totalabnormal),2).toString();
 					totaldiferencefinal.text=totaldiference.toString();
 					netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-totaldiference),2).toString();
-					netnonTypicalscore.text=(Number(NTgrossscore.text)-totaldiference).toString();
+					netnonTypicalscore.text=scoreutils.roundDecimals((Number(NTgrossscore.text)-totaldiference),2).toString();
 					
 				}
 			}
@@ -264,6 +267,8 @@
 						lblangleoptions3.text="LEFT";
 						lblangleoptions2.text="RIGHT";
 						lblangleoptions4.text="RIGHT";	
+						npointclose.text="NO. POINTS LEFT";
+						npointfar.text="NO. POINTS RIGHT";
 					}
 					txtcommentsdeer.text=photoItem.comments as String;
 					numberleftponitsgrid.text=photoItem.leftpoints as String;
@@ -472,9 +477,9 @@
 					
 					grossscore.text=photoItem.socorefinal as String;
 					totaldiferencefinal.text=tdiference.text;
-					NTgrossscore.text=(Number(grossscore.text)+adnormalpoint).toString();
+					NTgrossscore.text=scoreutils.roundDecimals((Number(grossscore.text)+adnormalpoint),2).toString();
 					netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-Number(tdiference.text)),2).toString();
-					netnonTypicalscore.text=(Number(NTgrossscore.text)-Number(tdiference.text)).toString();
+					netnonTypicalscore.text=scoreutils.roundDecimals((Number(NTgrossscore.text)-Number(tdiference.text)),2).toString();
 					
 				}else{
 					//app.workpanel.panelprincipal.currentState='stateMain';
@@ -512,6 +517,8 @@
 					lblangleoptions3.text="LEFT";
 					lblangleoptions2.text="RIGHT";
 					lblangleoptions4.text="RIGHT";	
+					npointclose.text="NO. POINTS LEFT";
+					npointfar.text="NO. POINTS RIGHT";
 				}
 				insidespread.text=scoreutils.insidespread;
 				
@@ -607,11 +614,11 @@
 				tleft.text=totalleft.toString();
 				trigth.text=totalrigth.toString();
 				tdiference.text=totaldiference.toString();
-				grossscore.text=(totalleft+ totalrigth).toString();
-				NTgrossscore.text=(totalleft+ totalrigth+ totalabnormal).toString();
+				grossscore.text=scoreutils.roundDecimals(((totalleft+ totalrigth)),2).toString();
+				NTgrossscore.text=scoreutils.roundDecimals((totalleft+ totalrigth+ totalabnormal),2).toString();
 				totaldiferencefinal.text=totaldiference.toString();
-				netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-Number(totaldiference)),2).toString();
-				netnonTypicalscore.text=(Number(NTgrossscore.text)-Number(totaldiference)).toString();
+				netTypicalscore.text=scoreutils.roundDecimals((Number(grossscore.text)-totaldiference),2).toString();
+				netnonTypicalscore.text=scoreutils.roundDecimals((Number(NTgrossscore.text)-totaldiference),2).toString();
 			}
 			////////////////////////////////////////////////////////back SCORE //////////////////////////////			
 			protected function ScoringFinalBuckView_clickHandler(event:MouseEvent):void
@@ -713,6 +720,8 @@
 						app.workpanel.currentState='statePrincipal'; 
 						
 						app.workpanel.panelprincipal.currentState='stateMain';
+						
+						if(app.silver) app.workpanel.panelprincipal.effects.setStyle("skinClass",com.complexless.skins.spark.ContentCropperSkinSilver);
 					}else Alert.show("No insert data","Buckscore");
 					app.workpanel.panelprincipal.panelscoreproccess.scoreutils=new ScoreUtils();
 					app.workpanel.panelprincipal.array2refresh();
@@ -722,6 +731,7 @@
 					scoreutils=new ScoreUtils();
 					app.workpanel.panelprincipal.statescoringview="";
 					app.workpanel.currentState='statePrincipal';
+					if(app.silver) app.workpanel.panelprincipal.effects.setStyle("skinClass",com.complexless.skins.spark.ContentCropperSkinSilver);
 				}
 			}			
 			private var myPDF:PDF;
@@ -874,8 +884,8 @@
 														 horizontalAlign="center"
 														 verticalAlign="bottom">
 												<s:Label id="lblangleoptions1" paddingTop="3"
-														 text="LEFT" verticalAlign="middle"
-														 text.ScoringFinalBuck="CLOSE"/>
+														 verticalAlign="middle"
+														 text="CLOSE"/>
 											</mx:GridItem>
 											<!-- Define the second cell of Row 1. -->
 											<mx:GridItem width="100%"
@@ -885,8 +895,8 @@
 														 horizontalAlign="center"
 														 verticalAlign="bottom">
 												<s:Label id="lblangleoptions2" paddingTop="3"
-														 text="RIGTH" verticalAlign="middle"
-														 text.ScoringFinalBuck="FAR"/>
+														  verticalAlign="middle"
+														 text="FAR"/>
 											</mx:GridItem>
 											<!-- Define the third cell of Row 1. -->
 											
@@ -1169,8 +1179,8 @@
 										<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
 											
 											
-											<s:Label paddingTop="3"
-													 text="NO. POINTS LEFT"
+											<s:Label id="npointclose" paddingTop="3"
+													 text="NO. POINTS CLOSE"
 													 verticalAlign="middle"/>	
 										</mx:GridItem>
 										<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
@@ -1182,8 +1192,9 @@
 										<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
 											
 											
-											<s:Label paddingTop="3"
-													 text="NO. POINTS RIGHT"
+											<s:Label id="npointfar" 
+													paddingTop="3"
+													 text="NO. POINTS FAR"
 													 verticalAlign="middle"/>	
 										</mx:GridItem>
 										<mx:GridItem  width="100%" horizontalAlign="center" verticalAlign="bottom" borderColor="#0B0A0A" borderStyle="solid">
@@ -1223,9 +1234,9 @@
 													 colSpan="1"
 													 horizontalAlign="center"
 													 verticalAlign="bottom">
-											<s:Label id="lblangleoptions3" paddingTop="3" text="LEFT"
+											<s:Label id="lblangleoptions3" paddingTop="3"
 													 verticalAlign="middle"
-													 text.ScoringFinalBuck="CLOSE"/>
+													 text="CLOSE"/>
 										</mx:GridItem>
 										<!-- Define the third cell of Row 1. -->
 										<mx:GridItem width="100%"
@@ -1235,8 +1246,8 @@
 													 horizontalAlign="center"
 													 verticalAlign="bottom">
 											<s:Label id="lblangleoptions4" paddingTop="3"
-													 text="RIGTH" verticalAlign="middle"
-													 text.ScoringFinalBuck="FAR"/>
+													  verticalAlign="middle"
+													 text="FAR"/>
 										</mx:GridItem>
 										<mx:GridItem width="100%"
 													 borderColor="#0B0A0A"

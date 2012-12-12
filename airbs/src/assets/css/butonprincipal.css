@@ -1,0 +1,14 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+#btndeerinfo {
+	chromeColor: #192F55;	
+}
+#btndeerscoresheet {
+	chromeColor: #192F55;
+}	
+
+#btnScoreProccess {
+	chromeColor: #192F55;
+}

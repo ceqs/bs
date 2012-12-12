@@ -189,8 +189,8 @@ in accordance with the terms of the license agreement accompanying it.
 				<!--<s:SolidColor id="backgroundFill" color="#FFFFFF"/> -->
 				<s:LinearGradient rotation="90">
 					<s:entries>
-						<s:GradientEntry color="0x4A5790" />
-						<s:GradientEntry color="0x4A5790" />
+						<s:GradientEntry color="0x636F8B" />
+						<s:GradientEntry color="0x636F8B" />
 					</s:entries>
 				</s:LinearGradient> 
 			</s:fill>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Button xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  label="SCORE" initialize="button1_initializeHandler(event)" effectStart="button1_effectStartHandler(event)" >
+	<fx:Script>
+		<![CDATA[
+			import mx.effects.EffectManager;
+			import mx.events.EffectEvent;
+			import mx.events.FlexEvent;
+			
+			protected function button1_initializeHandler(event:FlexEvent):void
+			{
+			
+			}
+			
+			protected function button1_effectStartHandler(event:EffectEvent):void
+			{
+				this.addEventListener( MouseEvent.MOUSE_OVER  , handleRoll );
+				this.addEventListener( MouseEvent.MOUSE_OUT  , handleRollOut );
+				this.addEventListener( MouseEvent.CLICK  , doButton );
+			}
+			private function  handleRoll( evt : MouseEvent):void
+			{
+				animateScaleXUpDown.startDelay;
+			}
+			private function  handleRollOut( evt : MouseEvent):void
+			{
+				animateScaleXUpDown.startDelay;
+			}
+			private function  doButton ( evt : MouseEvent):void
+			{
+				animateScaleXUpDown.startDelay;
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<mx:Sequence id="animateScaleXUpDown" >
+			<mx:AnimateProperty 
+				property="scaleX" 
+				fromValue="1.0" 
+				toValue="1.5"/>
+			<mx:AnimateProperty 
+				property="scaleX" 
+				fromValue="1.5" 
+				toValue="1.0"/>    
+		</mx:Sequence>
+	</fx:Declarations>
+</s:Button>

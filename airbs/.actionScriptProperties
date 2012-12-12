@@ -20,7 +20,11 @@
     </application>
   </applications>
   <modules/>
-  <buildCSSFiles/>
+  <buildCSSFiles>
+    <buildCSSFileEntry destPath="bin-debug" sourcePath="src/assets/css/airbssilver.css"/>
+    <buildCSSFileEntry destPath="bin-debug" sourcePath="src/assets/css/butonprincipal.css"/>
+    <buildCSSFileEntry destPath="bin-debug" sourcePath="src/assets/css/airbs2.css"/>
+  </buildCSSFiles>
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
   <buildTargets>
     <buildTarget buildTargetName="default">

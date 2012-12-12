@@ -38,20 +38,23 @@
 	<!-- layer 1: border -->
 	<s:Rect left="0" right="0" top="0" bottom="0">
 		<s:stroke>
-			<s:SolidColorStroke color="#202020" alpha="1.00" weight="1" />
+			<s:SolidColorStroke color="#747474" alpha="1.00" weight="1" />
 		</s:stroke>
 	</s:Rect>
 	
 	<!-- background fill -->
-	<s:Rect id="background" left="0" top="0" right="0" bottom="1">
+	<s:Rect id="background" left="0" top="0" right="0" bottom="1" >
 		<s:fill>
 			<s:LinearGradient rotation="90">
 				<s:entries>
-					<s:GradientEntry color="0xE2E2E2" />
-					<s:GradientEntry color="0xD9D9D9" />
+					<s:GradientEntry color="0x323232" />
+					<s:GradientEntry color="0x323232" />
 				</s:entries>
 			</s:LinearGradient>         
 		</s:fill>
+		<s:stroke>
+			<s:SolidColorStroke color="0x000000" weight="1"/>
+		</s:stroke>
 	</s:Rect>
 	
 	<s:Group id="contentGroup" left="0" right="0" top="0" bottom="0">

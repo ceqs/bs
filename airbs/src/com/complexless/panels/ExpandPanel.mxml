@@ -318,22 +318,28 @@
 							</s:VGroup>
 						</s:SkinnableContainer>
 						
-						<s:SkinnableContainer width="304" height="100%">
+						<s:SkinnableContainer width="100%" height="100%">
 							
-							<s:BorderContainer width="312" height="100%"
-											   backgroundColor="#A3AEB0">
-								<s:HGroup paddingLeft="6">
-									<s:VGroup>
+							<s:BorderContainer x="22" y="10" width="264" height="161"
+											   backgroundColor="#5E5E5E">
+								<s:HGroup x="0" y="8" height="151" paddingLeft="6">
+									<s:VGroup horizontalAlign="center" verticalAlign="middle">
 										<s:Label text="0-100"/>
-										<s:List id="listscoremin" width="80" labelField="deername" change="listscoremin_changeHandler(event)"/>
+										<s:List id="listscoremin" width="80" height="100%"
+												change="listscoremin_changeHandler(event)"
+												labelField="deername"/>
 									</s:VGroup>
-									<s:VGroup>
+									<s:VGroup horizontalAlign="center" verticalAlign="bottom">
 										<s:Label text="100-200"/>
-										<s:List id="listscoremedium" width="80" labelField="deername" change="listscoremedium_changeHandler(event)"/>
+										<s:List id="listscoremedium" width="80" height="100%"
+												change="listscoremedium_changeHandler(event)"
+												labelField="deername"/>
 									</s:VGroup>
-									<s:VGroup>
+									<s:VGroup horizontalAlign="center" verticalAlign="bottom">
 										<s:Label text="200 +"/>
-										<s:List id="listscoremax" width="80" labelField="deername" change="listscoremax_changeHandler(event)"/>
+										<s:List id="listscoremax" width="80" height="100%"
+												change="listscoremax_changeHandler(event)"
+												labelField="deername"/>
 									</s:VGroup>
 								</s:HGroup>
 							</s:BorderContainer>

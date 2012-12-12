@@ -9,11 +9,12 @@
 					  xmlns:ns1="*"
 					  width="320"
 					  creationComplete="init()" styleName="main">
-	
+	<fx:Style source="assets/css/airbs2.css"/>
 	<fx:Script>
 
 		<![CDATA[
 			import com.complexless.dialogs.Window;
+			import com.complexless.skins.spark.ContentCropperSkinSilver;
 			import com.complexless.utils.SQLbuckscore;
 			import com.complexless.utils.ScoreUtils;
 			import com.complexless.utils.albumbuckscore;
@@ -74,7 +75,7 @@
 			public var circumferenceleft:ArrayList= new ArrayList;
 			
 			public var logarchive:File;
-			public var log:String;
+			public var log:String="";
 			///////////////////////////////////////////////////////////////////////////////////////////////			
 			protected function init():void
 			{
@@ -112,6 +113,8 @@
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.currentState='statePrincipal';
 				app.workpanel.panelprincipal.currentState='stateMain';
+				if(app.silver) app.workpanel.panelprincipal.effects.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkinSilver);
+				else app.workpanel.panelprincipal.effects.setStyle("skinClass", com.complexless.skins.spark.ContentCropperSkin);
 			}
 			protected function button3_referenceFeature(event:MouseEvent):void
 			{
@@ -241,7 +244,7 @@
 				trace("reference feature:"+referencetype);
 				var app:airbs=this.parentApplication as airbs;
 				trace("reference type selection="+referencetype);
-				log+="\n---reference type selection="+referencetype+"\n";
+				log+="\n\r---reference type selection="+referencetype+"\n\r";
 				
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -292,7 +295,11 @@
 								trace("valueinch with measure:"+inchvalue);
 							}							
 						}
-						log+="\n---Age="+scoredeerage+"  \n---rule selection="+stateReferenceRule+"\n ---calculate rule indice:"+rule+" \n---distance feature: "+distance+"\n---inchevalue"+inchvalue  ;
+						var modo:String="";
+						if(referencetype=="001") modo="EAR";
+						else if(referencetype=="002") modo="EYE TO EYE";
+						else if(referencetype=="005") modo="EYE";
+						log+="\n\r |STA="+scorestate+"\n\r |AGE="+scoredeerage+"\n\r |MOD="+modo+" \n\r |Rule number="+stateReferenceRule+" \n\r |Rule Value="+rule+ "\n\r |MEASURE="+distance+"\n\r |InchValue="+inchvalue;
 					}	
 					else{						
 						currentState='MeasureInsideSpread';
@@ -315,7 +322,13 @@
 								trace("valueinch with measure:"+inchvalue);
 							}
 						}
-						log+="\n---Age="+scoredeerage+" \n---rule selection="+stateReferenceRule2+" \n---calculate rule indice:"+rule2+ " \n---distance feature: "+distance+"\n---inchevalue"+inchvalue;
+						if(grade!="0") imagebusckscorezoom.source="Image/INSSPR_22.jpg";
+						else imagebusckscorezoom.source="Image/INSSPR_0.jpg";
+						var modo:String="";
+						if(referencetype=="001") modo="EAR";
+						else if(referencetype=="002") modo="EYE TO EYE";
+						else if(referencetype=="005") modo="EYE";
+						log+="\n\r |STA="+scorestate+"\n\r |AGE="+scoredeerage+"\n\r |MOD="+modo+" \n\r |Rule number="+stateReferenceRule2+" \n\r |Rule Value="+rule2+ "\n\r |MEASURE= "+distance+"\n\r |InchValue="+inchvalue;
 					}
 					
 					////log="Age="+scoredeerage+"   rule selection="+stateReferenceRule+"  calculate rule indice:"+rule+"  inchevalue"+inchvalue;
@@ -345,7 +358,10 @@
 						trace(key1+"."+key2);
 						grade=mylistposition[i].attribute("Code");
 						trace("grado:"+grade);
-						log+="\n---grade: "+grade+"\n";
+						log+="\n\r |DEE:"+txtNamepaneltitle.text+"\n\r";
+						var someBirthday:Date = new Date();
+						log+="\n\r |DAT"+someBirthday.toDateString();
+						log+="\n\r |ORI: "+grade+"\n\r";
 					}
 				}
 				
@@ -374,7 +390,12 @@
 				if(grade=="0"){ 
 					angledescription1="Left";
 					angledescription2="Right";
+				}else{
+					angledescription1="Close";
+					angledescription2="Far";
 				}
+				
+				
 				if(grade=="22" || grade=="66"){
 					var app:airbs=this.parentApplication as airbs;
 					Alert.show("The view you have chosen is not an exact match to the Buscksocre requirements. Your result may vary."+"Do yo wish to continue", "Irregular Image Orientation Confirmation",
@@ -445,7 +466,11 @@
 				txttypicalleft.text=cmbletftypical.selectedItem;
 				txttypicalrigth.text=cmbrigthtypical.selectedItem;
 				btnRecordLeftTine.label="Measure "+angledescription1+" Main Beam"
+				
 				var app:airbs=this.parentApplication as airbs;
+				if(grade=="90")imagezoomscoring.source="Image/MAINBM_90.jpg";
+				else if(grade=="0"){imagezoomscoring.source="Image/MAINBM_0.jpg"}
+				else {imagezoomscoring.source="Image/MAINBM_66.jpg";}
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 				
 			}
@@ -465,6 +490,7 @@
 				txtTypicalLeftRecordRigth.text=cmbletftypical.selectedItem;
 				txtTypicalRigthRecordRigth.text=cmbrigthtypical.selectedItem;
 				btnRecordLeftTine.label="Record "+angledescription2+" Main Beam"
+				
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -478,9 +504,13 @@
 				}
 				else if(parseInt(cmbabnormalpointsleft.selectedItem)>0){
 					currentState='MeasureLeftAnormalTine';
+					if(grade!="0")imagezoomscoring.source="Image/ABNTIN_22.jpg";
+					else{imagezoomscoring.source="Image/ABNTIN_0.jpg";}
 				}
 				else if(parseInt(cmbabnormalpointsrigth.selectedItem)>0){
 					currentState='MeasureRigthAnormalTine';
+					if(grade!="0")imagezoomscoring.source="Image/ABNTIN_22.jpg";
+					else{imagezoomscoring.source="Image/ABNTIN_0.jpg";}
 				}
 				
 				txtleftanormalpoints.text=cmbabnormalpointsleft.selectedItem;
@@ -496,7 +526,8 @@
 				app.workpanel.panelprincipal.manageCropper.endDraw();
 				cmbage.selectedIndex=0;
 				cmbstate.selectedIndex=0;
-		
+				
+				
 				app.workpanel.panelprincipal.closebutton();
 				
 			}
@@ -526,6 +557,7 @@
 				cmbrigthtypical.selectedIndex=0;
 				cmbabnormalpointsleft.selectedIndex=0;
 				cmbabnormalpointsrigth.selectedIndex=0;
+				
 				app.workpanel.panelprincipal.closebutton();
 				
 			}
@@ -586,7 +618,7 @@
 					}
 					//distance=distance/72;
 					var options:XMLList;
-					log+="\n---distance of points inside spread: "+distance+"\n";
+					log+="\n\r |INS.M="+distance+"\n\r";
 					options=prefsXML.child("Equations").child("Equation");
 					
 					var j:int=0;
@@ -604,10 +636,11 @@
 					
 					var ldistance:Number=(distance)/(inchvalue);
 					
-					log+="\n---distance divided with inchevalue of inside spread: "+ldistance+"\n";
+					log+="\n\r |INS="+ldistance+"\n\r";
 					
 					var ISP:Number=Number(myangleoptions[0].attribute("A"))*ldistance+
 						Number(myangleoptions[0].attribute("B"));
+					log+="\n\r |INS.V="+ISP+"\n\r";
 					ISP=scoreutils.roundDecimals(ISP,2); 
 					scoreutils.insidespread=ISP.toString();
 					currentState='NumberTypicalPoints';
@@ -636,7 +669,7 @@
 						break;
 					}
 				}
-				log+="\n---Inside spread estimate between maximize of maim beam left and main beam rigth";
+				log+="\n\r |Inside spread estimate between maximize of maim beam left/close and main beam rigth/far";
 				trace(myangleoptions.toString());
 				
 			}
@@ -666,11 +699,11 @@
 						}	
 					}
 					//distance=distance/72;
-					log+="\n---distance of CLOSE/LEFT main beam: "+distance+"\n";
+					log+="\n\r |TB0.M "+angledescription1+"= "+distance+"\n\r";
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
 					
-					log+="\n---distance divided with inchevalue of CLOSE/LEFT main beam: "+ldistance+"\n";
+					log+="\n\r |TB0"+angledescription1+"="+ldistance+"\n\r";
 					if(grade=='0'){
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
@@ -679,6 +712,7 @@
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
 					}
+					log+="\n\r |TB0.V"+angledescription1+"="+ISP+"\n\r";
 					ISP=scoreutils.roundDecimals(ISP,2);
 					scoreutils.mainbeamleft=ISP.toString();
 					
@@ -717,10 +751,10 @@
 						}
 					}
 					//distance=distance/72;
-					log+="\n---distance of FAR/RIGTH main beam: "+distance+"\n";
+					log+="\n\r |TB0.M"+angledescription2+"="+distance+"\n\r";
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
-					log+="\n---distance divided with inchevalue of FAR/RIGHT main beam: "+ldistance+"\n";
+					log+="\n\r |TB0"+angledescription2+"="+ldistance+"\n\r";
 					if(grade=='0'){
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbrigthtypical.selectedItem);
@@ -736,7 +770,7 @@
 						
 					}
 					
-					
+					log+="\n\r |TB0.V"+angledescription2+"="+ISP+"\n\r";
 					ISP=scoreutils.roundDecimals(ISP,2);
 					scoreutils.mainbeamrigth=ISP.toString();
 					if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)>1){ currentState='MeasureRigthTine'; btnRecordLeftTine.label="Measure "+angledescription2+" Tine 1"; }
@@ -744,20 +778,21 @@
 					else if(parseInt(cmbletftypical.selectedItem)>1){ currentState='MeasureLeftTine'; btnRecordLeftTine.label="Measure "+angledescription1+" Tine 1";}
 					lbllasmeasurement.text=angledescription2+"Main Beam="+scoreutils.mainbeamrigth.toString();
 					//logarchive=new File(log);
-					try{
-						saveAs("c:/tmp","logbuckscore.txt",log);
-					}catch(errObject:Error){trace("no guardo");}
+					
 						
 					
 					app.workpanel.panelprincipal.manageCropper.endDraw();
 				}
 			}
 			public function saveAs(filepath:String,filename:String,logaux:String):void {
+				
+				
 				var file:File = new File(filepath+File.separator+filename);
+			
 				var fileStream:FileStream = new FileStream();
 				
-				fileStream.open(file,FileMode.WRITE);
-				
+				fileStream.open(file,FileMode.APPEND);
+			
 				fileStream.writeUTFBytes(logaux);
 				
 				
@@ -782,7 +817,9 @@
 					if(numbertypicalleft==vectorleft.getItemAt(i)) vectorleft.removeItemAt(i);
 				}
 				
-				
+				if(grade=="90")imagezoomscoring.source="Image/TYPTIN_90.jpg";
+				else if(grade=="0"){imagezoomscoring.source="Image/TYPTIN_0.jpg";}
+				else {imagezoomscoring.source="Image/TYPTIN_22.jpg";}	
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -810,9 +847,10 @@
 						}	
 					}
 					//distance=distance/72;
-					
+					log+="\n\r |TB1.M"+numbertypicalleft+".M"+angledescription1+"="+distance+"\n\r";
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
+					log+="\n\r |TB"+numbertypicalleft+""+angledescription1+"="+ldistance+"\n\r";
 					trace("distance de left points"+ldistance);
 					if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)-1){
 						if(grade=='0')
@@ -824,6 +862,7 @@
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
+						log+="\n\r |TB"+numbertypicalleft+".V"+angledescription1+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numbertypicalleft==1){
 							scoreutils.Typicalpointleft1=ISP.toString();
@@ -880,6 +919,7 @@
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
+						log+="\n\r |TB"+numbertypicalleft+".V"+angledescription1+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numbertypicalleft==1){
 							scoreutils.Typicalpointleft1=ISP.toString();
@@ -945,7 +985,10 @@
 				else usermirrortypical.visible=false;
 				for(var i:int=0; i<vectorleft.length;i++){
 					if(numbertypicalrigth==vectorleft.getItemAt(i)) usermirrortypical.visible=false;	
-				}	
+				}
+				if(grade=="90")imagezoomscoring.source="Image/TYPTIN_90.jpg";
+				else if(grade=="0"){imagezoomscoring.source="Image/TYPTIN_0.jpg";}
+				else {imagezoomscoring.source="Image/TYPTIN_22.jpg";}	
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 				
@@ -976,8 +1019,10 @@
 						}
 					}
 					//distance=distance/72;
+					log+="\n\r |TB"+numbertypicalrigth+".M"+angledescription2+"="+distance+"\n\r";
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
+					log+="\n\r |TB"+numbertypicalrigth+""+angledescription2+"="+ldistance+"\n\r";
 					trace("distance de left points"+ldistance);
 					if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)-1){
 						if(grade=='0')
@@ -990,6 +1035,7 @@
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0) cont++;
+						log+="\n\r |TB"+numbertypicalrigth+".V"+angledescription2+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numbertypicalrigth==1){
 							scoreutils.Typicalpointrigth1=ISP.toString();
@@ -1047,6 +1093,7 @@
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
+						log+="\n\r |TB"+numbertypicalrigth+".V"+angledescription2+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numbertypicalrigth==1){
 							scoreutils.Typicalpointrigth1=ISP.toString();
@@ -1114,6 +1161,8 @@
 				}
 				
 				btnRecordLeftTine.label="Record "+angledescription1+" Circumference "+numbercincumferenceleft;
+				if(grade!="0")imagezoomscoring.source="Image/CRCFRN_66.jpg";
+				else{imagezoomscoring.source="Image/CRCFRN_0.jpg";}
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
 			
@@ -1143,8 +1192,10 @@
 						}
 					}
 					//distance=distance/72;	
+					log+="\n\r |CR"+numbercincumferenceleft+".M"+angledescription1+"="+distance+"\n\r";
 					var ISP:Number;
 					var ldistance:Number=(3.14)*(distance)/(inchvalue);
+					log+="\n\r |CR"+numbercincumferenceleft+""+angledescription1+"="+ldistance+"\n\r";
 					if(numbercincumferenceleft<4){
 						
 						if(grade=='0')
@@ -1156,6 +1207,7 @@
 							ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}
+						log+="\n\r |CR"+numbercincumferenceleft+".V"+angledescription1+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0) cont++;
 						if(numbercincumferenceleft==1)
@@ -1181,6 +1233,7 @@
 							ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}
+						log+="\n\r |CR"+numbercincumferenceleft+".V"+angledescription1+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0) cont++;
 						if(numbercincumferenceleft==1)
@@ -1214,6 +1267,8 @@
 				for(var i:int=0; i<circumferenceleft.length;i++){
 					if(numbercincumferencerigth==circumferenceleft.getItemAt(i)) usermirrortypical.visible=false;	
 				}
+				if(grade!="0")imagezoomscoring.source="Image/CRCFRN_66.jpg";
+				else{imagezoomscoring.source="Image/CRCFRN_0.jpg";}
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -1244,9 +1299,10 @@
 						}	
 					}
 					//distance=distance/72;
+					log+="\n\r |CR"+numbercincumferencerigth+".M"+angledescription2+"="+distance+"\n\r";
 					var ISP:Number;
 					var ldistance:Number=(3.14)*(distance)/(inchvalue);
-					
+					log+="\n\r |CR"+numbercincumferencerigth+""+angledescription2+"="+ldistance+"\n\r";
 					if(numbercincumferencerigth<4){
 						if(grade=='0')
 						{
@@ -1259,6 +1315,7 @@
 							ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}
+						log+="\n\r |CR"+numbercincumferencerigth+".V"+angledescription2+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0)cont++;
 						if(numbercincumferencerigth==1){
@@ -1297,6 +1354,7 @@
 							if(cont!=0 && cont<4) cont++;
 							trace("entre y no es 0");
 						}
+						log+="\n\r |CR"+numbercincumferencerigth+".V"+angledescription2+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0)cont++;
 						
@@ -1317,6 +1375,7 @@
 							if(scoreutils.Circumferenceleft4=="1") scoreutils.Circumferenceleft4=scoreutils.Circumferencerigth4;
 						}	
 						currentState='MeasureAnormalPoints';
+						
 						lbllasmeasurement.text=angledescription2+" Circumference "+numbercincumferencerigth+"="+ISP.toString();
 						cmbabnormalpointsleft.selectedIndex=0;
 						cmbabnormalpointsrigth.selectedIndex=0;
@@ -1332,6 +1391,8 @@
 			{
 				currentState='RecordLefAbnormalTine';				
 				btnRecordLeftTine.label="Record "+angledescription1+" Abnormal Tine "+numberabnormalleft;
+				if(grade!="0")imagezoomscoring.source="Image/ABNTIN_22.jpg";
+				else{imagezoomscoring.source="Image/ABNTIN_0.jpg";}
 				var app:airbs=this.parentApplication as airbs;
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -1364,8 +1425,10 @@
 						
 					}
 					//distance=distance/72;
+					log+="\n\r |AB"+numberabnormalleft+".M"+angledescription1+"="+distance+"\n\r";
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
+					log+="\n\r |AB"+numberabnormalleft+""+angledescription1+"="+ldistance+"\n\r";
 					if(numberabnormalleft<parseInt(cmbabnormalpointsleft.selectedItem)){
 						if(grade=='0')
 						{
@@ -1378,6 +1441,7 @@
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
+						log+="\n\r |AB"+numberabnormalleft+".V"+angledescription1+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numberabnormalleft==1)
 							scoreutils.Abnormalpointleft1=ISP.toString();
@@ -1422,6 +1486,8 @@
 						
 						currentState='MeasureLeftAnormalTine';
 						//lbllasmeasurement.text="Abnormal Left Line "+numberabnormalleft+"="+ISP.toString();
+						if(grade!="0")imagezoomscoring.source="Image/ABNTIN_22.jpg";
+						else{imagezoomscoring.source="Image/ABNTIN_0.jpg";}
 						numberabnormalleft++;
 						btnRecordLeftTine.label="Measure "+angledescription1+" Abnormal Tine "+numberabnormalleft;
 						
@@ -1436,6 +1502,7 @@
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
+						log+="\n\r |AB"+numberabnormalleft+".V"+angledescription1+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numberabnormalleft==1)
 							scoreutils.Abnormalpointleft1=ISP.toString();
@@ -1493,7 +1560,8 @@
 			{
 				var app:airbs=this.parentApplication as airbs;
 				currentState='RecordRigthAbnormalTine';
-				
+				if(grade!="0")imagezoomscoring.source="Image/ABNTIN_22.jpg";
+				else{imagezoomscoring.source="Image/ABNTIN_0.jpg";}
 				btnRecordLeftTine.label="Record "+angledescription2+" Abnormal Tine "+numberabnormalright;
 				
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
@@ -1526,9 +1594,11 @@
 						
 						
 					}
+					log+="\n\r |AB"+numberabnormalright+".M"+angledescription2+"="+distance+"\n\r";
 					//distance=distance/72;	
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
+					log+="\n\r |AB"+numberabnormalright+""+angledescription2+"="+ldistance+"\n\r";
 					if(numberabnormalright<parseInt(cmbabnormalpointsrigth.selectedItem)){
 						if(grade=='0')
 						{
@@ -1541,6 +1611,7 @@
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
+						log+="\n\r |AB"+numberabnormalright+".V"+angledescription2+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numberabnormalright==1)
 							scoreutils.Abnormalpointrigth1=ISP.toString();
@@ -1600,6 +1671,7 @@
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0) cont++;
+						log+="\n\r |AB"+numberabnormalright+".V"+angledescription2+"="+ISP+"\n\r";
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numberabnormalright==1)
 							scoreutils.Abnormalpointrigth1=ISP.toString();
@@ -2367,6 +2439,9 @@
 			public function click_MeasureInsideSpread():void {
 				currentState='RecorderInsideSpread';
 				var app:airbs=this.parentApplication as airbs;
+				
+				if(grade!="0") imagebusckscorezoom.source="Image/INSSPR_22.jpg";
+				else imagebusckscorezoom.source="Image/INSSPR_0.jpg";
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
 			public var adjustement:String;
@@ -2375,6 +2450,11 @@
 				
 				var app:airbs=this.parentApplication as airbs;
 				adjustement=prefsXML.child("VelvetAdjustment").attribute("A").toString();
+				
+				try{
+					
+					saveAs("c:/tmp","logbuckscore.txt",log);
+				}catch(errObject:Error){trace("no guardo");}
 				
 				app.workpanel.currentState='stateScoring';
 				Alert.show("Is this deer in velvet", "Velvet Adjustement",
@@ -2476,7 +2556,7 @@
 	
 	
 	<s:VGroup id="holder" width="100%" height="100%" gap="0">								
-		<s:SkinnableContainer width="100%" height="45" textAlign="left" skinClass="com.complexless.skins.spark.ToolbarSkin">
+		<s:SkinnableContainer id="headpanelscore" width="100%" height="45" textAlign="left" skinClass="com.complexless.skins.spark.ToolbarSkin">
 			<s:HGroup paddingLeft="6" paddingRight="6" width="100%" height="100%" verticalAlign="middle">
 				<s:Label id="txtNamepaneltitle" width="100%" fontSize="20"
 						 text=" Name"/>
@@ -2515,7 +2595,7 @@
 						  alpha.scorephoto="9" click.scorephoto="button3_backscorephoto(event)"/>
 			</s:HGroup>
 		</s:SkinnableContainer>
-		<s:SkinnableContainer width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin2">
+		<s:SkinnableContainer id="panelScoreSkin" width="100%" height="100%" skinClass="com.complexless.skins.spark.ContentCropperSkin2">
 			<s:VGroup width="100%" height="100%" horizontalAlign="center"
 					  paddingLeft="6" paddingRight="6"
 					  height.MeasureLeftAnormalTine="668">
@@ -2565,7 +2645,7 @@
 								  label.RecordEyeballWidthFeature="Record Eyeball Width Feature"
 								  click.RecordEyeballWidthFeature="toggle_EarWidthHandler(event)"
 								  height.RecordEyetoEyeWidth="25"
-								  label.RecordEyetoEyeWidth="Record Inside Spread"
+								  label.RecordEyetoEyeWidth="Record Eye to Eye Width"
 								  click.RecordEyetoEyeWidth="toggle_EarWidthHandler(event)"/>
 						<s:Button includeIn="RecordEarWidth,RecordEyeballWidthFeature,RecordEyetoEyeWidth,RecorderInsideSpread"
 								  width="208" height="25" label="Erase Lines" alpha="10"

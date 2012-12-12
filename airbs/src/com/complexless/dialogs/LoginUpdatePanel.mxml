@@ -29,7 +29,7 @@
 		<s:State name="stateUpdate"/>
 	</s:states>
 	
-	<s:Panel title.stateLogin="Welcome Online Registeration"
+	<s:Panel id="loginpanelskin" title.stateLogin="Welcome Online Registeration"
 			 title.stateUpdate="Welcome Update License"
 			 width="300" height="200"
 			 horizontalCenter="0"

@@ -2,7 +2,7 @@
 @namespace s "library://ns.adobe.com/flex/spark";
 @namespace mx "library://ns.adobe.com/flex/mx";
 @namespace bs "library://ns.adobe.com/flex/mx";
-
+@namespace mx "library://ns.adobe.com/flex/halo";
 
 global
 {
@@ -10,15 +10,15 @@ global
 	font-size: 13;
 	font-family: "Arial, Calibri";
 	
-	chrome-color: #202020;
-	content-background-color: #202020;
-
+	chrome-color: #303030;
+	content-background-color: #323F56;
+	content-background-alpha: 1.0;
 	
 	color: #cecece;
 	text-roll-over-color: #cecece;
 	text-selected-color: #cecece;
 	
-	roll-over-color: #202020;
+	roll-over-color: #323F56;
 	selection-color: #aeaeae;
 	cornerRadius: 5.0;
 		
@@ -29,12 +29,12 @@ bs|MenuBar
 	font-anti-alias-type: advanced;
 	font-grid-fit-type: subpixel;
 
-	chrome-color: #202020;
-	content-background-color: #202020;
-
+	chrome-color: #DBE3ED;
+	content-background-color: #A5A9B3;
+	content-background-alpha: 2.0;
 	
-	color: white;
-	text-roll-over-color: #cecece;
+	color: #313767;
+	text-roll-over-color: #202020;
 	text-selected-color: #cecece;
 
 	
@@ -44,16 +44,25 @@ bs|MenuBar
 
 bs|Menu
 {
-	roll-over-color: #666666;
+	roll-over-color: #A5A9B3;
 	selection-color: #221E1F;
 	color: #ffffff;  
 	symbol-color: #ffffff;
 }
 
 #mainBox {
-	backgroundColor: #202020;
+	backgroundColor: #A5A9B3;
 	backgroundAlpha: 1.0;
 }
+
+
+#headpanelscore{
+
+backgroundColor: #323F56;
+}
+
+
+
 
 #titleMain {
 	borderColor: #000000;
@@ -68,7 +77,7 @@ mx|Alert{
 	messageStyleName: "messageStyle";
 	header-height:30;
 
-	background-color: #4A5790;
+	background-color: #202020;
 	corner-radius :0;
 	border-style :solid;
 
@@ -97,8 +106,8 @@ mx|Alert{
 
 s|Button { 
 	backgroundColor: #0a4efa;
-	chromeColor: #1F317D;
-	backgroundAlpha : 4.0;
+	chromeColor: #558CDC;
+	backgroundAlpha : 9.0;
 	cornerRadius: 5;
 	focusAlpha: 9.0;
 	
@@ -129,12 +138,13 @@ s|TextArea
 	color: black;
 	
 }
-
 s|DataGrid{
 	contentBackgroundColor: #323232;
 
 	
 }
+
+
 
 
 
