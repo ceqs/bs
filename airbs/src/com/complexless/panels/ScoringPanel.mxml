@@ -122,7 +122,7 @@
 					txtDeerNickName.text=deernamefinishscore;
 					txtLocationDeer.text=app.workpanel.panelprincipal.panelscoreproccess.location; //location
 					var someBirthday:Date = new Date();
-					txtdatedeer.text=someBirthday.toDateString();
+					txtdatedeer.text=someBirthday.toString();
 					imageforedition0.source=app.workpanel.panelprincipal.arraybyte;
 					numberleftponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbletftypical.selectedItem;
 					numberrigthponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbrigthtypical.selectedItem;
@@ -508,7 +508,7 @@
 				txtDeerNickName.text=deernamefinishscore;
 				txtLocationDeer.text=app.workpanel.panelprincipal.panelscoreproccess.location; //location
 				var someBirthday:Date = new Date();
-				txtdatedeer.text=someBirthday.toDateString();
+				txtdatedeer.text=someBirthday.toString();
 				imageforedition0.source=app.workpanel.panelprincipal.arraybyte;
 				numberleftponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbletftypical.selectedItem;
 				numberrigthponitsgrid.text=app.workpanel.panelprincipal.panelscoreproccess.cmbrigthtypical.selectedItem;

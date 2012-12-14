@@ -71,6 +71,8 @@
 			public var distancerect:Number=0;
 			public var angledescription1:String="Close";
 			public var angledescription2:String="Far";
+			public var loga1:String="C";
+			public var loga2:String="F";
 			public var vectorleft:ArrayList=new ArrayList;
 			public var circumferenceleft:ArrayList= new ArrayList;
 			
@@ -244,7 +246,6 @@
 				trace("reference feature:"+referencetype);
 				var app:airbs=this.parentApplication as airbs;
 				trace("reference type selection="+referencetype);
-				log+="\n\r---reference type selection="+referencetype+"\n\r";
 				
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
 			}
@@ -296,10 +297,10 @@
 							}							
 						}
 						var modo:String="";
-						if(referencetype=="001") modo="EAR";
-						else if(referencetype=="002") modo="EYE TO EYE";
-						else if(referencetype=="005") modo="EYE";
-						log+="\n\r |STA="+scorestate+"\n\r |AGE="+scoredeerage+"\n\r |MOD="+modo+" \n\r |Rule number="+stateReferenceRule+" \n\r |Rule Value="+rule+ "\n\r |MEASURE="+distance+"\n\r |InchValue="+inchvalue;
+						if(referencetype=="001") modo="Ears";
+						else if(referencetype=="002") modo="Eye to Eye";
+						else if(referencetype=="005") modo="Eye";
+						log+="|STA="+scorestate+"|AGE="+scoredeerage+"|MOD="+modo+"|RUL="+stateReferenceRule+"|RUV="+rule+"|MEA="+distance+"|INV="+inchvalue;
 					}	
 					else{						
 						currentState='MeasureInsideSpread';
@@ -318,17 +319,17 @@
 							if(mylistposition[i].attribute("Description")==scorestate){
 								var rule2:Number=Number(mylistposition[i].attribute(stateReferenceRule2));
 								inchvalue=distance/rule2;
-								trace("Rule selection:"+stateReferenceRule);
+								trace("Rule selection:"+stateReferenceRule2);
 								trace("valueinch with measure:"+inchvalue);
 							}
 						}
 						if(grade!="0") imagebusckscorezoom.source="Image/INSSPR_22.jpg";
 						else imagebusckscorezoom.source="Image/INSSPR_0.jpg";
 						var modo:String="";
-						if(referencetype=="001") modo="EAR";
-						else if(referencetype=="002") modo="EYE TO EYE";
-						else if(referencetype=="005") modo="EYE";
-						log+="\n\r |STA="+scorestate+"\n\r |AGE="+scoredeerage+"\n\r |MOD="+modo+" \n\r |Rule number="+stateReferenceRule2+" \n\r |Rule Value="+rule2+ "\n\r |MEASURE= "+distance+"\n\r |InchValue="+inchvalue;
+						if(referencetype=="001") modo="Ears";
+						else if(referencetype=="002") modo="Eye To Eye";
+						else if(referencetype=="005") modo="Eye";
+						log+="|STA="+scorestate+"|AGE="+scoredeerage+"|MOD="+modo+"|RUL="+stateReferenceRule2+"|RUV="+rule2+"|MEA="+distance+"|INV="+inchvalue;
 					}
 					
 					////log="Age="+scoredeerage+"   rule selection="+stateReferenceRule+"  calculate rule indice:"+rule+"  inchevalue"+inchvalue;
@@ -358,10 +359,12 @@
 						trace(key1+"."+key2);
 						grade=mylistposition[i].attribute("Code");
 						trace("grado:"+grade);
-						log+="\n\r |DEE:"+txtNamepaneltitle.text+"\n\r";
+						log+="\n\r";
+						log+="|DEE="+txtNamepaneltitle.text;
 						var someBirthday:Date = new Date();
-						log+="\n\r |DAT"+someBirthday.toDateString();
-						log+="\n\r |ORI: "+grade+"\n\r";
+						log+="|DAT="+someBirthday.toString();
+						log+="|ORI= "+grade;
+						trace(someBirthday.toString());
 					}
 				}
 				
@@ -390,9 +393,14 @@
 				if(grade=="0"){ 
 					angledescription1="Left";
 					angledescription2="Right";
+					loga1="L";
+					loga2="R";
+					
 				}else{
 					angledescription1="Close";
 					angledescription2="Far";
+					loga1="C";
+					loga2="F";
 				}
 				
 				
@@ -618,7 +626,8 @@
 					}
 					//distance=distance/72;
 					var options:XMLList;
-					log+="\n\r |INS.M="+distance+"\n\r";
+					
+					
 					options=prefsXML.child("Equations").child("Equation");
 					
 					var j:int=0;
@@ -636,11 +645,15 @@
 					
 					var ldistance:Number=(distance)/(inchvalue);
 					
-					log+="\n\r |INS="+ldistance+"\n\r";
+				
 					
 					var ISP:Number=Number(myangleoptions[0].attribute("A"))*ldistance+
 						Number(myangleoptions[0].attribute("B"));
-					log+="\n\r |INS.V="+ISP+"\n\r";
+					
+					log+="|INS.A="+Number(myangleoptions[0].attribute("A"))+"|INS.B="+Number(myangleoptions[0].attribute("B"));
+					log+="|INS.M="+distance;
+					log+="|INS="+ldistance;
+					log+="|INS.V="+ISP;
 					ISP=scoreutils.roundDecimals(ISP,2); 
 					scoreutils.insidespread=ISP.toString();
 					currentState='NumberTypicalPoints';
@@ -669,7 +682,7 @@
 						break;
 					}
 				}
-				log+="\n\r |Inside spread estimate between maximize of maim beam left/close and main beam rigth/far";
+				log+="|Inside spread estimate between maximize of maim beam left/close and main beam rigth/far";
 				trace(myangleoptions.toString());
 				
 			}
@@ -699,20 +712,26 @@
 						}	
 					}
 					//distance=distance/72;
-					log+="\n\r |TB0.M "+angledescription1+"= "+distance+"\n\r";
+					
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
 					
-					log+="\n\r |TB0"+angledescription1+"="+ldistance+"\n\r";
+					
 					if(grade=='0'){
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
+						log+="|TB0."+loga1+".A="+Number(myangleoptions[1].attribute("A"))+"|TB0."+loga1+".B="+Number(myangleoptions[1].attribute("B"))+"|TB0."+loga1+".C="+Number(myangleoptions[1].attribute("C"));
 						
 					}else{	
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbletftypical.selectedItem);
+						log+="|TB0."+loga1+".A="+Number(myangleoptions[1].attribute("A"))+"|TB0."+loga1+".B="+Number(myangleoptions[1].attribute("B"))+"|TB0."+loga1+".C="+Number(myangleoptions[1].attribute("C"));
 					}
-					log+="\n\r |TB0.V"+angledescription1+"="+ISP+"\n\r";
+					
+					log+="|TB0."+loga1+".M= "+distance;
+					log+="|TB0."+loga1+"="+ldistance;
+					log+="|PTS."+loga1+"="+Number(cmbletftypical.selectedItem);
+					log+="|TB0."+loga1+".V="+ISP;
 					ISP=scoreutils.roundDecimals(ISP,2);
 					scoreutils.mainbeamleft=ISP.toString();
 					
@@ -751,17 +770,19 @@
 						}
 					}
 					//distance=distance/72;
-					log+="\n\r |TB0.M"+angledescription2+"="+distance+"\n\r";
+					
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
-					log+="\n\r |TB0"+angledescription2+"="+ldistance+"\n\r";
+				
 					if(grade=='0'){
 						ISP=Number(myangleoptions[1].attribute("A"))*ldistance+Number(myangleoptions[1].attribute("B"))+
 							Number(myangleoptions[1].attribute("C"))*Number(cmbrigthtypical.selectedItem);
+						log+="|TB0."+loga2+".A="+Number(myangleoptions[1].attribute("A"))+"|TB0."+loga2+".B="+Number(myangleoptions[1].attribute("B"))+"|TB0."+loga2+".C="+Number(myangleoptions[1].attribute("C"));
 						
 					}else{
 						ISP=Number(myangleoptions[2].attribute("A"))*ldistance+Number(myangleoptions[2].attribute("B"))+
 							Number(myangleoptions[2].attribute("C"))*Number(cmbrigthtypical.selectedItem);
+						log+="|TB0."+loga2+".A="+Number(myangleoptions[1].attribute("A"))+"|TB0."+loga2+".B="+Number(myangleoptions[1].attribute("B"))+"|TB0."+loga2+".C="+Number(myangleoptions[1].attribute("C"));
 					}
 					if(grade=='90'){
 						if(ISP>=Number(scoreutils.mainbeamleft)) scoreutils.insidespread=(Number(myangleoptions[0].attribute("A"))*ISP+Number(myangleoptions[0].attribute("B"))).toString();
@@ -770,7 +791,10 @@
 						
 					}
 					
-					log+="\n\r |TB0.V"+angledescription2+"="+ISP+"\n\r";
+					log+="|TB0."+loga2+".M= "+distance;
+					log+="|TB0."+loga2+"="+ldistance;
+					log+="|PTS."+loga2+"="+Number(cmbrigthtypical.selectedItem);
+					log+="|TB0."+loga2+".V="+ISP;
 					ISP=scoreutils.roundDecimals(ISP,2);
 					scoreutils.mainbeamrigth=ISP.toString();
 					if(parseInt(cmbletftypical.selectedItem)<=1 && parseInt(cmbrigthtypical.selectedItem)>1){ currentState='MeasureRigthTine'; btnRecordLeftTine.label="Measure "+angledescription2+" Tine 1"; }
@@ -793,7 +817,7 @@
 				
 				fileStream.open(file,FileMode.APPEND);
 			
-				fileStream.writeUTFBytes(logaux);
+				fileStream.writeUTFBytes("\r"+logaux);
 				
 				
 				fileStream.close();
@@ -847,22 +871,29 @@
 						}	
 					}
 					//distance=distance/72;
-					log+="\n\r |TB1.M"+numbertypicalleft+".M"+angledescription1+"="+distance+"\n\r";
+				
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
-					log+="\n\r |TB"+numbertypicalleft+""+angledescription1+"="+ldistance+"\n\r";
 					trace("distance de left points"+ldistance);
 					if(numbertypicalleft<parseInt(cmbletftypical.selectedItem)-1){
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+							log+="|TB"+numbertypicalleft+"."+loga1+".A="+Number(myangleoptions[2+cont].attribute("A"))+"|TB"+numbertypicalleft+"."+loga1+".B="+Number(myangleoptions[2+cont].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+						
+							
 						}else{
 							ISP=Number(myangleoptions[3+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[3+(2*cont)].attribute("B"));
+							log+="|TB"+numbertypicalleft+"."+loga1+".A="+Number(myangleoptions[3+(2*cont)].attribute("A"))+"|TB"+numbertypicalleft+"."+loga1+".B="+Number(myangleoptions[3+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 						}
 						if(cont==0)cont++;
-						log+="\n\r |TB"+numbertypicalleft+".V"+angledescription1+"="+ISP+"\n\r";
+						
+						log+="|TB"+numbertypicalleft+"."+loga1+".M="+distance;
+						log+="|TB"+numbertypicalleft+"."+loga1+"="+ldistance;
+						log+="|TB"+numbertypicalleft+"."+loga1+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numbertypicalleft==1){
 							scoreutils.Typicalpointleft1=ISP.toString();
@@ -912,14 +943,20 @@
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+							log+="|TB"+numbertypicalleft+"."+loga1+".A="+Number(myangleoptions[2+cont].attribute("A"))+"|TB"+numbertypicalleft+"."+loga1+".B="+Number(myangleoptions[2+cont].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 						}else{
 							
 							ISP=Number(myangleoptions[3+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[3+(2*cont)].attribute("B"));
+							log+="|TB"+numbertypicalleft+"."+loga1+".A="+Number(myangleoptions[3+(2*cont)].attribute("A"))+"|TB"+numbertypicalleft+"."+loga1+".B="+Number(myangleoptions[3+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+						
 						}
 						if(cont==0)cont++;
-						log+="\n\r |TB"+numbertypicalleft+".V"+angledescription1+"="+ISP+"\n\r";
+						log+="|TB"+numbertypicalleft+"."+loga1+".M="+distance;
+						log+="|TB"+numbertypicalleft+"."+loga1+"="+ldistance;
+						log+="|TB"+numbertypicalleft+"."+loga1+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numbertypicalleft==1){
 							scoreutils.Typicalpointleft1=ISP.toString();
@@ -1019,23 +1056,28 @@
 						}
 					}
 					//distance=distance/72;
-					log+="\n\r |TB"+numbertypicalrigth+".M"+angledescription2+"="+distance+"\n\r";
+					
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
-					log+="\n\r |TB"+numbertypicalrigth+""+angledescription2+"="+ldistance+"\n\r";
 					trace("distance de left points"+ldistance);
 					if(numbertypicalrigth<parseInt(cmbrigthtypical.selectedItem)-1){
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+							log+="|TB"+numbertypicalrigth+"."+loga2+".A="+Number(myangleoptions[2+cont].attribute("A"))+"|TB"+numbertypicalrigth+"."+loga2+".B="+Number(myangleoptions[2+cont].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+						
 						}else{
 							
 							ISP=Number(myangleoptions[4+2*cont].attribute("A"))*ldistance+Number(myangleoptions[4+(2*cont)].attribute("B"));
+							log+="|TB"+numbertypicalrigth+"."+loga2+".A="+Number(myangleoptions[4+2*cont].attribute("A"))+"|TB"+numbertypicalrigth+"."+loga2+".B="+Number(myangleoptions[4+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 						}
 						if(cont==0) cont++;
-						log+="\n\r |TB"+numbertypicalrigth+".V"+angledescription2+"="+ISP+"\n\r";
+						log+="|TB"+numbertypicalrigth+"."+loga2+".M="+distance;
+						log+="|TB"+numbertypicalrigth+"."+loga2+"="+ldistance;
+						log+="|TB"+numbertypicalrigth+"."+loga2+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numbertypicalrigth==1){
 							scoreutils.Typicalpointrigth1=ISP.toString();
@@ -1086,14 +1128,20 @@
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[2+cont].attribute("A"))*ldistance+Number(myangleoptions[2+cont].attribute("B"));
+							log+="|TB"+numbertypicalrigth+"."+loga2+".A="+Number(myangleoptions[2+cont].attribute("A"))+"|TB"+numbertypicalrigth+"."+loga2+".B="+Number(myangleoptions[2+cont].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 						}else{
 							
 							ISP=Number(myangleoptions[4+2*(cont)].attribute("A"))*ldistance+Number(myangleoptions[4+(2*cont)].attribute("B"));
+							log+="|TB"+numbertypicalrigth+"."+loga2+".A="+Number(myangleoptions[4+2*cont].attribute("A"))+"|TB"+numbertypicalrigth+"."+loga2+".B="+Number(myangleoptions[4+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 						}
 						if(cont==0)cont++;
-						log+="\n\r |TB"+numbertypicalrigth+".V"+angledescription2+"="+ISP+"\n\r";
+						log+="|TB"+numbertypicalrigth+"."+loga2+".M="+distance;
+						log+="|TB"+numbertypicalrigth+"."+loga2+"="+ldistance;
+						log+="|TB"+numbertypicalrigth+"."+loga2+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numbertypicalrigth==1){
 							scoreutils.Typicalpointrigth1=ISP.toString();
@@ -1192,22 +1240,28 @@
 						}
 					}
 					//distance=distance/72;	
-					log+="\n\r |CR"+numbercincumferenceleft+".M"+angledescription1+"="+distance+"\n\r";
+					
 					var ISP:Number;
 					var ldistance:Number=(3.14)*(distance)/(inchvalue);
-					log+="\n\r |CR"+numbercincumferenceleft+""+angledescription1+"="+ldistance+"\n\r";
+			
 					if(numbercincumferenceleft<4){
 						
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[7+2*cont].attribute("A"))*ldistance+Number(myangleoptions[7+(2*cont)].attribute("B"));
+							log+="|CR"+numbercincumferenceleft+"."+loga1+".A="+Number(myangleoptions[7+2*cont].attribute("A"))+"|TB"+numbercincumferenceleft+"."+loga1+".B="+Number(myangleoptions[7+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 						}else{
 							
 							ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
+							log+="|CR"+numbercincumferenceleft+"."+loga1+".A="+Number(myangleoptions[13+2*cont].attribute("A"))+"|TB"+numbercincumferenceleft+"."+loga1+".B="+Number(myangleoptions[13+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 						}
-						log+="\n\r |CR"+numbercincumferenceleft+".V"+angledescription1+"="+ISP+"\n\r";
+						log+="|CR"+numbercincumferenceleft+"."+loga1+".M="+distance;
+						log+="|CR"+numbercincumferenceleft+"."+loga1+"="+ldistance;
+						log+="|CR"+numbercincumferenceleft+"."+loga1+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0) cont++;
 						if(numbercincumferenceleft==1)
@@ -1227,13 +1281,19 @@
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[7+2*cont].attribute("A"))*ldistance+Number(myangleoptions[7+(2*cont)].attribute("B"));
+							log+="|CR"+numbercincumferenceleft+"."+loga1+".A="+Number(myangleoptions[7+2*cont].attribute("A"))+"|TB"+numbercincumferenceleft+"."+loga1+".B="+Number(myangleoptions[7+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+					
 						}else{
 							
 							ISP=Number(myangleoptions[13+2*cont].attribute("A"))*ldistance+Number(myangleoptions[13+(2*cont)].attribute("B"));
+							log+="|CR"+numbercincumferenceleft+"."+loga1+".A="+Number(myangleoptions[13+2*cont].attribute("A"))+"|TB"+numbercincumferenceleft+"."+loga1+".B="+Number(myangleoptions[13+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 						}
-						log+="\n\r |CR"+numbercincumferenceleft+".V"+angledescription1+"="+ISP+"\n\r";
+						log+="|CR"+numbercincumferenceleft+"."+loga1+".M="+distance;
+						log+="|CR"+numbercincumferenceleft+"."+loga1+"="+ldistance;
+						log+="|CR"+numbercincumferenceleft+"."+loga1+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0) cont++;
 						if(numbercincumferenceleft==1)
@@ -1299,23 +1359,28 @@
 						}	
 					}
 					//distance=distance/72;
-					log+="\n\r |CR"+numbercincumferencerigth+".M"+angledescription2+"="+distance+"\n\r";
+					
 					var ISP:Number;
 					var ldistance:Number=(3.14)*(distance)/(inchvalue);
-					log+="\n\r |CR"+numbercincumferencerigth+""+angledescription2+"="+ldistance+"\n\r";
+				
 					if(numbercincumferencerigth<4){
 						if(grade=='0')
 						{
 							
 							ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
+							log+="|CR"+numbercincumferencerigth+"."+loga2+".A="+Number(myangleoptions[8+2*cont].attribute("A"))+"|TB"+numbercincumferencerigth+"."+loga2+".B="+Number(myangleoptions[8+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
+							
 							trace("entre 0");
 						}else{
 							
 							ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
+							log+="|CR"+numbercincumferencerigth+"."+loga2+".A="+Number(myangleoptions[14+2*cont].attribute("A"))+"|TB"+numbercincumferencerigth+"."+loga2+".B="+Number(myangleoptions[14+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}
-						log+="\n\r |CR"+numbercincumferencerigth+".V"+angledescription2+"="+ISP+"\n\r";
+						log+="|CR"+numbercincumferencerigth+"."+loga2+".M="+distance;
+						log+="|CR"+numbercincumferencerigth+"."+loga2+"="+ldistance;
+						log+="|CR"+numbercincumferencerigth+"."+loga2+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0)cont++;
 						if(numbercincumferencerigth==1){
@@ -1346,15 +1411,19 @@
 						{
 							
 							ISP=Number(myangleoptions[8+2*cont].attribute("A"))*ldistance+Number(myangleoptions[8+(2*cont)].attribute("B"));
+							log+="|CR"+numbercincumferencerigth+"."+loga2+".A="+Number(myangleoptions[8+2*cont].attribute("A"))+"|TB"+numbercincumferencerigth+"."+loga2+".B="+Number(myangleoptions[8+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 							trace("entre 0");
 						}else{
 							
 							ISP=Number(myangleoptions[14+2*cont].attribute("A"))*ldistance+Number(myangleoptions[14+(2*cont)].attribute("B"));
+							log+="|CR"+numbercincumferencerigth+"."+loga2+".A="+Number(myangleoptions[14+2*cont].attribute("A"))+"|TB"+numbercincumferencerigth+"."+loga2+".B="+Number(myangleoptions[14+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 							trace("entre y no es 0");
 						}
-						log+="\n\r |CR"+numbercincumferencerigth+".V"+angledescription2+"="+ISP+"\n\r";
+						log+="|CR"+numbercincumferencerigth+"."+loga2+".M="+distance;
+						log+="|CR"+numbercincumferencerigth+"."+loga2+"="+ldistance;
+						log+="|CR"+numbercincumferencerigth+"."+loga2+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(cont==0)cont++;
 						
@@ -1425,23 +1494,27 @@
 						
 					}
 					//distance=distance/72;
-					log+="\n\r |AB"+numberabnormalleft+".M"+angledescription1+"="+distance+"\n\r";
+					
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
-					log+="\n\r |AB"+numberabnormalleft+""+angledescription1+"="+ldistance+"\n\r";
+
 					if(numberabnormalleft<parseInt(cmbabnormalpointsleft.selectedItem)){
 						if(grade=='0')
 						{
 							
 							ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+							log+="|AB"+numberabnormalleft+"."+loga1+".A="+Number(myangleoptions[15+cont].attribute("A"))+"|AB"+numberabnormalleft+"."+loga1+".B="+Number(myangleoptions[15+cont].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}else{
 							
 							ISP=Number(myangleoptions[21+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[21+(2*cont)].attribute("B"));
+							log+="|AB"+numberabnormalleft+"."+loga1+".A="+Number(myangleoptions[21+(2*cont)].attribute("A"))+"|AB"+numberabnormalleft+"."+loga1+".B="+Number(myangleoptions[21+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
-						log+="\n\r |AB"+numberabnormalleft+".V"+angledescription1+"="+ISP+"\n\r";
+						log+="|AB"+numberabnormalleft+"."+loga1+".M="+distance;
+						log+="|AB"+numberabnormalleft+"."+loga1+"="+ldistance;
+						log+="|AB"+numberabnormalleft+"."+loga1+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numberabnormalleft==1)
 							scoreutils.Abnormalpointleft1=ISP.toString();
@@ -1495,14 +1568,18 @@
 						if(grade=='0')
 						{
 							ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+							log+="|AB"+numberabnormalleft+"."+loga1+".A="+Number(myangleoptions[15+cont].attribute("A"))+"|AB"+numberabnormalleft+"."+loga1+".B="+Number(myangleoptions[15+cont].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}else{
 							
 							ISP=Number(myangleoptions[21+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[21+(2*cont)].attribute("B"));
+							log+="|AB"+numberabnormalleft+"."+loga1+".A="+Number(myangleoptions[21+(2*cont)].attribute("A"))+"|AB"+numberabnormalleft+"."+loga1+".B="+Number(myangleoptions[21+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
-						log+="\n\r |AB"+numberabnormalleft+".V"+angledescription1+"="+ISP+"\n\r";
+						log+="|AB"+numberabnormalleft+"."+loga1+".M="+distance;
+						log+="|AB"+numberabnormalleft+"."+loga1+"="+ldistance;
+						log+="|AB"+numberabnormalleft+"."+loga1+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numberabnormalleft==1)
 							scoreutils.Abnormalpointleft1=ISP.toString();
@@ -1561,7 +1638,6 @@
 				var app:airbs=this.parentApplication as airbs;
 				currentState='RecordRigthAbnormalTine';
 				if(grade!="0")imagezoomscoring.source="Image/ABNTIN_22.jpg";
-				else{imagezoomscoring.source="Image/ABNTIN_0.jpg";}
 				btnRecordLeftTine.label="Record "+angledescription2+" Abnormal Tine "+numberabnormalright;
 				
 				app.workpanel.panelprincipal.manageCropper.beginDraw();
@@ -1594,24 +1670,26 @@
 						
 						
 					}
-					log+="\n\r |AB"+numberabnormalright+".M"+angledescription2+"="+distance+"\n\r";
 					//distance=distance/72;	
 					var ISP:Number;
 					var ldistance:Number=(distance)/(inchvalue);
-					log+="\n\r |AB"+numberabnormalright+""+angledescription2+"="+ldistance+"\n\r";
 					if(numberabnormalright<parseInt(cmbabnormalpointsrigth.selectedItem)){
 						if(grade=='0')
 						{
 							
 							ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+							log+="|AB"+numberabnormalright+"."+loga2+".A="+Number(myangleoptions[15+cont].attribute("A"))+"|AB"+numberabnormalright+"."+loga2+".B="+Number(myangleoptions[15+cont].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}else{
 							
 							ISP=Number(myangleoptions[22+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[22+(2*cont)].attribute("B"));
+							log+="|AB"+numberabnormalright+"."+loga2+".A="+Number(myangleoptions[22+(2*cont)].attribute("A"))+"|AB"+numberabnormalright+"."+loga2+".B="+Number(myangleoptions[22+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0)cont++;
-						log+="\n\r |AB"+numberabnormalright+".V"+angledescription2+"="+ISP+"\n\r";
+						log+="|AB"+numberabnormalright+"."+loga2+".M="+distance;
+						log+="|AB"+numberabnormalright+"."+loga2+"="+ldistance;
+						log+="|AB"+numberabnormalright+"."+loga2+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numberabnormalright==1)
 							scoreutils.Abnormalpointrigth1=ISP.toString();
@@ -1664,14 +1742,18 @@
 						{
 							
 							ISP=Number(myangleoptions[15+cont].attribute("A"))*ldistance+Number(myangleoptions[15+cont].attribute("B"));
+							log+="|AB"+numberabnormalright+"."+loga2+".A="+Number(myangleoptions[15+cont].attribute("A"))+"|AB"+numberabnormalright+"."+loga2+".B="+Number(myangleoptions[15+cont].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}else{
 							
 							ISP=Number(myangleoptions[22+(2*cont)].attribute("A"))*ldistance+Number(myangleoptions[22+(2*cont)].attribute("B"));
+							log+="|AB"+numberabnormalright+"."+loga2+".A="+Number(myangleoptions[22+(2*cont)].attribute("A"))+"|AB"+numberabnormalright+"."+loga2+".B="+Number(myangleoptions[22+(2*cont)].attribute("B"));
 							if(cont!=0 && cont<4) cont++;
 						}
 						if(cont==0) cont++;
-						log+="\n\r |AB"+numberabnormalright+".V"+angledescription2+"="+ISP+"\n\r";
+						log+="|AB"+numberabnormalright+"."+loga2+".M="+distance;
+						log+="|AB"+numberabnormalright+"."+loga2+"="+ldistance;
+						log+="|AB"+numberabnormalright+"."+loga2+".V="+ISP;
 						ISP=scoreutils.roundDecimals(ISP,2);
 						if(numberabnormalright==1)
 							scoreutils.Abnormalpointrigth1=ISP.toString();
@@ -2454,6 +2536,7 @@
 				try{
 					
 					saveAs("c:/tmp","logbuckscore.txt",log);
+					log="";
 				}catch(errObject:Error){trace("no guardo");}
 				
 				app.workpanel.currentState='stateScoring';
